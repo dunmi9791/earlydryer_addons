@@ -34,5 +34,4 @@ access_outcome_wizard_manager,outcome wizard manager,model_earlydryer_logistics_
 access_plan_wizard_manager,plan wizard manager,model_earlydryer_logistics_plan_wizard,earlydryer_base.group_branch_manager,1,1,1,1
 access_close_wizard_manager,close wizard manager,model_earlydryer_logistics_close_wizard,earlydryer_base.group_branch_manager,1,1,1,1
 access_close_wizard_finance,close wizard finance,model_earlydryer_logistics_close_wizard,earlydryer_base.group_finance,1,1,1,1
-access_dashboard_ops,logistics dashboard operations manager,model_earlydryer_logistics_dashboard,earlydryer_base.group_operations_manager,1,1,1,1
 access_fleet_vehicle_earlydryer_user,fleet.vehicle earlydryer read,fleet.model_fleet_vehicle,base.group_user,1,0,0,0

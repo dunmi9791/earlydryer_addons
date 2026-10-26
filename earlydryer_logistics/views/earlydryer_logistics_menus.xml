@@ -28,9 +28,6 @@
               action="earlydryer_logistics_transfer_action" sequence="40" groups="earlydryer_base.group_finance"/>
     <menuitem id="menu_earlydryer_logistics_reporting" name="Reporting" parent="menu_earlydryer_logistics"
               sequence="50" groups="earlydryer_base.group_branch_manager,earlydryer_base.group_finance"/>
-    <menuitem id="menu_earlydryer_logistics_dashboard" name="Logistics Dashboard"
-              parent="menu_earlydryer_logistics_reporting" action="earlydryer_logistics_dashboard_action"
-              sequence="1" groups="earlydryer_base.group_operations_manager"/>
     <menuitem id="menu_earlydryer_logistics_stop_analysis" name="Stop Analysis"
               parent="menu_earlydryer_logistics_reporting" action="earlydryer_logistics_stop_report_action" sequence="10"/>
     <menuitem id="menu_earlydryer_logistics_config" name="Logistics" parent="earlydryer_base.menu_earlydryer_configuration"

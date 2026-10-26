@@ -1,5 +1,6 @@
 # Copyright 2026 Secteur
 # License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl).
+# ruff: noqa: B018 -- Odoo manifests are dictionary literals.
 {
     "name": "Earlydryer Logistics",
     "summary": "Pickups and deliveries: zones, fees, slots, trips, rider view, "
@@ -10,12 +11,8 @@
     "license": "LGPL-3",
     "application": False,
     "installable": True,
-    # earlydryer_reporting (the KPI registry of the build prompt) does not
-    # exist on the addons path: earlydryer_notifications is the top of the
-    # installed Earlydryer chain (base > ... > pos > wallet > accounting_ng >
-    # notifications). The logistics KPIs live here (see README).
     "depends": [
-        "earlydryer_notifications",
+        "earlydryer_reporting",
         "base_location",
         # vehicles, odometer logs (Community)
         "fleet",
@@ -40,7 +37,6 @@
         "views/earlydryer_fail_reason_views.xml",
         "views/earlydryer_logistics_stop_views.xml",
         "views/earlydryer_logistics_trip_views.xml",
-        "views/earlydryer_logistics_dashboard_views.xml",
         "views/earlydryer_branch_views.xml",
         "views/res_partner_views.xml",
         "views/hr_employee_views.xml",
@@ -54,6 +50,7 @@
     "assets": {
         "web.assets_backend": [
             "earlydryer_logistics/static/src/rider/**/*",
+            "earlydryer_logistics/static/src/dashboard/**/*",
         ],
         "point_of_sale._assets_pos": [
             "earlydryer_logistics/static/src/pos/**/*",
