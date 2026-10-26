@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+ <t t-name="earlydryer_reporting.Header">
+  <header class="er-header">
+   <h1>Earlydryer Dashboard</h1>
+   <div class="er-filters">
+    <label>Period<select class="form-select er-period" t-model="props.state.period" t-on-change="props.periodChanged">
+     <option value="today">Today</option><option value="yesterday">Yesterday</option><option value="week">This week</option><option value="last_week">Last week</option><option value="month">This month</option><option value="last_month">Last month</option><option value="year">This year</option><option value="custom">Custom</option>
+    </select></label>
+    <label t-if="props.state.period === 'custom'">From<input class="form-control" type="date" t-model="props.state.start"/></label>
+    <label t-if="props.state.period === 'custom'">To<input class="form-control" type="date" t-model="props.state.end"/></label>
+    <label>Compare<select class="form-select er-compare" t-model="props.state.compare" t-on-change="props.refresh"><option value="previous">Previous period</option><option value="year">Same period last year</option></select></label>
+    <label>Plant<select class="form-select er-branch" t-model="props.state.branch" t-on-change="props.refresh" t-att-disabled="props.branches.length === 1">
+     <option value="">All allowed plants</option><option t-foreach="props.branches" t-as="branch" t-key="branch.id" t-att-value="branch.id" t-esc="branch.name"/>
+    </select></label>
+    <button class="btn btn-primary er-refresh" t-on-click="props.refresh" t-att-disabled="props.state.loading">Refresh</button>
+   </div>
+   <small class="text-muted">Last updated: <t t-esc="props.state.updated"/> · Africa/Lagos dates</small>
+  </header>
+ </t>
+ <t t-name="earlydryer_reporting.Tile">
+  <button class="er-tile text-start" t-on-click="() => props.open(props.kpi)" t-att-data-kpi="props.code" t-att-title="['orders_value','revenue_posted'].includes(props.code) ? 'Orders taken includes open POS sessions; posted revenue reaches the ledger when sessions close.' : props.kpi.label">
+   <span class="er-label" t-esc="props.kpi.label"/><strong class="er-value" t-esc="formatted"/>
+   <span class="er-unit" t-esc="props.kpi.unit"/>
+   <small t-if="props.kpi.point_in_time">Now · period ignored</small>
+   <small t-else="" t-att-class="direction"><t t-if="props.kpi.delta_pct !== null"><t t-esc="props.kpi.delta_pct &gt; 0 ? '↑ ' : '↓ '"/><t t-esc="Math.abs(props.kpi.delta_pct)"/>%</t><t t-else="">No comparison baseline</t></small>
+   <small t-if="props.kpi.method" t-esc="props.kpi.method"/>
+   <div class="er-splits" t-if="props.kpi.breakdown?.length &gt; 1"><span t-foreach="props.kpi.breakdown" t-as="split" t-key="split.branch_id || 'unassigned'"><t t-esc="split.name || split.branch_id || 'Unassigned'"/>: <t t-esc="(split.value || 0).toFixed(1)"/></span></div>
+   <div t-if="props.kpi.ageing" class="er-ageing"><div t-foreach="props.kpi.ageing" t-as="bucket" t-key="bucket.label"><t t-esc="bucket.label"/>: <t t-esc="bucket.value.toFixed(2)"/><progress max="100" t-att-value="props.kpi.receivables_total ? bucket.value/props.kpi.receivables_total*100 : 0"/></div></div>
+   <div t-if="props.kpi.accounts" class="er-accounts"><small t-foreach="props.kpi.accounts" t-as="account" t-key="account.account_id + ':' + account.branch_id"><t t-esc="account.name"/>: <t t-esc="account.value.toFixed(2)"/></small></div>
+  </button>
+ </t>
+ <t t-name="earlydryer_reporting.Section"><section><h2 t-esc="props.title"/><div class="er-grid"><t t-foreach="props.codes" t-as="code" t-key="code"><ReportingTile t-if="props.data[code]" code="code" kpi="props.data[code]" open="props.open"/></t></div></section></t>
+ <t t-name="earlydryer_reporting.Chart"><figure class="er-chart"><figcaption t-esc="props.title"/><div><canvas t-ref="canvas" t-att-aria-label="props.title" role="img"/></div></figure></t>
+ <t t-name="earlydryer_reporting.Dashboard">
+  <div class="er-dashboard o_action">
+   <ReportingHeader state="state" refresh.bind="refresh" periodChanged.bind="periodChanged" branches="state.branches"/>
+   <div t-if="state.error" class="alert alert-danger" role="alert" t-esc="state.error"/>
+   <div t-if="state.loading" role="status">Updating performance indicators…</div>
+   <div t-if="state.data._meta?.empty" class="alert alert-info">No orders in this period. Try another date range or begin recording activity.</div>
+   <p class="text-muted">Orders taken includes open POS sessions. Posted revenue follows posted accounting entries.</p>
+   <t t-foreach="sections" t-as="section" t-key="section.title"><ReportingSection title="section.title" codes="section.codes" data="state.data" open.bind="open"/></t>
+   <div class="er-chart-grid" t-if="state.data._meta"><ReportingChart rows="state.data._meta.daily || []" type="'line'" title.translate="Daily orders taken by plant"/><ReportingChart rows="state.data._meta.services || []" type="'bar'" title.translate="Turnaround by service type"/></div>
+   <section t-if="state.data.productivity" class="er-staff"><h2>Staff · coaching indicators</h2><p>Moves without employee: <t t-esc="state.data.productivity.moves_without_employee"/></p><div class="table-responsive"><table class="table"><thead><tr><th>Employee</th><th>Stage</th><th>Items</th><th>Moves</th><th>Average hours</th></tr></thead><tbody><tr t-foreach="state.data.productivity.rows.slice(0,10)" t-as="row" t-key="row.employee_id + ':' + row.stage + ':' + row.earlydryer_branch_id"><td t-esc="row.employee || 'Unassigned'"/><td t-esc="row.stage"/><td t-esc="row.items"/><td t-esc="row.moves"/><td t-esc="row.hours.toFixed(2)"/></tr></tbody></table></div></section>
+  </div>
+ </t>
+</templates>

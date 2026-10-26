@@ -1,0 +1,161 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+  <record id="rule_job_company" model="ir.rule">
+    <field name="name">Reporting company</field>
+    <field name="model_id" ref="model_earlydryer_report_job" />
+    <field name="domain_force">[('company_id','in',company_ids)]</field>
+  </record>
+  <record id="rule_job_branch" model="ir.rule">
+    <field name="name">Reporting allowed plants</field>
+    <field name="model_id" ref="model_earlydryer_report_job" />
+    <field name="domain_force">[('earlydryer_branch_id','in',earlydryer_branch_ids)]</field>
+    <field name="groups" eval="[(4,ref('base.group_user'))]" />
+  </record>
+  <record id="rule_job_all" model="ir.rule">
+    <field name="name">Reporting all plants</field>
+    <field name="model_id" ref="model_earlydryer_report_job" />
+    <field name="domain_force">[(1,"=",1)]</field>
+    <field name="groups" eval="[(4,ref('earlydryer_base.group_all_branches'))]" />
+  </record>
+  <record id="rule_item_company" model="ir.rule">
+    <field name="name">Reporting company</field>
+    <field name="model_id" ref="model_earlydryer_report_item" />
+    <field name="domain_force">[('company_id','in',company_ids)]</field>
+  </record>
+  <record id="rule_item_branch" model="ir.rule">
+    <field name="name">Reporting allowed plants</field>
+    <field name="model_id" ref="model_earlydryer_report_item" />
+    <field name="domain_force">[('earlydryer_branch_id','in',earlydryer_branch_ids)]</field>
+    <field name="groups" eval="[(4,ref('base.group_user'))]" />
+  </record>
+  <record id="rule_item_all" model="ir.rule">
+    <field name="name">Reporting all plants</field>
+    <field name="model_id" ref="model_earlydryer_report_item" />
+    <field name="domain_force">[(1,"=",1)]</field>
+    <field name="groups" eval="[(4,ref('earlydryer_base.group_all_branches'))]" />
+  </record>
+  <record id="rule_stage_company" model="ir.rule">
+    <field name="name">Reporting company</field>
+    <field name="model_id" ref="model_earlydryer_report_stage" />
+    <field name="domain_force">[('company_id','in',company_ids)]</field>
+  </record>
+  <record id="rule_stage_branch" model="ir.rule">
+    <field name="name">Reporting allowed plants</field>
+    <field name="model_id" ref="model_earlydryer_report_stage" />
+    <field name="domain_force">[('earlydryer_branch_id','in',earlydryer_branch_ids)]</field>
+    <field name="groups" eval="[(4,ref('base.group_user'))]" />
+  </record>
+  <record id="rule_stage_all" model="ir.rule">
+    <field name="name">Reporting all plants</field>
+    <field name="model_id" ref="model_earlydryer_report_stage" />
+    <field name="domain_force">[(1,"=",1)]</field>
+    <field name="groups" eval="[(4,ref('earlydryer_base.group_all_branches'))]" />
+  </record>
+  <record id="rule_sales_company" model="ir.rule">
+    <field name="name">Reporting company</field>
+    <field name="model_id" ref="model_earlydryer_report_sales" />
+    <field name="domain_force">[('company_id','in',company_ids)]</field>
+  </record>
+  <record id="rule_sales_branch" model="ir.rule">
+    <field name="name">Reporting allowed plants</field>
+    <field name="model_id" ref="model_earlydryer_report_sales" />
+    <field name="domain_force">[('earlydryer_branch_id','in',earlydryer_branch_ids)]</field>
+    <field name="groups" eval="[(4,ref('base.group_user'))]" />
+  </record>
+  <record id="rule_sales_all" model="ir.rule">
+    <field name="name">Reporting all plants</field>
+    <field name="model_id" ref="model_earlydryer_report_sales" />
+    <field name="domain_force">[(1,"=",1)]</field>
+    <field name="groups" eval="[(4,ref('earlydryer_base.group_all_branches'))]" />
+  </record>
+  <record id="rule_discount_company" model="ir.rule">
+    <field name="name">Reporting company</field>
+    <field name="model_id" ref="model_earlydryer_report_discount" />
+    <field name="domain_force">[('company_id','in',company_ids)]</field>
+  </record>
+  <record id="rule_discount_branch" model="ir.rule">
+    <field name="name">Reporting allowed plants</field>
+    <field name="model_id" ref="model_earlydryer_report_discount" />
+    <field name="domain_force">[('earlydryer_branch_id','in',earlydryer_branch_ids)]</field>
+    <field name="groups" eval="[(4,ref('base.group_user'))]" />
+  </record>
+  <record id="rule_discount_all" model="ir.rule">
+    <field name="name">Reporting all plants</field>
+    <field name="model_id" ref="model_earlydryer_report_discount" />
+    <field name="domain_force">[(1,"=",1)]</field>
+    <field name="groups" eval="[(4,ref('earlydryer_base.group_all_branches'))]" />
+  </record>
+  <record id="rule_qc_event_company" model="ir.rule">
+    <field name="name">Reporting company</field>
+    <field name="model_id" ref="model_earlydryer_report_qc_event" />
+    <field name="domain_force">[('company_id','in',company_ids)]</field>
+  </record>
+  <record id="rule_qc_event_branch" model="ir.rule">
+    <field name="name">Reporting allowed plants</field>
+    <field name="model_id" ref="model_earlydryer_report_qc_event" />
+    <field name="domain_force">[('earlydryer_branch_id','in',earlydryer_branch_ids)]</field>
+    <field name="groups" eval="[(4,ref('base.group_user'))]" />
+  </record>
+  <record id="rule_qc_event_all" model="ir.rule">
+    <field name="name">Reporting all plants</field>
+    <field name="model_id" ref="model_earlydryer_report_qc_event" />
+    <field name="domain_force">[(1,"=",1)]</field>
+    <field name="groups" eval="[(4,ref('earlydryer_base.group_all_branches'))]" />
+  </record>
+  <record id="rule_subscription_company" model="ir.rule">
+    <field name="name">Report company</field>
+    <field name="model_id" ref="model_earlydryer_report_subscription" />
+    <field name="domain_force">[('company_id','in',company_ids)]</field>
+  </record>
+  <record id="rule_subscription_own" model="ir.rule">
+    <field name="name">Own subscriptions and packs</field>
+    <field name="model_id" ref="model_earlydryer_report_subscription" />
+    <field name="domain_force">['|',('user_id','=',user.id),('owner_user_id','=',user.id)]</field>
+    <field name="groups" eval="[(4,ref('base.group_user'))]" />
+  </record>
+  <record id="rule_subscription_management" model="ir.rule">
+    <field name="name">Management subscriptions and packs</field>
+    <field name="model_id" ref="model_earlydryer_report_subscription" />
+    <field name="domain_force">[(1,"=",1)]</field>
+    <field name="groups" eval="[(4,ref('earlydryer_base.group_management'))]" />
+  </record>
+  <record id="rule_pack_company" model="ir.rule">
+    <field name="name">Report company</field>
+    <field name="model_id" ref="model_earlydryer_report_pack" />
+    <field name="domain_force">[('company_id','in',company_ids)]</field>
+  </record>
+  <record id="rule_pack_own" model="ir.rule">
+    <field name="name">Own subscriptions and packs</field>
+    <field name="model_id" ref="model_earlydryer_report_pack" />
+    <field name="domain_force">['|',('user_id','=',user.id),('subscription_id.owner_user_id','=',user.id)]</field>
+    <field name="groups" eval="[(4,ref('base.group_user'))]" />
+  </record>
+  <record id="rule_pack_management" model="ir.rule">
+    <field name="name">Management subscriptions and packs</field>
+    <field name="model_id" ref="model_earlydryer_report_pack" />
+    <field name="domain_force">[(1,"=",1)]</field>
+    <field name="groups" eval="[(4,ref('earlydryer_base.group_management'))]" />
+  </record>
+  <record id="mis_pack_scope" model="ir.rule">
+    <field name="name">Pack MIS plant scope</field>
+    <field name="model_id" ref="mis_builder.model_mis_report_instance" />
+    <field name="domain_force">[(1,'=',1)] if user._earlydryer_has_all_branches() else [('earlydryer_report_branch_ids','not any',[('id','not in',earlydryer_branch_ids)])]</field>
+  </record>
+  <record id="rule_ledger_company" model="ir.rule">
+    <field name="name">Reporting company</field>
+    <field name="model_id" ref="model_earlydryer_report_ledger" />
+    <field name="domain_force">[('company_id','in',company_ids)]</field>
+  </record>
+  <record id="rule_ledger_branch" model="ir.rule">
+    <field name="name">Reporting allowed plants</field>
+    <field name="model_id" ref="model_earlydryer_report_ledger" />
+    <field name="domain_force">[('earlydryer_branch_id','in',earlydryer_branch_ids)]</field>
+    <field name="groups" eval="[(4,ref('base.group_user'))]" />
+  </record>
+  <record id="rule_ledger_all" model="ir.rule">
+    <field name="name">Reporting all plants</field>
+    <field name="model_id" ref="model_earlydryer_report_ledger" />
+    <field name="domain_force">[(1,"=",1)]</field>
+    <field name="groups" eval="[(4,ref('earlydryer_base.group_all_branches'))]" />
+  </record>
+</odoo>
