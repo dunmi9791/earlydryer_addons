@@ -17,7 +17,7 @@ class EarlydryerRiderHandoverWizard(models.TransientModel):
         ]._default_earlydryer_branch_id(),
     )
     currency_id = fields.Many2one(related="branch_id.currency_id")
-    rider_id = fields.Many2one("hr.employee", string="Rider", required=True)
+    rider_id = fields.Many2one("hr.employee", required=True)
     amount = fields.Monetary(required=True)
     date = fields.Date(required=True, default=fields.Date.context_today)
     reference = fields.Char()
@@ -25,7 +25,11 @@ class EarlydryerRiderHandoverWizard(models.TransientModel):
     def action_handover(self):
         self.ensure_one()
         move = self.env["account.move"]._earlydryer_rider_handover(
-            self.branch_id, self.amount, self.rider_id, date=self.date, ref=self.reference
+            self.branch_id,
+            self.amount,
+            self.rider_id,
+            date=self.date,
+            ref=self.reference,
         )
         return {
             "type": "ir.actions.act_window",

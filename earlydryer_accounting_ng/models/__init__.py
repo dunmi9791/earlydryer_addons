@@ -23,3 +23,4 @@ from . import earlydryer_close_checklist_item
 from . import earlydryer_close_checklist
 from . import earlydryer_close_checklist_line
 from . import res_config_settings
+from . import earlydryer_accounting_demo

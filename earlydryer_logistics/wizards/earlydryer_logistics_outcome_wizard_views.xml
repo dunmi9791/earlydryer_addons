@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_logistics_outcome_wizard_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.logistics.outcome.wizard.form</field>
+        <field name="model">earlydryer.logistics.outcome.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <field name="stop_id" invisible="1"/>
+                <field name="stop_type" invisible="1"/>
+                <field name="currency_id" invisible="1"/>
+                <group>
+                    <field name="outcome" widget="radio" options="{'horizontal': true}"/>
+                </group>
+                <group invisible="outcome != 'done'">
+                    <group>
+                        <field name="recipient_name"/>
+                        <field name="signature" widget="signature"/>
+                        <field name="attachment_ids" widget="many2many_binary"/>
+                    </group>
+                    <group invisible="stop_type != 'delivery'">
+                        <field name="cod_amount"/>
+                        <field name="collection_method"/>
+                        <field name="cash_collected" invisible="collection_method != 'cash'"/>
+                        <field name="transfer_amount" invisible="collection_method != 'transfer_confirmed'"/>
+                        <field name="office_credit"/>
+                    </group>
+                    <group invisible="stop_type != 'pickup'">
+                        <field name="bag_count"/>
+                        <field name="piece_count_estimate"/>
+                        <field name="pickup_note"/>
+                    </group>
+                </group>
+                <group invisible="outcome != 'failed'">
+                    <field name="fail_reason_id" required="outcome == 'failed'"
+                           domain="[('stop_type', 'in', (stop_type, 'both'))]"/>
+                    <field name="fail_note"/>
+                    <field name="attachment_ids" widget="many2many_binary"/>
+                </group>
+                <footer>
+                    <button name="action_confirm" type="object" string="Record" class="btn-primary"/>
+                    <button special="cancel" string="Cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

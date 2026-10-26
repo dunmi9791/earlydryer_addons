@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <!-- earlydryer_base branch pattern, except that riders only see their own
+         trips and stops: the branch rules are given to the office roles, not
+         to every internal user (rules of a user's groups are OR-ed). -->
+
+    <!-- earlydryer.logistics.stop -->
+    <record id="stop_rule_company" model="ir.rule">
+        <field name="name">Logistics stop: multi-company</field>
+        <field name="model_id" ref="model_earlydryer_logistics_stop"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="stop_rule_branch" model="ir.rule">
+        <field name="name">Logistics stop: allowed branches (office)</field>
+        <field name="model_id" ref="model_earlydryer_logistics_stop"/>
+        <field name="domain_force">[('earlydryer_branch_id', 'in', earlydryer_branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('earlydryer_base.group_front_desk')), (4, ref('earlydryer_base.group_customer_service')), (4, ref('earlydryer_base.group_branch_manager')), (4, ref('earlydryer_base.group_finance'))]"/>
+    </record>
+    <record id="stop_rule_all_branches" model="ir.rule">
+        <field name="name">Logistics stop: all branches</field>
+        <field name="model_id" ref="model_earlydryer_logistics_stop"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('earlydryer_base.group_all_branches'))]"/>
+    </record>
+    <record id="stop_rule_rider" model="ir.rule">
+        <field name="name">Logistics stop: rider's own trips</field>
+        <field name="model_id" ref="model_earlydryer_logistics_stop"/>
+        <field name="domain_force">[('rider_user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('earlydryer_base.group_rider'))]"/>
+    </record>
+
+    <!-- earlydryer.logistics.trip -->
+    <record id="trip_rule_company" model="ir.rule">
+        <field name="name">Logistics trip: multi-company</field>
+        <field name="model_id" ref="model_earlydryer_logistics_trip"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="trip_rule_branch" model="ir.rule">
+        <field name="name">Logistics trip: allowed branches (office)</field>
+        <field name="model_id" ref="model_earlydryer_logistics_trip"/>
+        <field name="domain_force">[('earlydryer_branch_id', 'in', earlydryer_branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('earlydryer_base.group_front_desk')), (4, ref('earlydryer_base.group_customer_service')), (4, ref('earlydryer_base.group_branch_manager')), (4, ref('earlydryer_base.group_finance'))]"/>
+    </record>
+    <record id="trip_rule_all_branches" model="ir.rule">
+        <field name="name">Logistics trip: all branches</field>
+        <field name="model_id" ref="model_earlydryer_logistics_trip"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('earlydryer_base.group_all_branches'))]"/>
+    </record>
+    <record id="trip_rule_rider" model="ir.rule">
+        <field name="name">Logistics trip: rider's own trips</field>
+        <field name="model_id" ref="model_earlydryer_logistics_trip"/>
+        <field name="domain_force">[('rider_user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('earlydryer_base.group_rider'))]"/>
+    </record>
+
+    <!-- zones and slots: every internal user of the plant reads them -->
+    <record id="zone_rule_branch" model="ir.rule">
+        <field name="name">Delivery zone: allowed branches</field>
+        <field name="model_id" ref="model_earlydryer_delivery_zone"/>
+        <field name="domain_force">[('earlydryer_branch_id', 'in', earlydryer_branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="zone_rule_all_branches" model="ir.rule">
+        <field name="name">Delivery zone: all branches</field>
+        <field name="model_id" ref="model_earlydryer_delivery_zone"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('earlydryer_base.group_all_branches'))]"/>
+    </record>
+    <record id="slot_rule_branch" model="ir.rule">
+        <field name="name">Logistics slot: allowed branches</field>
+        <field name="model_id" ref="model_earlydryer_logistics_slot_template"/>
+        <field name="domain_force">[('earlydryer_branch_id', 'in', earlydryer_branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="slot_rule_all_branches" model="ir.rule">
+        <field name="name">Logistics slot: all branches</field>
+        <field name="model_id" ref="model_earlydryer_logistics_slot_template"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('earlydryer_base.group_all_branches'))]"/>
+    </record>
+</odoo>

@@ -21,7 +21,7 @@ class EarlydryerCloseChecklistLine(models.Model):
     sequence = fields.Integer(default=10)
     check_code = fields.Selection(related="item_id.check_code")
     done = fields.Boolean()
-    done_by_id = fields.Many2one("res.users", string="Done By", readonly=True)
+    done_by_id = fields.Many2one("res.users", readonly=True)
     done_on = fields.Datetime(readonly=True)
     status = fields.Selection(
         [
@@ -126,8 +126,12 @@ class EarlydryerCloseChecklistLine(models.Model):
             )
         )
         accounts |= journals.default_account_id
-        methods = self.env["pos.payment.method"].sudo().search(
-            [("company_id", "=", company.id), ("journal_id", "in", journals.ids)]
+        methods = (
+            self.env["pos.payment.method"]
+            .sudo()
+            .search(
+                [("company_id", "=", company.id), ("journal_id", "in", journals.ids)]
+            )
         )
         accounts |= methods.outstanding_account_id
         return accounts.filtered("reconcile")
@@ -158,7 +162,9 @@ class EarlydryerCloseChecklistLine(models.Model):
                 count=len(lines),
                 accounts=", ".join(lines.account_id.mapped("display_name")),
             )
-        return "ok", self.env._("Card, gateway, rider and in-transit clearing are clear.")
+        return "ok", self.env._(
+            "Card, gateway, rider and in-transit clearing are clear."
+        )
 
     def _earlydryer_check_wallet_control(self):
         control = (
@@ -268,19 +274,27 @@ class EarlydryerCloseChecklistLine(models.Model):
         )
         if lock >= self.checklist_id.date_to:
             return "ok", self.env._("Locked up to %(date)s.", date=lock)
-        return "issue", self.env._("Set the lock date to %(date)s.", date=self.checklist_id.date_to)
+        return "issue", self.env._(
+            "Set the lock date to %(date)s.", date=self.checklist_id.date_to
+        )
 
     def action_open_tool(self):
         """Open what the step is about (lock date wizard, gaps, reports...)."""
         self.ensure_one()
         code = self.check_code
         xmlids = {
-            "lock_date": "account_lock_date_update.account_update_lock_date_act_window",
+            "lock_date": (
+                "account_lock_date_update.account_update_lock_date_act_window"
+            ),
             "analytic_gaps": "earlydryer_accounting_ng.action_earlydryer_analytic_gaps",
-            "wht_prepared": "earlydryer_accounting_ng.earlydryer_wht_report_wizard_action",
+            "wht_prepared": (
+                "earlydryer_accounting_ng.earlydryer_wht_report_wizard_action"
+            ),
             "pos_closed": "point_of_sale.action_pos_session",
             "depreciation": "account_asset_management.account_asset_action",
-            "wallet_control": "earlydryer_wallet.earlydryer_wallet_control_server_action",
+            "wallet_control": (
+                "earlydryer_wallet.earlydryer_wallet_control_server_action"
+            ),
         }
         xmlid = xmlids.get(code)
         if code == "clearing_reconciled":

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo noupdate="1">
+    <!-- PLACEHOLDER thresholds (currency amounts): 0 = every occurrence. -->
+    <record id="rule_alert_failed_delivery" model="earlydryer.notify.alert.rule">
+        <field name="name">Failed delivery or pickup</field>
+        <field name="event_id" ref="earlydryer_notifications.event_alert_failed_delivery"/>
+        <field name="mode">immediate</field>
+        <field name="threshold">0</field>
+        <field name="recipient_group_ids" eval="[(6, 0, [ref('earlydryer_base.group_branch_manager')])]"/>
+    </record>
+    <record id="rule_alert_rider_cash_short" model="earlydryer.notify.alert.rule">
+        <field name="name">Rider cash short</field>
+        <field name="event_id" ref="event_alert_rider_cash_short"/>
+        <field name="mode">immediate</field>
+        <field name="threshold">0</field>
+        <field name="recipient_group_ids" eval="[(6, 0, [ref('earlydryer_base.group_branch_manager'), ref('earlydryer_base.group_finance')])]"/>
+    </record>
+</odoo>

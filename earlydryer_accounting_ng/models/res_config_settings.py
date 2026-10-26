@@ -29,12 +29,12 @@ class ResConfigSettings(models.TransientModel):
     def _compute_earlydryer_vat_pending(self):
         for settings in self:
             company = settings.company_id
-            state = "%s/%s" % (
-                int(settings.earlydryer_vat_registered),
-                int(settings.earlydryer_prices_include_vat),
+            state = (
+                f"{int(settings.earlydryer_vat_registered)}/"
+                f"{int(settings.earlydryer_prices_include_vat)}"
             )
-            settings.earlydryer_vat_pending = (
-                state != (company.earlydryer_vat_applied_state or "0/1")
+            settings.earlydryer_vat_pending = state != (
+                company.earlydryer_vat_applied_state or "0/1"
             )
             settings.earlydryer_is_live = company._earlydryer_is_live()
 

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_delivery_zone_view_list" model="ir.ui.view">
+        <field name="name">earlydryer.delivery.zone.list</field>
+        <field name="model">earlydryer.delivery.zone</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="earlydryer_branch_id"/>
+                <field name="fee_mode"/>
+                <field name="flat_fee"/>
+                <field name="base_fee" optional="show"/>
+                <field name="fee_per_km" optional="show"/>
+                <field name="express_fee"/>
+                <field name="free_over_amount"/>
+                <field name="min_order_amount" optional="hide"/>
+                <field name="area_ids" widget="many2many_tags"/>
+                <field name="currency_id" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+    <record id="earlydryer_delivery_zone_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.delivery.zone.form</field>
+        <field name="model">earlydryer.delivery.zone</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <h1><field name="name" placeholder="e.g. Central"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="earlydryer_branch_id"/>
+                            <field name="sequence"/>
+                            <field name="active" invisible="1"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                        <group string="Fee">
+                            <field name="fee_mode" widget="radio"/>
+                            <field name="flat_fee" invisible="fee_mode != 'flat'"/>
+                            <field name="base_fee" invisible="fee_mode != 'distance'"/>
+                            <field name="fee_per_km" invisible="fee_mode != 'distance'"/>
+                            <field name="max_km" invisible="fee_mode != 'distance'"/>
+                            <field name="express_fee"/>
+                            <field name="pickup_fee"/>
+                            <field name="free_over_amount"/>
+                            <field name="min_order_amount"/>
+                        </group>
+                    </group>
+                    <field name="area_ids" widget="many2many_tags" placeholder="Areas served..."/>
+                    <field name="note" placeholder="Notes..."/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+    <record id="earlydryer_delivery_zone_action" model="ir.actions.act_window">
+        <field name="name">Delivery Zones</field>
+        <field name="res_model">earlydryer.delivery.zone</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

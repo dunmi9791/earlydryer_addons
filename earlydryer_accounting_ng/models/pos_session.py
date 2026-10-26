@@ -57,12 +57,14 @@ class PosSession(models.Model):
         return vals
 
     def _create_account_move(
-        self, balancing_account=False, amount_to_balance=0, bank_payment_method_diffs=None
+        self,
+        balancing_account=False,
+        amount_to_balance=0,
+        bank_payment_method_diffs=None,
     ):
         branch = self.config_id.earlydryer_branch_id
-        if branch:
-            self = self.with_context(earlydryer_move_branch_id=branch.id)
-        return super()._create_account_move(
+        session = self.with_context(earlydryer_move_branch_id=branch.id or False)
+        return super(PosSession, session)._create_account_move(
             balancing_account=balancing_account,
             amount_to_balance=amount_to_balance,
             bank_payment_method_diffs=bank_payment_method_diffs,
@@ -75,9 +77,8 @@ class PosSession(models.Model):
         bank_payment_method_diffs=None,
     ):
         branch = self.config_id.earlydryer_branch_id
-        if branch:
-            self = self.with_context(earlydryer_move_branch_id=branch.id)
-        return super()._validate_session(
+        session = self.with_context(earlydryer_move_branch_id=branch.id or False)
+        return super(PosSession, session)._validate_session(
             balancing_account=balancing_account,
             amount_to_balance=amount_to_balance,
             bank_payment_method_diffs=bank_payment_method_diffs,

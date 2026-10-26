@@ -2,4 +2,11 @@
 <!-- Copyright 2026 Secteur
      License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
 <odoo>
+    <!-- DEMO ONLY: setup wizard on the demo company (two plants, a fictional
+         bank, one card provider, VAT not registered), two WHT vendors with a
+         bill each, a corporate invoice with a WHT deduction, one POS day per
+         plant (closed), a lodgement per plant and a rider handover.
+         demo/opening_trial_balance.csv is a file to try the opening balance
+         import by hand; it is not loaded. -->
+    <function model="earlydryer.accounting.demo" name="_earlydryer_load_demo"/>
 </odoo>

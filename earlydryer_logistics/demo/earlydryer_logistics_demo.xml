@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <!-- DEMO ONLY (earlydryer.logistics.demo._earlydryer_load_demo): three
+         zones per plant (flat, by distance, free over 20,000), morning /
+         afternoon / evening slots every day, two riders with logins (ed_rider,
+         ed_rider2) and one without, a motorbike, a 3PL carrier, and a demo
+         day: booked pickups, a pickup priced into a job, COD deliveries, a
+         trip closed with a 200 shortage, a failed delivery rescheduled and a
+         3PL trip with its carrier bill. Demo PIN of the Plant 1 manager
+         employee: 4321 (when it had none). -->
+    <function model="earlydryer.logistics.demo" name="_earlydryer_load_demo"/>
+</odoo>

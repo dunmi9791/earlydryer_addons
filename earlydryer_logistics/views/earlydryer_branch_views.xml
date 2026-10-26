@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_branch_view_form_logistics" model="ir.ui.view">
+        <field name="name">earlydryer.branch.form.logistics</field>
+        <field name="model">earlydryer.branch</field>
+        <field name="inherit_id" ref="earlydryer_base.earlydryer_branch_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Logistics" name="logistics">
+                    <group>
+                        <group>
+                            <field name="earlydryer_allow_cod"/>
+                            <field name="earlydryer_auto_draft_delivery"/>
+                        </group>
+                        <group string="Failed deliveries (placeholder)">
+                            <field name="earlydryer_failed_fee_mode"/>
+                            <field name="earlydryer_failed_fee_amount"
+                                   invisible="earlydryer_failed_fee_mode != 'flat'"/>
+                        </group>
+                    </group>
+                    <field name="earlydryer_zone_ids" readonly="1">
+                        <list>
+                            <field name="name"/>
+                            <field name="fee_mode"/>
+                            <field name="flat_fee"/>
+                            <field name="area_ids" widget="many2many_tags"/>
+                            <field name="currency_id" column_invisible="1"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

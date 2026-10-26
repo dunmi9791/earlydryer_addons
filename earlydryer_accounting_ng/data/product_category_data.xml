@@ -8,4 +8,5 @@
         <field name="name">Delivery Fees</field>
         <field name="earlydryer_service_line_id" ref="service_line_delivery"/>
     </record>
+    <function model="product.template" name="_earlydryer_recompute_service_lines"/>
 </odoo>

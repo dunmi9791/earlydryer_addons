@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <menuitem id="menu_earlydryer_logistics" name="Logistics" parent="earlydryer_base.menu_earlydryer_root"
+              sequence="12"/>
+    <menuitem id="menu_earlydryer_logistics_rider" name="My Trips" parent="menu_earlydryer_logistics"
+              action="earlydryer_logistics_rider_action" sequence="1" groups="earlydryer_base.group_rider"/>
+    <menuitem id="menu_earlydryer_logistics_book_pickup" name="Book Pickup" parent="menu_earlydryer_logistics"
+              action="earlydryer_logistics_book_pickup_action" sequence="5"
+              groups="earlydryer_base.group_front_desk,earlydryer_base.group_customer_service"/>
+    <menuitem id="menu_earlydryer_logistics_stops" name="Pickups and Deliveries" parent="menu_earlydryer_logistics"
+              action="earlydryer_logistics_stop_action" sequence="10"
+              groups="earlydryer_base.group_front_desk,earlydryer_base.group_customer_service,earlydryer_base.group_finance"/>
+    <menuitem id="menu_earlydryer_logistics_arrived" name="Pickups Arrived" parent="menu_earlydryer_logistics"
+              action="earlydryer_logistics_arrived_action" sequence="15"
+              groups="earlydryer_base.group_front_desk,earlydryer_base.group_customer_service"/>
+    <menuitem id="menu_earlydryer_logistics_planning" name="Daily Planning" parent="menu_earlydryer_logistics"
+              action="earlydryer_logistics_planning_action" sequence="20"
+              groups="earlydryer_base.group_branch_manager"/>
+    <menuitem id="menu_earlydryer_logistics_plan_auto" name="Plan Automatically" parent="menu_earlydryer_logistics"
+              action="earlydryer_logistics_plan_wizard_action" sequence="25"
+              groups="earlydryer_base.group_branch_manager"/>
+    <menuitem id="menu_earlydryer_logistics_trips" name="Trips" parent="menu_earlydryer_logistics"
+              action="earlydryer_logistics_trip_action" sequence="30"
+              groups="earlydryer_base.group_branch_manager,earlydryer_base.group_finance"/>
+    <menuitem id="menu_earlydryer_logistics_transfers" name="Door Transfers to Match" parent="menu_earlydryer_logistics"
+              action="earlydryer_logistics_transfer_action" sequence="40" groups="earlydryer_base.group_finance"/>
+    <menuitem id="menu_earlydryer_logistics_reporting" name="Reporting" parent="menu_earlydryer_logistics"
+              sequence="50" groups="earlydryer_base.group_branch_manager,earlydryer_base.group_finance"/>
+    <menuitem id="menu_earlydryer_logistics_dashboard" name="Logistics Dashboard"
+              parent="menu_earlydryer_logistics_reporting" action="earlydryer_logistics_dashboard_action"
+              sequence="1" groups="earlydryer_base.group_operations_manager"/>
+    <menuitem id="menu_earlydryer_logistics_stop_analysis" name="Stop Analysis"
+              parent="menu_earlydryer_logistics_reporting" action="earlydryer_logistics_stop_report_action" sequence="10"/>
+    <menuitem id="menu_earlydryer_logistics_config" name="Logistics" parent="earlydryer_base.menu_earlydryer_configuration"
+              sequence="40" groups="earlydryer_base.group_branch_manager"/>
+    <menuitem id="menu_earlydryer_logistics_zones" name="Delivery Zones" parent="menu_earlydryer_logistics_config"
+              action="earlydryer_delivery_zone_action" sequence="10"/>
+    <menuitem id="menu_earlydryer_logistics_areas" name="Areas" parent="menu_earlydryer_logistics_config"
+              action="earlydryer_area_action" sequence="20"/>
+    <menuitem id="menu_earlydryer_logistics_slots" name="Slots" parent="menu_earlydryer_logistics_config"
+              action="earlydryer_slot_template_action" sequence="30"/>
+    <menuitem id="menu_earlydryer_logistics_reasons" name="Failure Reasons" parent="menu_earlydryer_logistics_config"
+              action="earlydryer_fail_reason_action" sequence="40"/>
+</odoo>

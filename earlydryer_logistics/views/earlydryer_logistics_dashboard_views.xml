@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_logistics_dashboard_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.logistics.dashboard.form</field>
+        <field name="model">earlydryer.logistics.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Logistics" create="false">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                        <group>
+                            <field name="branch_ids" widget="many2many_tags" placeholder="All my plants"/>
+                            <field name="currency_id" invisible="1"/>
+                        </group>
+                    </group>
+                    <group string="Logistics">
+                        <group>
+                            <field name="pickups_done"/>
+                            <field name="deliveries_done"/>
+                            <field name="on_slot_rate"/>
+                            <field name="failed_rate"/>
+                            <field name="avg_stops_per_trip"/>
+                        </group>
+                        <group>
+                            <field name="delivery_fee_revenue"/>
+                            <field name="cod_collected"/>
+                            <field name="rider_cash_difference"/>
+                            <field name="carrier_cost"/>
+                        </group>
+                    </group>
+                    <group string="Top failure reasons">
+                        <field name="top_fail_reasons" nolabel="1" colspan="2"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="earlydryer_logistics_dashboard_action" model="ir.actions.act_window">
+        <field name="name">Logistics Dashboard</field>
+        <field name="res_model">earlydryer.logistics.dashboard</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+</odoo>

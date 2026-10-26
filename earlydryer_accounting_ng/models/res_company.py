@@ -188,14 +188,18 @@ class ResCompany(models.Model):
         self.ensure_one()
         journal = self._earlydryer_chart_ref("general")
         if not journal:
-            journal = self.env["account.journal"].sudo().search(
-                [
-                    ("company_id", "=", self.id),
-                    ("type", "=", "general"),
-                    ("earlydryer_role", "=", False),
-                    ("id", "!=", self.earlydryer_wallet_journal_id.id),
-                ],
-                limit=1,
+            journal = (
+                self.env["account.journal"]
+                .sudo()
+                .search(
+                    [
+                        ("company_id", "=", self.id),
+                        ("type", "=", "general"),
+                        ("earlydryer_role", "=", False),
+                        ("id", "!=", self.earlydryer_wallet_journal_id.id),
+                    ],
+                    limit=1,
+                )
             )
         return journal
 
@@ -296,14 +300,18 @@ class ResCompany(models.Model):
                 tax = company._earlydryer_acc_ref(key)
                 if not tax and l10n_key and company._earlydryer_is_ng_chart():
                     tax = company._earlydryer_chart_ref(l10n_key) or Tax
-                    if tax and include and tax.price_include != (
-                        include == "tax_included"
+                    if (
+                        tax
+                        and include
+                        and tax.price_include != (include == "tax_included")
                     ):
                         tax = Tax
                     if tax:
                         company._earlydryer_acc_bind(key, tax)
-                if not tax and key == "tax_vat_sale_incl" and taxes.get(
-                    "tax_vat_sale_excl"
+                if (
+                    not tax
+                    and key == "tax_vat_sale_incl"
+                    and taxes.get("tax_vat_sale_excl")
                 ):
                     tax = taxes["tax_vat_sale_excl"].copy(
                         {"name": label, "price_include_override": include}
@@ -353,7 +361,10 @@ class ResCompany(models.Model):
             account_type = "liability_current" if tax_use == "sale" else "asset_current"
             Account = self.env["account.account"].with_company(self)
             account = Account.search(
-                [*Account._check_company_domain(self), ("account_type", "=", account_type)],
+                [
+                    *Account._check_company_domain(self),
+                    ("account_type", "=", account_type),
+                ],
                 limit=1,
             )
         return account
@@ -414,15 +425,22 @@ class ResCompany(models.Model):
                     "earlydryer_vat_applied_state": company._earlydryer_vat_state(),
                 }
             )
-            configs = self.env["pos.config"].sudo().search(
-                [("company_id", "=", company.id), ("earlydryer_enabled", "=", True)]
+            configs = (
+                self.env["pos.config"]
+                .sudo()
+                .search(
+                    [("company_id", "=", company.id), ("earlydryer_enabled", "=", True)]
+                )
             )
             for config in configs:
                 # POS lines take the product taxes; a default fiscal position
                 # would map them, so none is forced here
                 if config.tax_regime_selection and not registered:
                     config.write(
-                        {"tax_regime_selection": False, "default_fiscal_position_id": False}
+                        {
+                            "tax_regime_selection": False,
+                            "default_fiscal_position_id": False,
+                        }
                     )
             if configs:
                 summary.append(
@@ -436,9 +454,9 @@ class ResCompany(models.Model):
 
     def _earlydryer_vat_state(self):
         self.ensure_one()
-        return "%s/%s" % (
-            int(self.earlydryer_vat_registered),
-            int(self.earlydryer_prices_include_vat),
+        return (
+            f"{int(self.earlydryer_vat_registered)}/"
+            f"{int(self.earlydryer_prices_include_vat)}"
         )
 
     def _earlydryer_is_live(self):

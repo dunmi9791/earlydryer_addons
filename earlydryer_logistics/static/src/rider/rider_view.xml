@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="earlydryer_logistics.SignaturePad">
+        <div class="o_ed_signature">
+            <canvas t-ref="canvas" class="o_ed_signature_canvas"
+                    t-on-pointerdown="onDown" t-on-pointermove="onMove"
+                    t-on-pointerup="onUp" t-on-pointerleave="onUp"/>
+            <button type="button" class="btn btn-sm btn-link" t-on-click="clear">Clear</button>
+        </div>
+    </t>
+
+    <t t-name="earlydryer_logistics.RiderView">
+        <div class="o_ed_rider o_action">
+            <div class="o_ed_rider_bar d-flex align-items-center gap-2 px-2 py-2">
+                <button t-if="state.tripId" class="btn btn-light" t-on-click="back">
+                    <i class="fa fa-arrow-left"/>
+                </button>
+                <strong class="flex-grow-1 text-truncate">
+                    <t t-if="trip" t-out="trip.name"/>
+                    <t t-else="">My Trips</t>
+                </strong>
+                <span t-attf-class="badge {{ state.online ? 'text-bg-success' : 'text-bg-danger' }}">
+                    <t t-if="state.online">Online</t><t t-else="">Offline</t>
+                </span>
+                <span class="badge text-bg-warning" t-if="state.pending or state.photosPending"
+                      title="Waiting to be sent">
+                    <i class="fa fa-cloud-upload"/> <t t-out="state.pending + state.photosPending"/> pending sync
+                </span>
+                <button class="btn btn-light" t-on-click="() => this.sync()" t-att-disabled="state.syncing">
+                    <i t-attf-class="fa fa-refresh {{ state.syncing ? 'fa-spin' : '' }}"/>
+                </button>
+            </div>
+
+            <div class="o_ed_rider_body p-2">
+                <div t-if="state.loading" class="text-center text-muted p-4">Loading...</div>
+
+                <!-- Trip list -->
+                <t t-elif="!state.tripId">
+                    <div t-if="!trips.length" class="text-center text-muted p-4">
+                        No trip for you today.
+                    </div>
+                    <div t-foreach="trips" t-as="t" t-key="t.id" class="card mb-2" t-on-click="() => this.openTrip(t)">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between">
+                                <h5 class="mb-1" t-out="t.name"/>
+                                <span class="badge text-bg-secondary" t-out="t.state"/>
+                            </div>
+                            <div class="text-muted"><t t-out="t.date"/> <t t-out="t.slot"/> <t t-out="t.vehicle"/></div>
+                            <div><t t-out="t.done_count"/> / <t t-out="t.stop_count"/> stops</div>
+                            <div t-if="t.cod_total">COD: <strong t-out="formatAmount(t.cod_total)"/></div>
+                        </div>
+                    </div>
+                    <div t-if="state.lastSync" class="small text-muted text-center">Updated <t t-out="state.lastSync"/> UTC</div>
+                </t>
+
+                <!-- Trip -->
+                <t t-elif="!state.stopId">
+                    <t t-set="tr" t-value="trip"/>
+                    <div t-if="!tr" class="text-muted p-3">Trip not found.</div>
+                    <t t-else="">
+                        <button t-if="tr.state === 'planned'" class="btn btn-primary btn-lg w-100 mb-2"
+                                t-on-click="() => this.startTrip(tr)">Start trip</button>
+                        <div t-if="tr.state === 'in_progress'" class="mb-2">
+                            <input type="text" class="form-control form-control-lg" inputmode="text"
+                                   placeholder="Scan bag label" t-on-keydown="onScan"/>
+                            <div class="small mt-1" t-if="state.scanMessage" t-out="state.scanMessage"/>
+                        </div>
+                        <div t-foreach="tr.stops" t-as="s" t-key="s.id"
+                             t-attf-class="card mb-2 o_ed_stop o_ed_stop_{{ s.state }}">
+                            <div class="card-body" t-on-click="() => this.openStop(s)">
+                                <div class="d-flex justify-content-between">
+                                    <span>
+                                        <i t-attf-class="fa {{ s.type === 'pickup' ? 'fa-arrow-up' : 'fa-arrow-down' }}"/>
+                                        <strong t-out="s.customer"/>
+                                    </span>
+                                    <span class="badge text-bg-light" t-out="s.state"/>
+                                </div>
+                                <div t-out="s.area"/>
+                                <div class="text-muted small" t-if="s.landmark" t-out="s.landmark"/>
+                                <div class="small" t-out="s.slot"/>
+                                <div t-if="s.cod_amount" class="o_ed_cod">COD <t t-out="formatAmount(s.cod_amount, s.currency)"/></div>
+                                <div class="small" t-if="s.type === 'delivery'">
+                                    <t t-out="s.jobs.join(', ')"/>
+                                    <span t-if="!s.loaded and !isClosed(s)" class="text-danger"> - not scanned</span>
+                                </div>
+                                <div class="small" t-if="s.bag_count">Bags: <t t-out="s.bag_count"/></div>
+                                <div class="small text-warning" t-if="s.pending">Waiting to sync</div>
+                            </div>
+                        </div>
+                    </t>
+                </t>
+
+                <!-- Stop -->
+                <t t-else="">
+                    <t t-set="s" t-value="stop"/>
+                    <div t-if="!s" class="text-muted p-3">Stop not found.</div>
+                    <t t-elif="!state.mode">
+                        <h4 t-out="s.customer"/>
+                        <div t-out="s.address"/>
+                        <div><strong t-out="s.area"/></div>
+                        <div t-if="s.landmark">Landmark: <t t-out="s.landmark"/></div>
+                        <div t-if="s.gate">Gate: <t t-out="s.gate"/></div>
+                        <div t-if="s.customer_note" class="fst-italic" t-out="s.customer_note"/>
+                        <div t-out="s.slot"/>
+                        <div t-if="s.cod_amount" class="o_ed_cod my-2">COD <t t-out="formatAmount(s.cod_amount, s.currency)"/></div>
+                        <div t-if="s.credit_approved" class="text-success">Credit approved by the office</div>
+                        <div class="d-flex gap-2 my-2">
+                            <a t-if="s.tel_url" class="btn btn-outline-primary flex-fill" t-att-href="s.tel_url">
+                                <i class="fa fa-phone"/> Call</a>
+                            <a t-if="s.whatsapp_url" class="btn btn-outline-success flex-fill" t-att-href="s.whatsapp_url"
+                               target="_blank" rel="noopener">
+                                <i class="fa fa-whatsapp"/> WhatsApp</a>
+                            <a t-if="s.map_url" class="btn btn-outline-secondary flex-fill" t-att-href="s.map_url"
+                               target="_blank" rel="noopener">
+                                <i class="fa fa-map-marker"/> Navigate</a>
+                        </div>
+                        <t t-if="!isClosed(s)">
+                            <button t-if="['assigned', 'en_route'].includes(s.state) and (s.type === 'pickup' or s.loaded)"
+                                    class="btn btn-primary btn-lg w-100 mb-2" t-on-click="() => this.arrive(s)">Arrived</button>
+                            <div t-if="s.type === 'delivery' and !s.loaded and s.state === 'assigned'" class="alert alert-warning">
+                                Scan the bag label of <t t-out="s.jobs.join(', ')"/> first.
+                            </div>
+                            <button t-if="s.state === 'arrived'" class="btn btn-success btn-lg w-100 mb-2"
+                                    t-on-click="() => this.startComplete(s)">Done</button>
+                            <button t-if="['en_route', 'arrived'].includes(s.state) or (s.state === 'assigned' and s.type === 'delivery')"
+                                    class="btn btn-outline-danger btn-lg w-100" t-on-click="() => this.startFail(s)">Failed</button>
+                        </t>
+                        <div t-else="" class="alert alert-info">
+                            <t t-out="s.state"/>
+                            <t t-if="s.fail_reason">: <t t-out="s.fail_reason"/></t>
+                        </div>
+                    </t>
+
+                    <!-- Complete -->
+                    <t t-elif="state.mode === 'complete'">
+                        <h5>Complete <t t-out="s.name"/></h5>
+                        <label class="form-label mt-2">Recipient name</label>
+                        <input type="text" class="form-control" t-model="state.form.recipient_name"/>
+                        <label class="form-label mt-2">Signature</label>
+                        <SignaturePad onChange.bind="onSignature"/>
+                        <label class="form-label mt-2">Photo <t t-if="state.form.photos">(<t t-out="state.form.photos"/>)</t></label>
+                        <input type="file" class="form-control" accept="image/*" capture="environment" t-on-change="onPhoto"/>
+                        <t t-if="s.type === 'delivery'">
+                            <label class="form-label mt-2">Collected</label>
+                            <select class="form-select" t-model="state.form.collection_method">
+                                <option value="cash">Cash</option>
+                                <option value="transfer_confirmed">Transfer confirmed by the office</option>
+                                <option value="none">Nothing</option>
+                            </select>
+                            <input t-if="state.form.collection_method === 'cash'" type="number" inputmode="decimal"
+                                   class="form-control form-control-lg mt-1" t-model.number="state.form.cash_collected"/>
+                            <div t-if="short > 0 and !s.credit_approved" class="alert alert-warning mt-2">
+                                <div><strong>Short: <t t-out="formatAmount(short, s.currency)"/></strong></div>
+                                <div>A manager's PIN is needed to leave the garments on credit. Otherwise fail the stop (Unable to pay).</div>
+                                <select class="form-select mt-1" t-model="state.form.approver_employee_id">
+                                    <option value="">Manager...</option>
+                                    <option t-foreach="state.data.approvers" t-as="a" t-key="a.id" t-att-value="a.id" t-out="a.name"/>
+                                </select>
+                                <input type="password" inputmode="numeric" class="form-control mt-1" placeholder="PIN"
+                                       t-model="state.form.pin"/>
+                            </div>
+                        </t>
+                        <t t-else="">
+                            <label class="form-label mt-2">Bags</label>
+                            <input type="number" inputmode="numeric" class="form-control form-control-lg"
+                                   t-model.number="state.form.bag_count"/>
+                            <label class="form-label mt-2">Pieces (rough count, optional)</label>
+                            <input type="number" inputmode="numeric" class="form-control" t-model.number="state.form.piece_count_estimate"/>
+                            <label class="form-label mt-2">Seal / bag tag numbers</label>
+                            <input type="text" class="form-control" t-model="state.form.pickup_note"/>
+                        </t>
+                        <div class="form-check mt-2" t-if="!s.has_location">
+                            <input class="form-check-input" type="checkbox" id="ed_save_loc" t-model="state.form.save_location"/>
+                            <label class="form-check-label" for="ed_save_loc">Save this location for the customer</label>
+                        </div>
+                        <div class="form-check mt-2" t-else="">
+                            <input class="form-check-input" type="checkbox" id="ed_fix_loc" t-model="state.form.fix_location"/>
+                            <label class="form-check-label" for="ed_fix_loc">The customer's saved location is wrong: replace it</label>
+                        </div>
+                        <button class="btn btn-success btn-lg w-100 mt-3" t-on-click="confirmComplete">Confirm done</button>
+                        <button class="btn btn-light w-100 mt-2" t-on-click="back">Back</button>
+                    </t>
+
+                    <!-- Fail -->
+                    <t t-elif="state.mode === 'fail'">
+                        <h5>Failed <t t-out="s.name"/></h5>
+                        <select class="form-select form-select-lg" t-model="state.form.reason_id">
+                            <option value="">Reason...</option>
+                            <option t-foreach="reasonsFor(s)" t-as="r" t-key="r.id" t-att-value="r.id" t-out="r.name"/>
+                        </select>
+                        <textarea class="form-control mt-2" rows="3" placeholder="Note" t-model="state.form.note"/>
+                        <label class="form-label mt-2">Photo (optional)</label>
+                        <input type="file" class="form-control" accept="image/*" capture="environment" t-on-change="onPhoto"/>
+                        <button class="btn btn-danger btn-lg w-100 mt-3" t-on-click="confirmFail">Confirm failed</button>
+                        <button class="btn btn-light w-100 mt-2" t-on-click="back">Back</button>
+                    </t>
+                </t>
+            </div>
+        </div>
+    </t>
+</templates>

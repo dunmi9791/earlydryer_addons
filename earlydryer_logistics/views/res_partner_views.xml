@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="view_partner_form_earlydryer_logistics" model="ir.ui.view">
+        <field name="name">res.partner.form.earlydryer.logistics</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook" position="inside">
+                <page string="Delivery" name="earlydryer_delivery">
+                    <group>
+                        <group string="Address">
+                            <field name="earlydryer_area_id"/>
+                            <field name="earlydryer_landmark"/>
+                            <field name="earlydryer_gate_instructions"/>
+                            <field name="earlydryer_map_url" widget="url" text="Open map" invisible="not earlydryer_map_url"/>
+                        </group>
+                        <group string="Location">
+                            <field name="partner_latitude"/>
+                            <field name="partner_longitude"/>
+                            <field name="earlydryer_gps_accuracy_m"/>
+                            <field name="earlydryer_gps_captured_on"/>
+                        </group>
+                        <group string="Logistics">
+                            <field name="earlydryer_cod_blocked"
+                                   groups="earlydryer_base.group_branch_manager"/>
+                            <field name="earlydryer_is_carrier"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

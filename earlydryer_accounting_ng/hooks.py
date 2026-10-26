@@ -59,8 +59,10 @@ def post_init_hook(env):
         ),
     ):
         rules |= _ensure_auditlog_rule(env, model_xmlid, name, xmlid)
-    company_rule = env["auditlog.rule"].with_context(active_test=False).search(
-        [("model_id", "=", env.ref("base.model_res_company").id)], limit=1
+    company_rule = (
+        env["auditlog.rule"]
+        .with_context(active_test=False)
+        .search([("model_id", "=", env.ref("base.model_res_company").id)], limit=1)
     )
     if company_rule and not company_rule.log_write:
         if company_rule.state == "confirmed":

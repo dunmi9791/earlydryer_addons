@@ -180,11 +180,12 @@ class EarlydryerWhtCategory(models.Model):
                         if tax_vals:
                             tax.write(tax_vals)
                     # one company in production: the category shows its taxes
-                    if company == self.env.company or not category[field]:
-                        if category[field] != tax:
-                            super(EarlydryerWhtCategory, category).write(
-                                {field: tax.id if tax else False}
-                            )
+                    if (
+                        company == self.env.company or not category[field]
+                    ) and category[field] != tax:
+                        super(EarlydryerWhtCategory, category).write(
+                            {field: tax.id if tax else False}
+                        )
         return True
 
     def _earlydryer_tax_vals(self, company, vendor_type, rate, group, account):
@@ -225,12 +226,17 @@ class EarlydryerWhtCategory(models.Model):
             return tax
         return self.env["account.tax"]
 
-    def unlink(self):
+    @api.ondelete(at_uninstall=False)
+    def _unlink_except_with_taxes(self):
         self._earlydryer_check_finance()
-        if self.env["account.tax"].sudo().with_context(active_test=False).search_count(
-            [("earlydryer_wht_category_id", "in", self.ids)], limit=1
+        if (
+            self.env["account.tax"]
+            .sudo()
+            .with_context(active_test=False)
+            .search_count([("earlydryer_wht_category_id", "in", self.ids)], limit=1)
         ):
             raise UserError(
-                self.env._("Archive WHT categories that have taxes; do not delete them.")
+                self.env._(
+                    "Archive WHT categories that have taxes; do not delete them."
+                )
             )
-        return super().unlink()

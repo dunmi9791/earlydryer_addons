@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo noupdate="1">
+    <!-- "Fee applies" marks the reasons for which a failed-delivery fee could
+         be charged; the plant's rule is None by default (open question). -->
+    <record id="fail_reason_absent" model="earlydryer.logistics.fail.reason">
+        <field name="name">Customer not available</field>
+        <field name="code">absent</field>
+        <field name="sequence">10</field>
+        <field name="fee_applies" eval="True"/>
+    </record>
+    <record id="fail_reason_unable_to_pay" model="earlydryer.logistics.fail.reason">
+        <field name="name">Unable to pay</field>
+        <field name="code">unable_to_pay</field>
+        <field name="sequence">20</field>
+        <field name="stop_type">delivery</field>
+        <field name="fee_applies" eval="True"/>
+    </record>
+    <record id="fail_reason_wrong_address" model="earlydryer.logistics.fail.reason">
+        <field name="name">Address not found</field>
+        <field name="code">wrong_address</field>
+        <field name="sequence">30</field>
+        <field name="fee_applies" eval="True"/>
+        <field name="note_required" eval="True"/>
+    </record>
+    <record id="fail_reason_refused" model="earlydryer.logistics.fail.reason">
+        <field name="name">Customer refused</field>
+        <field name="code">refused</field>
+        <field name="sequence">40</field>
+        <field name="note_required" eval="True"/>
+    </record>
+    <record id="fail_reason_customer_reschedule" model="earlydryer.logistics.fail.reason">
+        <field name="name">Customer asked for another time</field>
+        <field name="code">customer_reschedule</field>
+        <field name="sequence">50</field>
+    </record>
+    <record id="fail_reason_no_access" model="earlydryer.logistics.fail.reason">
+        <field name="name">No access (gate, security)</field>
+        <field name="code">no_access</field>
+        <field name="sequence">60</field>
+        <field name="fee_applies" eval="True"/>
+    </record>
+    <record id="fail_reason_bags_not_ready" model="earlydryer.logistics.fail.reason">
+        <field name="name">Bags not ready</field>
+        <field name="code">bags_not_ready</field>
+        <field name="sequence">70</field>
+        <field name="stop_type">pickup</field>
+    </record>
+    <record id="fail_reason_rider_issue" model="earlydryer.logistics.fail.reason">
+        <field name="name">Rider or vehicle problem</field>
+        <field name="code">rider_issue</field>
+        <field name="sequence">80</field>
+        <field name="note_required" eval="True"/>
+    </record>
+</odoo>

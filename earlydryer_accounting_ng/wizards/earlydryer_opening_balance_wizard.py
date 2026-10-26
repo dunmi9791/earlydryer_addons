@@ -70,9 +70,11 @@ class EarlydryerOpeningBalanceWizard(models.TransientModel):
             valid = lines.filtered(lambda line: line.status != "advances")
             wizard.total_debit = sum(valid.mapped("debit"))
             wizard.total_credit = sum(valid.mapped("credit"))
-            wizard.difference = wizard.currency_id.round(
-                wizard.total_debit - wizard.total_credit
-            ) if wizard.currency_id else 0.0
+            wizard.difference = (
+                wizard.currency_id.round(wizard.total_debit - wizard.total_credit)
+                if wizard.currency_id
+                else 0.0
+            )
             wizard.error_count = len(lines.filtered(lambda line: line.status != "ok"))
             advances = lines.filtered(lambda line: line.status == "advances")
             wizard.advances_tb_amount = sum(advances.mapped("credit")) - sum(
@@ -94,8 +96,10 @@ class EarlydryerOpeningBalanceWizard(models.TransientModel):
     @api.model
     def _earlydryer_check_right(self):
         user = self.env.user
-        if self.env.su or user.has_group("earlydryer_base.group_finance") or (
-            user.has_group("earlydryer_base.group_admin")
+        if (
+            self.env.su
+            or user.has_group("earlydryer_base.group_finance")
+            or (user.has_group("earlydryer_base.group_admin"))
         ):
             return True
         raise AccessError(
@@ -137,9 +141,7 @@ class EarlydryerOpeningBalanceWizard(models.TransientModel):
                 {(key or "").strip().lower(): value for key, value in row.items()}
                 for row in reader
             ]
-        missing = [
-            column for column in COLUMNS if rows and column not in rows[0]
-        ]
+        missing = [column for column in COLUMNS if rows and column not in rows[0]]
         if missing:
             raise UserError(
                 self.env._(
@@ -189,7 +191,7 @@ class EarlydryerOpeningBalanceWizard(models.TransientModel):
             return Partner
         phone = normalize_ng_phone(ref)
         if phone.startswith("+234") and len(phone) == 14:
-            for partner in Partner.search([("phone", "ilike", phone[-9:])], order="id"):
+            for partner in Partner.search([("phone", "ilike", phone[-4:])], order="id"):
                 if normalize_ng_phone(partner.phone) == phone:
                     return partner.commercial_partner_id
         partner = Partner.search([("ref", "=", ref)], order="id", limit=1)
@@ -202,14 +204,15 @@ class EarlydryerOpeningBalanceWizard(models.TransientModel):
         company = self.company_id
         Account = self.env["account.account"].sudo().with_company(company)
         advances = company.earlydryer_wallet_account_id
-        branches = self.env["earlydryer.branch"].sudo().search(
-            [("company_id", "=", company.id)]
+        branches = (
+            self.env["earlydryer.branch"]
+            .sudo()
+            .search([("company_id", "=", company.id)])
         )
         vals_list = []
         for number, row in enumerate(self._read_rows(), start=2):
             code = str(row.get("account_code") or "").strip()
-            if code.endswith(".0"):
-                code = code[:-2]
+            code = code.removesuffix(".0")
             vals = {
                 "row": number,
                 "account_code": code,
@@ -238,9 +241,10 @@ class EarlydryerOpeningBalanceWizard(models.TransientModel):
                 messages.append(self.env._("Unknown account %(code)s.", code=code))
             else:
                 vals["account_id"] = account.id
-                if vals["account_name"] and vals["account_name"].lower() != (
-                    account.name or ""
-                ).lower():
+                if (
+                    vals["account_name"]
+                    and vals["account_name"].lower() != (account.name or "").lower()
+                ):
                     messages.append(
                         self.env._(
                             "Name differs from the chart (%(name)s): check only.",
@@ -282,17 +286,20 @@ class EarlydryerOpeningBalanceWizard(models.TransientModel):
                     messages.append(
                         self.env._("Unknown plant %(code)s.", code=vals["plant_code"])
                     )
-            if vals.get("debit", 0) < 0 or vals.get("credit", 0) < 0 or (
-                vals.get("debit") and vals.get("credit")
+            if (
+                vals.get("debit", 0) < 0
+                or vals.get("credit", 0) < 0
+                or (vals.get("debit") and vals.get("credit"))
             ):
                 if vals["status"] == "ok":
                     vals["status"] = "amount"
                 messages.append(
                     self.env._("Give either a positive debit or a positive credit.")
                 )
-            if any("Unreadable" in message for message in messages) and vals[
-                "status"
-            ] == "ok":
+            if (
+                any("Unreadable" in message for message in messages)
+                and vals["status"] == "ok"
+            ):
                 vals["status"] = "amount"
             vals["message"] = " ".join(messages)
             vals_list.append(vals)
@@ -312,17 +319,25 @@ class EarlydryerOpeningBalanceWizard(models.TransientModel):
     def _existing_entry(self):
         """A posted opening entry of this date that was not reversed."""
         self.ensure_one()
-        moves = self.env["account.move"].sudo().search(
-            [
-                ("company_id", "=", self.company_id.id),
-                ("earlydryer_kind", "=", "opening_balance"),
-                ("date", "=", self.date),
-                ("state", "=", "posted"),
-            ]
+        moves = (
+            self.env["account.move"]
+            .sudo()
+            .search(
+                [
+                    ("company_id", "=", self.company_id.id),
+                    ("earlydryer_kind", "=", "opening_balance"),
+                    ("date", "=", self.date),
+                    ("state", "=", "posted"),
+                ]
+            )
         )
-        return moves.filtered(lambda move: not move.reversal_move_ids.filtered(
-            lambda reversal: reversal.state == "posted"
-        ))[:1]
+        return moves.filtered(
+            lambda move: (
+                not move.reversal_move_ids.filtered(
+                    lambda reversal: reversal.state == "posted"
+                )
+            )
+        )[:1]
 
     def action_preview(self):
         """Dry run: reads and checks the file, posts nothing."""
@@ -369,7 +384,9 @@ class EarlydryerOpeningBalanceWizard(models.TransientModel):
             raise UserError(self.env._("The file has no rows."))
         journal = company.earlydryer_opening_journal_id
         if not journal:
-            raise UserError(self.env._("Run the accounting setup first (Opening balances journal)."))
+            raise UserError(
+                self.env._("Run the accounting setup first (Opening balances journal).")
+            )
         difference = self.difference
         if not company.currency_id.is_zero(difference) and not self.confirm_difference:
             raise UserError(

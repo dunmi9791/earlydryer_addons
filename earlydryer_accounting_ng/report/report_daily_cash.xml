@@ -44,7 +44,7 @@
                         </tr>
                     </tbody>
                 </table>
-                <p class="text-muted">Sessions: <t t-out="', '.join(r['sessions'].mapped('name')) or '-'"/></p>
+                <p class="text-muted">Sessions: <t t-out="', '.join(n for n in r['sessions'].mapped('name') if n and n != '/') or '-'"/></p>
             </div>
         </t>
     </template>

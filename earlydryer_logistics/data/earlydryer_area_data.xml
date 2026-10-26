@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo noupdate="1">
+    <!-- STARTING LIST for Earlydryer to correct: Abuja areas and APPROXIMATE
+         centre points (used only for distance estimates when an address has
+         no GPS). Karu is in Nasarawa State but served from Abuja. -->
+    <record id="city_abuja" model="res.city">
+        <field name="name">Abuja</field>
+        <field name="country_id" ref="base.ng"/>
+        <field name="state_id" ref="base.state_ng_fc"/>
+    </record>
+    <record id="area_central_area" model="earlydryer.area">
+        <field name="name">Central Area</field>
+        <field name="code">CBD</field>
+        <field name="city_id" ref="city_abuja"/>
+        <field name="latitude">9.0579</field>
+        <field name="longitude">7.4951</field>
+    </record>
+    <record id="area_wuse" model="earlydryer.area">
+        <field name="name">Wuse</field>
+        <field name="code">WUS</field>
+        <field name="city_id" ref="city_abuja"/>
+        <field name="latitude">9.0765</field>
+        <field name="longitude">7.479</field>
+    </record>
+    <record id="area_wuse_ii" model="earlydryer.area">
+        <field name="name">Wuse II</field>
+        <field name="code">WU2</field>
+        <field name="city_id" ref="city_abuja"/>
+        <field name="latitude">9.079</field>
+        <field name="longitude">7.47</field>
+    </record>
+    <record id="area_garki" model="earlydryer.area">
+        <field name="name">Garki</field>
+        <field name="code">GAR</field>
+        <field name="city_id" ref="city_abuja"/>
+        <field name="latitude">9.03</field>
+        <field name="longitude">7.49</field>
+    </record>
+    <record id="area_maitama" model="earlydryer.area">
+        <field name="name">Maitama</field>
+        <field name="code">MAI</field>
+        <field name="city_id" ref="city_abuja"/>
+        <field name="latitude">9.088</field>
+        <field name="longitude">7.495</field>
+    </record>
+    <record id="area_asokoro" model="earlydryer.area">
+        <field name="name">Asokoro</field>
+        <field name="code">ASO</field>
+        <field name="city_id" ref="city_abuja"/>
+        <field name="latitude">9.0436</field>
+        <field name="longitude">7.525</field>
+    </record>
+    <record id="area_gwarinpa" model="earlydryer.area">
+        <field name="name">Gwarinpa</field>
+        <field name="code">GWA</field>
+        <field name="city_id" ref="city_abuja"/>
+        <field name="latitude">9.11</field>
+        <field name="longitude">7.405</field>
+    </record>
+    <record id="area_jabi" model="earlydryer.area">
+        <field name="name">Jabi</field>
+        <field name="code">JAB</field>
+        <field name="city_id" ref="city_abuja"/>
+        <field name="latitude">9.07</field>
+        <field name="longitude">7.425</field>
+    </record>
+    <record id="area_utako" model="earlydryer.area">
+        <field name="name">Utako</field>
+        <field name="code">UTA</field>
+        <field name="city_id" ref="city_abuja"/>
+        <field name="latitude">9.07</field>
+        <field name="longitude">7.44</field>
+    </record>
+    <record id="area_wuye" model="earlydryer.area">
+        <field name="name">Wuye</field>
+        <field name="code">WUY</field>
+        <field name="city_id" ref="city_abuja"/>
+        <field name="latitude">9.061</field>
+        <field name="longitude">7.45</field>
+    </record>
+    <record id="area_mabushi" model="earlydryer.area">
+        <field name="name">Mabushi</field>
+        <field name="code">MAB</field>
+        <field name="city_id" ref="city_abuja"/>
+        <field name="latitude">9.082</field>
+        <field name="longitude">7.456</field>
+    </record>
+    <record id="area_kado" model="earlydryer.area">
+        <field name="name">Kado</field>
+        <field name="code">KAD</field>
+        <field name="city_id" ref="city_abuja"/>
+        <field name="latitude">9.088</field>
+        <field name="longitude">7.43</field>
+    </record>
+    <record id="area_life_camp" model="earlydryer.area">
+        <field name="name">Life Camp</field>
+        <field name="code">LIF</field>
+        <field name="city_id" ref="city_abuja"/>
+        <field name="latitude">9.079</field>
+        <field name="longitude">7.403</field>
+    </record>
+    <record id="area_katampe" model="earlydryer.area">
+        <field name="name">Katampe</field>
+        <field name="code">KAT</field>
+        <field name="city_id" ref="city_abuja"/>
+        <field name="latitude">9.12</field>
+        <field name="longitude">7.47</field>
+    </record>
+    <record id="area_jahi" model="earlydryer.area">
+        <field name="name">Jahi</field>
+        <field name="code">JAH</field>
+        <field name="city_id" ref="city_abuja"/>
+        <field name="latitude">9.095</field>
+        <field name="longitude">7.44</field>
+    </record>
+    <record id="area_dutse" model="earlydryer.area">
+        <field name="name">Dutse</field>
+        <field name="code">DUT</field>
+        <field name="city_id" ref="city_abuja"/>
+        <field name="latitude">9.145</field>
+        <field name="longitude">7.455</field>
+    </record>
+    <record id="area_kubwa" model="earlydryer.area">
+        <field name="name">Kubwa</field>
+        <field name="code">KUB</field>
+        <field name="city_id" ref="city_abuja"/>
+        <field name="latitude">9.155</field>
+        <field name="longitude">7.322</field>
+    </record>
+    <record id="area_durumi" model="earlydryer.area">
+        <field name="name">Durumi</field>
+        <field name="code">DUR</field>
+        <field name="city_id" ref="city_abuja"/>
+        <field name="latitude">9.018</field>
+        <field name="longitude">7.46</field>
+    </record>
+    <record id="area_gudu" model="earlydryer.area">
+        <field name="name">Gudu</field>
+        <field name="code">GUD</field>
+        <field name="city_id" ref="city_abuja"/>
+        <field name="latitude">9.013</field>
+        <field name="longitude">7.475</field>
+    </record>
+    <record id="area_apo" model="earlydryer.area">
+        <field name="name">Apo</field>
+        <field name="code">APO</field>
+        <field name="city_id" ref="city_abuja"/>
+        <field name="latitude">8.995</field>
+        <field name="longitude">7.5</field>
+    </record>
+    <record id="area_galadimawa" model="earlydryer.area">
+        <field name="name">Galadimawa</field>
+        <field name="code">GAL</field>
+        <field name="city_id" ref="city_abuja"/>
+        <field name="latitude">9.0</field>
+        <field name="longitude">7.43</field>
+    </record>
+    <record id="area_lokogoma" model="earlydryer.area">
+        <field name="name">Lokogoma</field>
+        <field name="code">LOK</field>
+        <field name="city_id" ref="city_abuja"/>
+        <field name="latitude">8.98</field>
+        <field name="longitude">7.45</field>
+    </record>
+    <record id="area_lugbe" model="earlydryer.area">
+        <field name="name">Lugbe</field>
+        <field name="code">LUG</field>
+        <field name="city_id" ref="city_abuja"/>
+        <field name="latitude">8.98</field>
+        <field name="longitude">7.38</field>
+    </record>
+    <record id="area_nyanya" model="earlydryer.area">
+        <field name="name">Nyanya</field>
+        <field name="code">NYA</field>
+        <field name="city_id" ref="city_abuja"/>
+        <field name="latitude">9.04</field>
+        <field name="longitude">7.57</field>
+    </record>
+    <record id="area_karu" model="earlydryer.area">
+        <field name="name">Karu</field>
+        <field name="code">KAR</field>
+        <field name="city_id" ref="city_abuja"/>
+        <field name="latitude">9.018</field>
+        <field name="longitude">7.56</field>
+    </record>
+</odoo>

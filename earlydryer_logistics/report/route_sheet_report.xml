@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="action_report_route_sheet" model="ir.actions.report">
+        <field name="name">Route Sheet</field>
+        <field name="model">earlydryer.logistics.trip</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">earlydryer_logistics.report_route_sheet</field>
+        <field name="report_file">earlydryer_logistics.report_route_sheet</field>
+        <field name="print_report_name">'Route Sheet - %s' % (object.name or '').replace('/', '-')</field>
+        <field name="binding_model_id" ref="model_earlydryer_logistics_trip"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_route_sheet">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="trip">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h3>Route Sheet <span t-field="trip.name"/></h3>
+                        <div class="row mb-2">
+                            <div class="col-4"><strong>Date:</strong> <span t-field="trip.date"/> <span t-field="trip.slot"/></div>
+                            <div class="col-4">
+                                <strong>Rider:</strong> <span t-out="trip.rider_employee_id.sudo().name or trip.carrier_partner_id.name"/>
+                                <t t-if="trip.carrier_reference"> (<span t-field="trip.carrier_reference"/>)</t>
+                            </div>
+                            <div class="col-4"><strong>Vehicle:</strong> <span t-field="trip.vehicle_id"/></div>
+                        </div>
+                        <table class="table table-sm table-bordered" style="font-size: 9pt;">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Stop</th>
+                                    <th>Customer / Address</th>
+                                    <th>Slot</th>
+                                    <th>Bags / Jobs</th>
+                                    <th class="text-end">COD</th>
+                                    <th style="width: 30mm;">Signature</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="trip.stop_ids.filtered(lambda s: s.state != 'cancelled').sorted(lambda s: (s.sequence, s.id))" t-as="stop">
+                                    <tr style="page-break-inside: avoid;">
+                                        <td><t t-out="stop_index + 1"/></td>
+                                        <td>
+                                            <strong t-field="stop.name"/><br/>
+                                            <span t-field="stop.stop_type"/>
+                                            <t t-if="stop.attempt &gt; 1"> (attempt <t t-out="stop.attempt"/>)</t>
+                                        </td>
+                                        <td>
+                                            <strong t-field="stop.partner_id.name"/> <span t-field="stop.phone"/><br/>
+                                            <span t-field="stop.address_text"/> <span t-field="stop.area_id"/><br/>
+                                            <t t-if="stop.landmark"><em>Landmark:</em> <span t-field="stop.landmark"/><br/></t>
+                                            <t t-if="stop.gate_instructions"><em>Gate:</em> <span t-field="stop.gate_instructions"/><br/></t>
+                                            <t t-if="stop.customer_note"><em t-field="stop.customer_note"/></t>
+                                        </td>
+                                        <td><span t-field="stop.slot_label"/></td>
+                                        <td>
+                                            <t t-if="stop.stop_type == 'pickup'">Bags: ______</t>
+                                            <t t-foreach="(stop.job_ids | stop.job_id)" t-as="job">
+                                                <div>
+                                                    <span t-out="job.name"/>
+                                                    <t t-out="job.name"
+                                                         t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 600, 'height': 100, 'quiet': 0, 'img_style': 'width: 45mm; height: 8mm;'}"/>
+                                                </div>
+                                            </t>
+                                        </td>
+                                        <td class="text-end">
+                                            <span t-if="stop.cod_amount" t-field="stop.cod_amount"
+                                                  t-options="{'widget': 'monetary', 'display_currency': stop.currency_id}"/>
+                                        </td>
+                                        <td style="height: 18mm;"/>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                        <div class="row mt-3">
+                            <div class="col-6">
+                                <strong>COD to collect:</strong>
+                                <span t-field="trip.cod_total" t-options="{'widget': 'monetary', 'display_currency': trip.currency_id}"/>
+                            </div>
+                            <div class="col-6">Cash handed over: ______________ Checked by: ______________</div>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -21,13 +21,15 @@ class EarlydryerWhtReportWizard(models.TransientModel):
     date_range_id = fields.Many2one("date.range", string="Period")
     date_from = fields.Date(
         required=True,
-        default=lambda self: fields.Date.context_today(self).replace(day=1)
-        - relativedelta(months=1),
+        default=lambda self: (
+            fields.Date.context_today(self).replace(day=1) - relativedelta(months=1)
+        ),
     )
     date_to = fields.Date(
         required=True,
-        default=lambda self: fields.Date.context_today(self).replace(day=1)
-        - relativedelta(days=1),
+        default=lambda self: (
+            fields.Date.context_today(self).replace(day=1) - relativedelta(days=1)
+        ),
     )
     only_unremitted = fields.Boolean(
         string="Not Remitted Only",
@@ -107,9 +109,9 @@ class EarlydryerWhtReportWizard(models.TransientModel):
                     "wht": -line.balance,
                     "category": tax.earlydryer_wht_category_id.name,
                     "vendor_type": dict(
-                        tax._fields["earlydryer_wht_vendor_type"]._description_selection(
-                            self.env
-                        )
+                        tax._fields[
+                            "earlydryer_wht_vendor_type"
+                        ]._description_selection(self.env)
                     ).get(tax.earlydryer_wht_vendor_type, ""),
                 }
             )

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_area_view_list" model="ir.ui.view">
+        <field name="name">earlydryer.area.list</field>
+        <field name="model">earlydryer.area</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="city_id"/>
+                <field name="zip_id" optional="hide"/>
+                <field name="latitude"/>
+                <field name="longitude"/>
+                <field name="zone_ids" widget="many2many_tags" readonly="1"/>
+                <field name="active" column_invisible="1"/>
+            </list>
+        </field>
+    </record>
+    <record id="earlydryer_area_view_search" model="ir.ui.view">
+        <field name="name">earlydryer.area.search</field>
+        <field name="model">earlydryer.area</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="city_id"/>
+                <filter name="no_zone" string="Not in a zone" domain="[('zone_ids', '=', False)]"/>
+                <filter name="archived" string="Archived" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+    <record id="earlydryer_area_action" model="ir.actions.act_window">
+        <field name="name">Areas</field>
+        <field name="res_model">earlydryer.area</field>
+        <field name="view_mode">list</field>
+    </record>
+</odoo>

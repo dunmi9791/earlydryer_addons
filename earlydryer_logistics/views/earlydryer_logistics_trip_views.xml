@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_logistics_trip_view_list" model="ir.ui.view">
+        <field name="name">earlydryer.logistics.trip.list</field>
+        <field name="model">earlydryer.logistics.trip</field>
+        <field name="arch" type="xml">
+            <list decoration-muted="state == 'cancelled'" decoration-success="state == 'done'" sample="1">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="slot"/>
+                <field name="rider_employee_id"/>
+                <field name="carrier_partner_id" optional="show"/>
+                <field name="vehicle_id" optional="hide"/>
+                <field name="stop_count" sum="Stops"/>
+                <field name="done_count" sum="Done"/>
+                <field name="failed_count" sum="Failed"/>
+                <field name="cod_total" sum="COD"/>
+                <field name="cash_expected" sum="Expected" optional="show"/>
+                <field name="cash_counted" sum="Counted" optional="show"/>
+                <field name="cash_difference" sum="Difference" optional="show"/>
+                <field name="carrier_fee" optional="hide" sum="3PL"/>
+                <field name="earlydryer_branch_id" optional="hide"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="state" widget="badge" decoration-info="state == 'planned'"
+                       decoration-warning="state == 'in_progress'" decoration-success="state == 'done'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="earlydryer_logistics_trip_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.logistics.trip.form</field>
+        <field name="model">earlydryer.logistics.trip</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_plan" type="object" string="Plan" class="btn-primary"
+                            invisible="state != 'draft'" groups="earlydryer_base.group_branch_manager"/>
+                    <button name="action_start" type="object" string="Start" class="btn-primary"
+                            invisible="state != 'planned'" groups="earlydryer_base.group_branch_manager"/>
+                    <button name="action_open_close_wizard" type="object" string="Close Trip" class="btn-primary"
+                            invisible="state != 'in_progress'"
+                            groups="earlydryer_base.group_branch_manager,earlydryer_base.group_finance"/>
+                    <button name="action_create_carrier_bill" type="object" string="Create Carrier Bill"
+                            invisible="not carrier_partner_id or carrier_bill_id or state == 'cancelled'"
+                            groups="earlydryer_base.group_branch_manager,earlydryer_base.group_finance"/>
+                    <button name="action_print_route_sheet" type="object" string="Route Sheet"
+                            invisible="state == 'cancelled'"/>
+                    <button name="action_back_to_draft" type="object" string="Back to Draft"
+                            invisible="state != 'planned'" groups="earlydryer_base.group_branch_manager"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state not in ('draft', 'planned')" confirm="Cancel this trip?"
+                            groups="earlydryer_base.group_branch_manager"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,planned,in_progress,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_stops" type="object" class="oe_stat_button" icon="fa-map-marker">
+                            <field name="stop_count" widget="statinfo" string="Stops"/>
+                        </button>
+                        <button name="action_view_carrier_bill" type="object" class="oe_stat_button"
+                                icon="fa-file-text-o" invisible="not carrier_bill_id" string="Carrier Bill"/>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="earlydryer_branch_id" readonly="state != 'draft'"/>
+                            <field name="date" readonly="state not in ('draft', 'planned')"/>
+                            <field name="slot"/>
+                            <field name="rider_employee_id" readonly="state not in ('draft', 'planned')"
+                                   invisible="carrier_partner_id"
+                                   domain="['|', ('earlydryer_is_rider', '=', True), ('user_id.all_group_ids', 'in', [%(earlydryer_base.group_rider)d])]"/>
+                            <field name="vehicle_id" invisible="carrier_partner_id"/>
+                            <field name="carrier_partner_id" readonly="state not in ('draft', 'planned')"
+                                   invisible="rider_employee_id" context="{'default_earlydryer_is_carrier': True}"/>
+                            <field name="carrier_reference" invisible="not carrier_partner_id"/>
+                            <field name="carrier_fee" invisible="not carrier_partner_id"/>
+                            <field name="carrier_bill_id" invisible="not carrier_bill_id"/>
+                        </group>
+                        <group>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="started_on"/>
+                            <field name="ended_on"/>
+                            <field name="odometer_start" invisible="not vehicle_id"/>
+                            <field name="odometer_end" invisible="not vehicle_id" readonly="1"/>
+                            <field name="cod_total"/>
+                            <field name="cash_expected"/>
+                            <field name="cash_counted"/>
+                            <field name="cash_difference" decoration-danger="cash_difference &lt; 0"/>
+                            <field name="handover_move_id" invisible="not handover_move_id"/>
+                            <field name="difference_move_id" invisible="not difference_move_id"/>
+                            <field name="not_loaded_count" invisible="not_loaded_count == 0"
+                                   decoration-danger="not_loaded_count &gt; 0"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Stops" name="stops">
+                            <field name="stop_ids" readonly="state in ('done', 'cancelled')"
+                                   context="{'default_earlydryer_branch_id': earlydryer_branch_id}">
+                                <list create="false" decoration-danger="not_loaded or state == 'failed'"
+                                      decoration-success="state == 'done'">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="stop_type"/>
+                                    <field name="partner_id"/>
+                                    <field name="area_id"/>
+                                    <field name="landmark" optional="show"/>
+                                    <field name="slot_label"/>
+                                    <field name="job_id"/>
+                                    <field name="cod_amount" sum="COD"/>
+                                    <field name="cash_collected" sum="Collected"/>
+                                    <field name="loaded"/>
+                                    <field name="not_loaded" column_invisible="1"/>
+                                    <field name="currency_id" column_invisible="1"/>
+                                    <field name="state" widget="badge"/>
+                                    <button name="action_open_outcome_wizard" type="object" string="Outcome"
+                                            icon="fa-check" invisible="state not in ('assigned', 'en_route', 'arrived')"
+                                            groups="earlydryer_base.group_branch_manager"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="note"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="earlydryer_logistics_trip_view_search" model="ir.ui.view">
+        <field name="name">earlydryer.logistics.trip.search</field>
+        <field name="model">earlydryer.logistics.trip</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="rider_employee_id"/>
+                <field name="carrier_partner_id"/>
+                <field name="date"/>
+                <filter name="today" string="Today" domain="[('date', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter name="open" string="Open" domain="[('state', 'in', ('draft', 'planned', 'in_progress'))]"/>
+                <filter name="carrier" string="3PL" domain="[('carrier_partner_id', '!=', False)]"/>
+                <filter name="short" string="Cash short" domain="[('cash_difference', '&lt;', 0)]"/>
+                <filter name="date_filter" string="Date" date="date"/>
+                <group>
+                    <filter name="group_rider" string="Rider" context="{'group_by': 'rider_employee_id'}"/>
+                    <filter name="group_branch" string="Plant" context="{'group_by': 'earlydryer_branch_id'}"/>
+                    <filter name="group_date" string="Date" context="{'group_by': 'date'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="earlydryer_logistics_trip_view_pivot" model="ir.ui.view">
+        <field name="name">earlydryer.logistics.trip.pivot</field>
+        <field name="model">earlydryer.logistics.trip</field>
+        <field name="arch" type="xml">
+            <pivot string="Trips" sample="1">
+                <field name="date" type="row" interval="week"/>
+                <field name="rider_employee_id" type="col"/>
+                <field name="stop_count" type="measure"/>
+                <field name="cash_difference" type="measure"/>
+                <field name="carrier_fee" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+    <record id="earlydryer_logistics_trip_action" model="ir.actions.act_window">
+        <field name="name">Trips</field>
+        <field name="res_model">earlydryer.logistics.trip</field>
+        <field name="view_mode">list,form,pivot</field>
+        <field name="context">{'search_default_open': 1}</field>
+    </record>
+    <record id="earlydryer_logistics_rider_action" model="ir.actions.client">
+        <field name="name">My Trips</field>
+        <field name="tag">earlydryer_logistics.rider_view</field>
+    </record>
+</odoo>

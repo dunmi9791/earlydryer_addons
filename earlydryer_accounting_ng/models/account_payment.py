@@ -24,11 +24,14 @@ class AccountPayment(models.Model):
     def _compute_earlydryer_wht_amount(self):
         for payment in self:
             bills = (payment.invoice_ids | payment.reconciled_bill_ids).filtered(
-                lambda move: move.move_type in ("in_invoice", "in_refund")
-                and move.earlydryer_wht_amount
+                lambda move: (
+                    move.move_type in ("in_invoice", "in_refund")
+                    and move.earlydryer_wht_amount
+                )
             )
             payment.earlydryer_wht_bill_ids = bills
             payment.earlydryer_wht_amount = sum(
-                bill.earlydryer_wht_amount * (-1 if bill.move_type == "in_refund" else 1)
+                bill.earlydryer_wht_amount
+                * (-1 if bill.move_type == "in_refund" else 1)
                 for bill in bills
             )

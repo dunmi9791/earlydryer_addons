@@ -14,7 +14,8 @@ class EarlydryerWhtRemovalWizard(models.TransientModel):
     line_ids = fields.Many2many(
         "account.move.line",
         string="Lines",
-        domain="[('move_id', '=', move_id), ('tax_ids.earlydryer_wht_category_id', '!=', False)]",
+        domain="[('move_id', '=', move_id), "
+        "('tax_ids.earlydryer_wht_category_id', '!=', False)]",
     )
     reason = fields.Char(required=True)
 
@@ -28,6 +29,15 @@ class EarlydryerWhtRemovalWizard(models.TransientModel):
             )
             res["line_ids"] = [(6, 0, lines.ids)]
         return res
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        wizards = super().create(vals_list)
+        for wizard in wizards.filtered(lambda w: not w.line_ids):
+            wizard.line_ids = wizard.move_id.invoice_line_ids.filtered(
+                lambda line: line.tax_ids.filtered("earlydryer_wht_category_id")
+            )
+        return wizards
 
     def action_remove(self):
         self.ensure_one()

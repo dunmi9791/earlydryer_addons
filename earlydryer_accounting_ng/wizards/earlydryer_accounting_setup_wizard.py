@@ -134,7 +134,7 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
     bank_acc_number = fields.Char(string="Account Number")
     card_providers = fields.Char(
         string="Card Terminal Providers",
-        default=lambda self: self.env._("Card Terminal"),
+        default=lambda self: self._default_card_providers(),
         help="Comma-separated: one clearing account and journal per provider.",
     )
     separate_discounts = fields.Boolean(
@@ -160,6 +160,19 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
     created_count = fields.Integer(readonly=True)
     summary = fields.Text(readonly=True)
 
+    @api.model
+    def _default_card_providers(self):
+        """A first provider only when the company has no card journal yet, so
+        running the setup again adds no clearing journal."""
+        has_card = self.env["account.journal"].search_count(
+            [
+                ("company_id", "=", self.env.company.id),
+                ("earlydryer_role", "=", "card"),
+            ],
+            limit=1,
+        )
+        return False if has_card else self.env._("Card Terminal")
+
     # ------------------------------------------------------------------
     # Rights
     # ------------------------------------------------------------------
@@ -167,8 +180,10 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
     @api.model
     def _earlydryer_check_setup_right(self):
         user = self.env.user
-        if self.env.su or user.has_group("earlydryer_base.group_finance") or (
-            user.has_group("earlydryer_base.group_admin")
+        if (
+            self.env.su
+            or user.has_group("earlydryer_base.group_finance")
+            or (user.has_group("earlydryer_base.group_admin"))
         ):
             return True
         raise AccessError(
@@ -301,6 +316,7 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
             section,
             key,
             record.display_name,
+            code=record.code if "code" in record._fields else False,
             status="reuse",
             res_model=record._name,
             res_id=record.id,
@@ -309,10 +325,23 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
             **extra,
         )
 
-    def _journal_line(self, key, name, code, journal_type, taken, existing=None, **extra):
+    def _journal_line(
+        self,
+        key,
+        name,
+        code,
+        journal_type,
+        taken,
+        existing=None,
+        match_code=True,
+        **extra,
+    ):
+        """Line of a journal: existing by XML id, then by code (plant, rider,
+        gateway and opening journals; a new bank account or card provider
+        always gets its own journal)."""
         company = self.company_id
         record = existing or company._earlydryer_acc_ref(f"jnl_{key}")
-        if not record:
+        if not record and match_code:
             record = self._journal_by_code(code)
         if record:
             return self._line(
@@ -349,10 +378,20 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
                     company=company.name,
                 )
             )
-        lines = []
         taken_accounts = set()
         taken_journals = set()
-        # --- company accounts
+        lines = self._plan_company_accounts(taken_accounts)
+        lines += self._plan_branches(taken_accounts, taken_journals)
+        lines += self._plan_cards_banks(taken_accounts, taken_journals)
+        lines += self._plan_other_journals(taken_journals)
+        lines += self._plan_steps()
+        for sequence, vals in enumerate(lines, start=1):
+            vals["sequence"] = sequence
+        return lines
+
+    def _plan_company_accounts(self, taken_accounts):
+        company = self.company_id
+        lines = []
         for key, label, param, account_type, reconcile, field in COMPANY_ACCOUNTS:
             if key == "discount" and not self.separate_discounts and not company[field]:
                 continue
@@ -375,7 +414,10 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
         if claims:
             lines.append(
                 self._reuse_line(
-                    "account", "acc_claims", claims, note=self.env._("earlydryer_wallet")
+                    "account",
+                    "acc_claims",
+                    claims,
+                    note=self.env._("earlydryer_wallet"),
                 )
             )
         else:
@@ -414,7 +456,12 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
                 note=self.env._("company's undistributed profits account"),
             )
         )
-        # --- per plant
+        return lines
+
+    def _plan_branches(self, taken_accounts, taken_journals):
+        """Plant cash and rider cash accounts and journals of each plant."""
+        company = self.company_id
+        lines = []
         cash_base = self._param("code_plant_cash") or (
             (company.cash_account_code_prefix or "") + "01"
         )
@@ -456,7 +503,9 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
                 lines.append(
                     self._account_line(
                         f"rider_cash_{branch.id}",
-                        self.env._("Rider Cash in Transit %(plant)s", plant=branch.name),
+                        self.env._(
+                            "Rider Cash in Transit %(plant)s", plant=branch.name
+                        ),
                         rider_base,
                         "asset_current",
                         True,
@@ -486,15 +535,19 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
                     branch_id=branch.id,
                 )
             )
-        # --- card providers (existing card journals are kept)
+        return lines
+
+    def _plan_cards_banks(self, taken_accounts, taken_journals):
+        """Card clearing per provider (existing card journals are kept) and
+        bank journals."""
+        company = self.company_id
+        lines = []
         Journal = self.env["account.journal"].sudo()
         card_journals = Journal.search(
             [("company_id", "=", company.id), ("earlydryer_role", "=", "card")]
         )
         for journal in card_journals:
-            lines.append(
-                self._reuse_line("journal", f"jnl_card_{journal.id}", journal)
-            )
+            lines.append(self._reuse_line("journal", f"jnl_card_{journal.id}", journal))
         known = {self._slug(name) for name in card_journals.mapped("name")}
         card_base = self._param("code_card_clearing")
         for provider in self._providers():
@@ -520,6 +573,7 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
                     self._param("journal_code_card", "CRD"),
                     "bank",
                     taken_journals,
+                    match_code=False,
                 )
             )
         # --- banks
@@ -537,6 +591,7 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
                     self._param("journal_code_bank", "BNK"),
                     "bank",
                     taken_journals,
+                    match_code=False,
                     existing=Journal.search(
                         [
                             ("company_id", "=", company.id),
@@ -559,6 +614,11 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
                     ),
                 )
             )
+        return lines
+
+    def _plan_other_journals(self, taken_journals):
+        company = self.company_id
+        lines = []
         lines.append(
             self._journal_line(
                 "gateway",
@@ -588,42 +648,53 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
                     note=self.env._("earlydryer_wallet"),
                 )
             )
-        # --- the other steps (not editable)
-        lines += [
+        return lines
+
+    def _plan_steps(self):
+        """The steps applied on confirm (not editable)."""
+        company = self.company_id
+        return [
             self._line(
                 "tax",
                 "tax_vat",
                 self.env._("VAT 7.5% on sales and purchases"),
-                status="reuse" if company.earlydryer_sale_tax_id else "create",
+                status="apply",
                 editable=False,
-                note=self.env._("l10n_ng taxes when the company uses the Nigerian chart"),
+                note=self.env._(
+                    "l10n_ng taxes when the company uses the Nigerian chart"
+                ),
             ),
             self._line(
                 "tax",
                 "tax_vat_apply",
-                self.env._("Apply the VAT setting (registered: %(state)s)", state=self.env._("yes") if company.earlydryer_vat_registered else self.env._("no")),
-                status="create",
+                self.env._(
+                    "Apply the VAT setting (registered: %(state)s)",
+                    state=self.env._("yes")
+                    if company.earlydryer_vat_registered
+                    else self.env._("no"),
+                ),
+                status="apply",
                 editable=False,
             ),
             self._line(
                 "tax",
                 "tax_wht",
                 self.env._("WHT taxes of the active WHT categories"),
-                status="create",
+                status="apply",
                 editable=False,
             ),
             self._line(
                 "analytic",
                 "analytic_plants",
                 self.env._("Plant analytic accounts and distribution models"),
-                status="create",
+                status="apply",
                 editable=False,
             ),
             self._line(
                 "analytic",
                 "analytic_service_lines",
                 self.env._("Service line distribution models"),
-                status="create",
+                status="apply",
                 editable=False,
             ),
             self._line(
@@ -635,20 +706,17 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
                     y1=fields.Date.context_today(self).year,
                     y2=fields.Date.context_today(self).year + 1,
                 ),
-                status="create",
+                status="apply",
                 editable=False,
             ),
             self._line(
                 "report",
                 "mis_instances",
                 self.env._("P&L by plant, P&L by service line, cash flow summary"),
-                status="create",
+                status="apply",
                 editable=False,
             ),
         ]
-        for sequence, vals in enumerate(lines, start=1):
-            vals["sequence"] = sequence
-        return lines
 
     def action_preview(self):
         self.ensure_one()
@@ -692,12 +760,17 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
         company = self.company_id
         if line.status == "reuse":
             record = line._record()
-            if record and not company._earlydryer_acc_ref(line.key) and line.key not in (
-                "acc_advances",
-                "acc_claims",
-                "acc_opening_equity",
-                "acc_vat_output",
-                "acc_vat_input",
+            if (
+                record
+                and not company._earlydryer_acc_ref(line.key)
+                and line.key
+                not in (
+                    "acc_advances",
+                    "acc_claims",
+                    "acc_opening_equity",
+                    "acc_vat_output",
+                    "acc_vat_input",
+                )
             ):
                 company._earlydryer_acc_bind(line.key, record)
             return record
@@ -708,7 +781,9 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
         )
         if existing:
             company._earlydryer_acc_bind(line.key, existing)
-            line.write({"status": "reuse", "res_model": existing._name, "res_id": existing.id})
+            line.write(
+                {"status": "reuse", "res_model": existing._name, "res_id": existing.id}
+            )
             return existing
         account = self._Account().create(
             {
@@ -721,7 +796,9 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
         )
         company._earlydryer_acc_bind(line.key, account)
         line.write({"status": "done", "res_model": account._name, "res_id": account.id})
-        _logger.info("Account %s %s created for %s.", account.code, account.name, company.name)
+        _logger.info(
+            "Account %s %s created for %s.", account.code, account.name, company.name
+        )
         return account
 
     def _apply_journal(self, line, vals):
@@ -729,14 +806,22 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
         Journal = self.env["account.journal"].sudo()
         if line.status == "reuse":
             journal = line._record()
-            if journal and line.key.startswith(("jnl_plant_", "jnl_rider_", "jnl_gateway", "jnl_opening")) and not company._earlydryer_acc_ref(line.key):
+            if (
+                journal
+                and line.key.startswith(
+                    ("jnl_plant_", "jnl_rider_", "jnl_gateway", "jnl_opening")
+                )
+                and not company._earlydryer_acc_ref(line.key)
+            ):
                 company._earlydryer_acc_bind(line.key, journal)
             if journal and vals.get("earlydryer_role") and not journal.earlydryer_role:
                 journal.earlydryer_role = vals["earlydryer_role"]
             return journal
         if line.status != "create":
             return Journal
-        journal = company._earlydryer_acc_ref(line.key) or self._journal_by_code(line.code)
+        journal = company._earlydryer_acc_ref(line.key) or self._journal_by_code(
+            line.code
+        )
         if journal:
             company._earlydryer_acc_bind(line.key, journal)
             return journal
@@ -758,14 +843,9 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
             if not method_line.payment_account_id:
                 method_line.payment_account_id = account
 
-    def _earlydryer_apply(self):
-        self.ensure_one()
+    def _apply_accounts(self):
+        """Create or reuse the accounts of the preview; set the company fields."""
         company = self.company_id
-        lines = self._lines_by_key()
-        summary = []
-        created_before = len(self.line_ids.filtered(lambda line: line.status == "done"))
-
-        # accounts
         accounts = {}
         for line in self.line_ids.filtered(lambda line: line.section == "account"):
             accounts[line.key] = self._apply_account(line)
@@ -774,17 +854,23 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
             account = accounts.get(f"acc_{key}")
             if account and company[field] != account:
                 company_vals[field] = account.id
-        if not company.earlydryer_wallet_credit_account_id and accounts.get("acc_claims"):
-            company_vals["earlydryer_wallet_credit_account_id"] = accounts["acc_claims"].id
+        if not company.earlydryer_wallet_credit_account_id and accounts.get(
+            "acc_claims"
+        ):
+            company_vals["earlydryer_wallet_credit_account_id"] = accounts[
+                "acc_claims"
+            ].id
         if not company.earlydryer_opening_equity_account_id:
             company_vals["earlydryer_opening_equity_account_id"] = accounts[
                 "acc_opening_equity"
             ].id
         if company_vals:
             company.write(company_vals)
-        cash_diff = company.earlydryer_cash_diff_account_id
+        return accounts
 
-        # plant and rider cash journals
+    def _apply_branch_journals(self, accounts, lines):
+        company = self.company_id
+        cash_diff = company.earlydryer_cash_diff_account_id
         for branch in self._branches():
             cash_line = lines.get(f"jnl_plant_cash_{branch.id}")
             if cash_line:
@@ -792,7 +878,9 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
                     cash_line,
                     {
                         "type": "cash",
-                        "default_account_id": accounts[f"acc_plant_cash_{branch.id}"].id,
+                        "default_account_id": accounts[
+                            f"acc_plant_cash_{branch.id}"
+                        ].id,
                         "earlydryer_branch_id": branch.id,
                         "earlydryer_role": "plant_cash",
                         "profit_account_id": cash_diff.id,
@@ -815,7 +903,9 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
                     rider_line,
                     {
                         "type": "cash",
-                        "default_account_id": accounts[f"acc_rider_cash_{branch.id}"].id,
+                        "default_account_id": accounts[
+                            f"acc_rider_cash_{branch.id}"
+                        ].id,
                         "earlydryer_branch_id": branch.id,
                         "earlydryer_role": "rider_cash",
                     },
@@ -824,6 +914,9 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
                     journal.earlydryer_branch_id = branch
                 if branch.earlydryer_rider_journal_id != journal:
                     branch.earlydryer_rider_journal_id = journal
+
+    def _apply_card_bank_journals(self, accounts):
+        """Card clearing and bank journals; returns the bank journals created."""
         # card providers
         for line in self.line_ids.filtered(
             lambda line: line.key.startswith("jnl_card_")
@@ -858,6 +951,18 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
             journal = self._apply_journal(line, vals)
             if line.status == "done":
                 bank_created |= journal
+        return bank_created
+
+    def _earlydryer_apply(self):
+        self.ensure_one()
+        company = self.company_id
+        lines = self._lines_by_key()
+        summary = []
+        created_before = len(self.line_ids.filtered(lambda line: line.status == "done"))
+
+        accounts = self._apply_accounts()
+        self._apply_branch_journals(accounts, lines)
+        bank_created = self._apply_card_bank_journals(accounts)
         # gateway and opening journals
         gateway_line = lines.get("jnl_gateway")
         gateway = self._apply_journal(
@@ -884,19 +989,26 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
         # taxes
         company._earlydryer_ensure_vat_taxes()
         summary += company._earlydryer_apply_vat_setting()
-        self.env["earlydryer.wht.category"].sudo().with_context(
-            active_test=False
-        ).search([])._earlydryer_sync_taxes(company)
+        Category = (
+            self.env["earlydryer.wht.category"].sudo().with_context(active_test=False)
+        )
+        categories = Category.search([])  # pylint: disable=no-search-all
+        categories._earlydryer_sync_taxes(company)
         if not company.earlydryer_tax_authority_id:
             company.earlydryer_tax_authority_id = self._earlydryer_tax_authority()
         # analytics, fiscal year, reports, POS
         summary += self._earlydryer_setup_analytics()
         summary += self._earlydryer_setup_fiscal_year()
         summary += self._earlydryer_setup_mis()
-        transfer = self.transfer_journal_id or bank_created[:1] or self.env[
-            "account.journal"
-        ].sudo().search(
-            [("company_id", "=", company.id), ("earlydryer_role", "=", "bank")], limit=1
+        transfer = (
+            self.transfer_journal_id
+            or bank_created[:1]
+            or self.env["account.journal"]
+            .sudo()
+            .search(
+                [("company_id", "=", company.id), ("earlydryer_role", "=", "bank")],
+                limit=1,
+            )
         )
         summary += self._earlydryer_setup_pos(transfer)
         created = len(self.line_ids.filtered(lambda line: line.status == "done")) - (
@@ -1030,7 +1142,9 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
                         "company_id": company.id,
                     }
                 )
-                summary.append(self.env._("Fiscal year %(year)s created.", year=current))
+                summary.append(
+                    self.env._("Fiscal year %(year)s created.", year=current)
+                )
         RangeType = self.env["date.range.type"].sudo()
         range_type = company._earlydryer_acc_ref("date_range_type_month")
         if not range_type:
@@ -1078,12 +1192,19 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
         service_plan = self.env.ref(
             "earlydryer_accounting_ng.analytic_plan_service_lines"
         )
-        service_lines = self.env["account.analytic.account"].sudo().search(
-            [("plan_id", "=", service_plan.id)]
+        service_lines = (
+            self.env["account.analytic.account"]
+            .sudo()
+            .search([("plan_id", "=", service_plan.id)])
         )
         for key, name, report, columns in (
             ("mis_pnl_plant", self.env._("P&L by Plant"), pnl, plants),
-            ("mis_pnl_service_line", self.env._("P&L by Service Line"), pnl, service_lines),
+            (
+                "mis_pnl_service_line",
+                self.env._("P&L by Service Line"),
+                pnl,
+                service_lines,
+            ),
             ("mis_cash_flow", self.env._("Cash Flow Summary"), cash, None),
         ):
             instance = company._earlydryer_acc_ref(key)
@@ -1097,7 +1218,9 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
             sequence = 10
             for column in columns or []:
                 domain = f"[('analytic_distribution', 'in', [{column.id}])]"
-                if not periods.filtered(lambda p, domain=domain: p.analytic_domain == domain):
+                if not periods.filtered(
+                    lambda p, domain=domain: p.analytic_domain == domain
+                ):
                     instance.period_ids = [
                         Command.create(
                             {
@@ -1137,13 +1260,21 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
         a method used in a session is never deleted."""
         company = self.company_id
         Method = self.env["pos.payment.method"].sudo()
-        configs = self.env["pos.config"].sudo().search(
-            [("company_id", "=", company.id), ("earlydryer_enabled", "=", True)]
+        configs = (
+            self.env["pos.config"]
+            .sudo()
+            .search(
+                [("company_id", "=", company.id), ("earlydryer_enabled", "=", True)]
+            )
         )
-        card_journal = self.env["account.journal"].sudo().search(
-            [("company_id", "=", company.id), ("earlydryer_role", "=", "card")],
-            order="id",
-            limit=1,
+        card_journal = (
+            self.env["account.journal"]
+            .sudo()
+            .search(
+                [("company_id", "=", company.id), ("earlydryer_role", "=", "card")],
+                order="id",
+                limit=1,
+            )
         )
         pos_lines = []
         summary = []
@@ -1155,7 +1286,7 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
                 ("transfer", self.env._("Bank Transfer"), transfer_journal),
             ]
             if config.current_session_id:
-                for kind, label, journal in wanted:
+                for _kind, label, journal in wanted:
                     pos_lines.append(
                         {
                             "config_id": config.id,
@@ -1177,7 +1308,9 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
                         }
                     )
                     continue
-                method = methods.filtered(lambda m, journal=journal: m.journal_id == journal)[:1]
+                method = methods.filtered(
+                    lambda m, journal=journal: m.journal_id == journal
+                )[:1]
                 action = self.env._("kept")
                 if not method:
                     method = Method.search(
@@ -1192,23 +1325,29 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
                 if not method:
                     method = Method.create(
                         {
-                            "name": f"{label} {branch.code}" if kind == "cash" else label,
+                            "name": f"{label} {branch.code}"
+                            if kind == "cash"
+                            else label,
                             "journal_id": journal.id,
                             "company_id": company.id,
                         }
                     )
                     action = self.env._("created")
-                if kind == "card" and journal.default_account_id and (
-                    method.outstanding_account_id != journal.default_account_id
+                if (
+                    kind == "card"
+                    and journal.default_account_id
+                    and (method.outstanding_account_id != journal.default_account_id)
                 ):
                     method.outstanding_account_id = journal.default_account_id
                 # the method this one replaces on the till (same kind, other
                 # journal) is unlinked from the till, never deleted
                 replaced = methods.filtered(
-                    lambda m, kind=kind, journal=journal: m.journal_id
-                    and m.journal_id != journal
-                    and m.type == ("cash" if kind == "cash" else "bank")
-                    and self._earlydryer_method_kind(m) == kind
+                    lambda m, kind=kind, journal=journal: (
+                        m.journal_id
+                        and m.journal_id != journal
+                        and m.type == ("cash" if kind == "cash" else "bank")
+                        and self._earlydryer_method_kind(m) == kind
+                    )
                 )
                 commands = [Command.link(method.id)] + [
                     Command.unlink(old.id) for old in replaced
@@ -1217,7 +1356,8 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
                     config.payment_method_ids = commands
                     if replaced:
                         action += self.env._(
-                            " (replaces %(old)s)", old=", ".join(replaced.mapped("name"))
+                            " (replaces %(old)s)",
+                            old=", ".join(replaced.mapped("name")),
                         )
                 pos_lines.append(
                     {
@@ -1229,7 +1369,9 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
                         "action": action,
                     }
                 )
-            for method in config.payment_method_ids.filtered(lambda m: not m.journal_id):
+            for method in config.payment_method_ids.filtered(
+                lambda m: not m.journal_id
+            ):
                 pos_lines.append(
                     {
                         "config_id": config.id,
@@ -1243,9 +1385,7 @@ class EarlydryerAccountingSetupWizard(models.TransientModel):
                 )
         self.pos_line_ids.unlink()
         self.pos_line_ids = [Command.create(vals) for vals in pos_lines]
-        summary.append(
-            self.env._("%(count)s till(s) checked.", count=len(configs))
-        )
+        summary.append(self.env._("%(count)s till(s) checked.", count=len(configs)))
         return summary
 
     @api.model

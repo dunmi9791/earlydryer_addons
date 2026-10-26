@@ -30,13 +30,15 @@ class EarlydryerCloseChecklist(models.Model):
     )
     date_from = fields.Date(
         required=True,
-        default=lambda self: fields.Date.context_today(self).replace(day=1)
-        - relativedelta(months=1),
+        default=lambda self: (
+            fields.Date.context_today(self).replace(day=1) - relativedelta(months=1)
+        ),
     )
     date_to = fields.Date(
         required=True,
-        default=lambda self: fields.Date.context_today(self).replace(day=1)
-        - relativedelta(days=1),
+        default=lambda self: (
+            fields.Date.context_today(self).replace(day=1) - relativedelta(days=1)
+        ),
     )
     state = fields.Selection(
         [("open", "Open"), ("done", "Closed")],
@@ -97,12 +99,17 @@ class EarlydryerCloseChecklist(models.Model):
     @api.model_create_multi
     def create(self, vals_list):
         self._earlydryer_check_right()
-        items = self.env["earlydryer.close.checklist.item"].search([])
+        # the few steps of the close
+        items = self.env["earlydryer.close.checklist.item"].search([])  # pylint: disable=no-search-all
         for vals in vals_list:
             if "line_ids" not in vals:
                 vals["line_ids"] = [
                     Command.create(
-                        {"item_id": item.id, "name": item.name, "sequence": item.sequence}
+                        {
+                            "item_id": item.id,
+                            "name": item.name,
+                            "sequence": item.sequence,
+                        }
                     )
                     for item in items
                 ]
