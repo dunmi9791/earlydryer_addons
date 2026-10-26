@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+  <record id="provider_demo_whatsapp" model="earlydryer.notify.provider">
+    <field name="name">Demo whatsapp</field>
+    <field name="channel">whatsapp</field>
+    <field name="provider_type">log_only</field>
+    <field name="app_secret">DEMO-ONLY-not-a-real-secret</field>
+    <field name="webhook_verify_token">DEMO-ONLY-verify</field>
+  </record>
+  <record id="provider_demo_sms" model="earlydryer.notify.provider">
+    <field name="name">Demo sms</field>
+    <field name="channel">sms</field>
+    <field name="provider_type">log_only</field>
+    <field name="app_secret">DEMO-ONLY-not-a-real-secret</field>
+    <field name="webhook_verify_token">DEMO-ONLY-verify</field>
+  </record>
+  <record id="partner_demo_whatsapp" model="res.partner">
+    <field name="name">Notification demo whatsapp</field>
+    <field name="phone">08031234567</field>
+    <field name="earlydryer_notify_channel">whatsapp</field>
+    <field name="earlydryer_notify_opt_in" eval="True" />
+    <field name="earlydryer_notify_opt_out" eval="False" />
+    <field name="earlydryer_whatsapp_unavailable" eval="False" />
+  </record>
+  <record id="partner_demo_sms" model="res.partner">
+    <field name="name">Notification demo sms</field>
+    <field name="phone">08031234568</field>
+    <field name="earlydryer_notify_channel">sms</field>
+    <field name="earlydryer_notify_opt_in" eval="True" />
+    <field name="earlydryer_notify_opt_out" eval="False" />
+    <field name="earlydryer_whatsapp_unavailable" eval="False" />
+  </record>
+  <record id="partner_demo_opted_out" model="res.partner">
+    <field name="name">Notification demo opted_out</field>
+    <field name="phone">08031234569</field>
+    <field name="earlydryer_notify_channel">none</field>
+    <field name="earlydryer_notify_opt_in" eval="False" />
+    <field name="earlydryer_notify_opt_out" eval="True" />
+    <field name="earlydryer_whatsapp_unavailable" eval="False" />
+  </record>
+  <record id="partner_demo_unavailable" model="res.partner">
+    <field name="name">Notification demo unavailable</field>
+    <field name="phone">08031234560</field>
+    <field name="earlydryer_notify_channel">whatsapp</field>
+    <field name="earlydryer_notify_opt_in" eval="True" />
+    <field name="earlydryer_notify_opt_out" eval="False" />
+    <field name="earlydryer_whatsapp_unavailable" eval="True" />
+  </record>
+  <record id="message_demo_sent" model="earlydryer.notify.message">
+    <field name="phone">+2348031234567</field>
+    <field name="channel">whatsapp</field>
+    <field name="provider_id" ref="provider_demo_whatsapp" />
+    <field name="partner_id" ref="partner_demo_whatsapp" />
+    <field name="state">sent</field>
+    <field name="body">Demo message: no real API called.</field>
+    <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_1" />
+  </record>
+  <record id="message_demo_delivered" model="earlydryer.notify.message">
+    <field name="phone">+2348031234567</field>
+    <field name="channel">whatsapp</field>
+    <field name="provider_id" ref="provider_demo_whatsapp" />
+    <field name="partner_id" ref="partner_demo_whatsapp" />
+    <field name="state">delivered</field>
+    <field name="body">Demo message: no real API called.</field>
+    <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_1" />
+  </record>
+  <record id="message_demo_failed" model="earlydryer.notify.message">
+    <field name="phone">+2348031234567</field>
+    <field name="channel">whatsapp</field>
+    <field name="provider_id" ref="provider_demo_whatsapp" />
+    <field name="partner_id" ref="partner_demo_whatsapp" />
+    <field name="state">failed</field>
+    <field name="body">Demo message: no real API called.</field>
+    <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_1" />
+  </record>
+  <record id="inbound_demo_auto_replied" model="earlydryer.notify.inbound">
+    <field name="provider_id" ref="provider_demo_whatsapp" />
+    <field name="channel">whatsapp</field>
+    <field name="phone">+2348031234567</field>
+    <field name="partner_id" ref="partner_demo_whatsapp" />
+    <field name="body">status</field>
+    <field name="state">auto_replied</field>
+    <field name="external_id">demo-auto_replied</field>
+    <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_1" />
+  </record>
+  <record id="inbound_demo_needs_reply" model="earlydryer.notify.inbound">
+    <field name="provider_id" ref="provider_demo_whatsapp" />
+    <field name="channel">whatsapp</field>
+    <field name="phone">+2348031234567</field>
+    <field name="partner_id" ref="partner_demo_whatsapp" />
+    <field name="body">Please help with my garment</field>
+    <field name="state">needs_reply</field>
+    <field name="external_id">demo-needs_reply</field>
+    <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_1" />
+  </record>
+  <record id="inbound_demo_closed" model="earlydryer.notify.inbound">
+    <field name="provider_id" ref="provider_demo_whatsapp" />
+    <field name="channel">whatsapp</field>
+    <field name="phone">+2348031234567</field>
+    <field name="partner_id" ref="partner_demo_whatsapp" />
+    <field name="body">STOP</field>
+    <field name="state">closed</field>
+    <field name="external_id">demo-closed</field>
+    <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_1" />
+  </record>
+  <record id="earlydryer_base.branch_plant_1" model="earlydryer.branch">
+    <field name="eod_email_recipient_ids" eval="[(4,ref('base.partner_admin'))]" />
+    <field name="eod_whatsapp_recipient_ids" eval="[(4,ref('partner_demo_whatsapp'))]" />
+  </record>
+  <record id="earlydryer_base.branch_plant_2" model="earlydryer.branch">
+    <field name="eod_email_recipient_ids" eval="[(4,ref('base.partner_admin'))]" />
+    <field name="eod_whatsapp_recipient_ids" eval="[(4,ref('partner_demo_whatsapp'))]" />
+  </record>
+</odoo>

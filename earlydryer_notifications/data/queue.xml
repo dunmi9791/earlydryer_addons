@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+  <record id="channel_notify" model="queue.job.channel">
+    <field name="name">earlydryer_notify</field>
+    <field name="parent_id" ref="queue_job.channel_root" />
+  </record>
+  <record id="job_message__send" model="queue.job.function">
+    <field name="model_id" ref="model_earlydryer_notify_message" />
+    <field name="method">_send</field>
+    <field name="channel_id" ref="channel_notify" />
+    <field name="retry_pattern" eval="{1:60,2:300,3:900,4:3600}" />
+  </record>
+  <record id="job_webhook_log__process" model="queue.job.function">
+    <field name="model_id" ref="model_earlydryer_notify_webhook_log" />
+    <field name="method">_process</field>
+    <field name="channel_id" ref="channel_notify" />
+    <field name="retry_pattern" eval="{1:60,2:300,3:900,4:3600}" />
+  </record>
+  <record id="job_provider__test_connection" model="queue.job.function">
+    <field name="model_id" ref="model_earlydryer_notify_provider" />
+    <field name="method">_test_connection</field>
+    <field name="channel_id" ref="channel_notify" />
+    <field name="retry_pattern" eval="{1:60,2:300,3:900,4:3600}" />
+  </record>
+  <record id="job_alert__deliver" model="queue.job.function">
+    <field name="model_id" ref="model_earlydryer_notify_alert" />
+    <field name="method">_deliver</field>
+    <field name="channel_id" ref="channel_notify" />
+    <field name="retry_pattern" eval="{1:60,2:300,3:900,4:3600}" />
+  </record>
+  <record id="job_alert_rule__send_mail" model="queue.job.function">
+    <field name="model_id" ref="model_earlydryer_notify_alert_rule" />
+    <field name="method">_send_mail</field>
+    <field name="channel_id" ref="channel_notify" />
+    <field name="retry_pattern" eval="{1:60,2:300,3:900,4:3600}" />
+  </record>
+  <record id="job_eod_report__deliver" model="queue.job.function">
+    <field name="model_id" ref="model_earlydryer_notify_eod_report" />
+    <field name="method">_deliver</field>
+    <field name="channel_id" ref="channel_notify" />
+    <field name="retry_pattern" eval="{1:60,2:300,3:900,4:3600}" />
+  </record>
+</odoo>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="partner_form_notify" model="ir.ui.view">
+    <field name="name">Partner notification consent</field>
+    <field name="model">res.partner</field>
+    <field name="inherit_id" ref="base.view_partner_form" />
+    <field name="arch" type="xml">
+      <xpath expr="//sheet" position="inside">
+        <group string="Order updates">
+          <field name="earlydryer_notify_opt_in" />
+          <field name="earlydryer_notify_channel" />
+          <field name="earlydryer_notify_opt_out" />
+          <field name="earlydryer_notify_opt_out_on" />
+          <field name="earlydryer_notify_opt_out_source" />
+          <field name="earlydryer_whatsapp_unavailable" />
+          <field name="earlydryer_last_inbound_on" />
+        </group>
+      </xpath>
+    </field>
+  </record>
+  <record id="branch_form_notify" model="ir.ui.view">
+    <field name="name">Branch notification settings</field>
+    <field name="model">earlydryer.branch</field>
+    <field name="inherit_id" ref="earlydryer_base.earlydryer_branch_view_form" />
+    <field name="arch" type="xml">
+      <xpath expr="//notebook" position="inside">
+        <page string="Notifications" groups="earlydryer_base.group_branch_manager">
+          <group>
+            <field name="eod_report_time" />
+            <field name="eod_email_recipient_ids" />
+            <field name="eod_whatsapp_recipient_ids" />
+            <field name="eod_last_sent_on" />
+          </group>
+          <button name="action_eod_report" string="Send EOD report now" type="object" />
+        </page>
+      </xpath>
+    </field>
+  </record>
+  <record id="settings_form_notify" model="ir.ui.view">
+    <field name="name">Notification settings</field>
+    <field name="model">res.config.settings</field>
+    <field name="inherit_id" ref="base.res_config_settings_view_form" />
+    <field name="arch" type="xml">
+      <xpath expr="//form" position="inside">
+        <app name="earlydryer_notifications" string="Earlydryer Notifications" groups="earlydryer_base.group_admin">
+          <block title="Messaging">
+            <setting string="Quiet Start">
+              <field name="earlydryer_notify_quiet_start" />
+            </setting>
+            <setting string="Quiet End">
+              <field name="earlydryer_notify_quiet_end" />
+            </setting>
+            <setting string="Retention Days">
+              <field name="earlydryer_notify_retention_days" />
+            </setting>
+          </block>
+        </app>
+      </xpath>
+    </field>
+  </record>
+</odoo>

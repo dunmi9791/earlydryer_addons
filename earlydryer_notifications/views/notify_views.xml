@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="view_provider_list" model="ir.ui.view">
+    <field name="name">view_provider_list</field>
+    <field name="model">earlydryer.notify.provider</field>
+    <field name="arch" type="xml">
+      <list create="true">
+        <field name="name" />
+        <field name="channel" />
+        <field name="provider_type" />
+        <field name="company_id" />
+        <field name="sequence" />
+        <field name="active" />
+      </list>
+    </field>
+  </record>
+  <record id="view_provider_form" model="ir.ui.view">
+    <field name="name">view_provider_form</field>
+    <field name="model">earlydryer.notify.provider</field>
+    <field name="arch" type="xml">
+      <form create="true">
+        <header>
+          <button name="action_test_connection" string="Test connection" type="object" />
+          <button name="action_send_test" string="Send test message" type="object" />
+        </header>
+        <sheet>
+          <group>
+            <field name="name" readonly="0" />
+            <field name="company_id" readonly="0" />
+            <field name="active" readonly="0" />
+            <field name="sequence" readonly="0" />
+            <field name="channel" readonly="0" />
+            <field name="provider_type" readonly="0" />
+            <field name="api_token" readonly="0" />
+            <field name="app_secret" readonly="0" />
+            <field name="webhook_verify_token" readonly="0" />
+            <field name="webhook_url" readonly="0" />
+            <field name="phone_number_id" readonly="0" />
+            <field name="business_account_id" readonly="0" />
+            <field name="graph_version" readonly="0" />
+            <field name="default_language" readonly="0" />
+            <field name="http_method" readonly="0" />
+            <field name="url_template" readonly="0" />
+            <field name="headers_json" readonly="0" />
+            <field name="body_template" readonly="0" />
+            <field name="body_encoding" readonly="0" />
+            <field name="success_json_path" readonly="0" />
+            <field name="message_id_json_path" readonly="0" />
+            <field name="error_json_path" readonly="0" />
+            <field name="cost_json_path" readonly="0" />
+            <field name="sender_id" readonly="0" />
+            <field name="rate_limit_per_minute" readonly="0" />
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <record id="view_provider_search" model="ir.ui.view">
+    <field name="name">view_provider_search</field>
+    <field name="model">earlydryer.notify.provider</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="name" />
+      </search>
+    </field>
+  </record>
+  <record id="action_provider" model="ir.actions.act_window">
+    <field name="name">Notifications provider</field>
+    <field name="res_model">earlydryer.notify.provider</field>
+    <field name="view_mode">list,form</field>
+    <field name="search_view_id" ref="view_provider_search" />
+  </record>
+  <record id="view_event_list" model="ir.ui.view">
+    <field name="name">view_event_list</field>
+    <field name="model">earlydryer.notify.event</field>
+    <field name="arch" type="xml">
+      <list create="true">
+        <field name="name" />
+        <field name="code" />
+        <field name="audience" />
+        <field name="active" />
+        <field name="urgent" />
+        <field name="channels" />
+      </list>
+    </field>
+  </record>
+  <record id="view_event_form" model="ir.ui.view">
+    <field name="name">view_event_form</field>
+    <field name="model">earlydryer.notify.event</field>
+    <field name="arch" type="xml">
+      <form create="true">
+        <header />
+        <sheet>
+          <group>
+            <field name="name" readonly="0" />
+            <field name="code" readonly="0" />
+            <field name="active" readonly="0" />
+            <field name="audience" readonly="0" />
+            <field name="urgent" readonly="0" />
+            <field name="channels" readonly="0" />
+            <field name="dedupe_minutes" readonly="0" />
+            <field name="allow_repeat" readonly="0" />
+            <field name="branch_ids" readonly="0" />
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <record id="view_event_search" model="ir.ui.view">
+    <field name="name">view_event_search</field>
+    <field name="model">earlydryer.notify.event</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="name" />
+      </search>
+    </field>
+  </record>
+  <record id="action_event" model="ir.actions.act_window">
+    <field name="name">Notifications event</field>
+    <field name="res_model">earlydryer.notify.event</field>
+    <field name="view_mode">list,form</field>
+    <field name="search_view_id" ref="view_event_search" />
+  </record>
+  <record id="view_template_list" model="ir.ui.view">
+    <field name="name">view_template_list</field>
+    <field name="model">earlydryer.notify.template</field>
+    <field name="arch" type="xml">
+      <list create="true">
+        <field name="name" />
+        <field name="event_id" />
+        <field name="channel" />
+        <field name="branch_id" />
+        <field name="approved" />
+      </list>
+    </field>
+  </record>
+  <record id="view_template_form" model="ir.ui.view">
+    <field name="name">view_template_form</field>
+    <field name="model">earlydryer.notify.template</field>
+    <field name="arch" type="xml">
+      <form create="true">
+        <header />
+        <sheet>
+          <group>
+            <field name="name" readonly="0" />
+            <field name="event_id" readonly="0" />
+            <field name="channel" readonly="0" />
+            <field name="branch_id" readonly="0" />
+            <field name="approved" readonly="0" />
+            <field name="body" readonly="0" />
+            <field name="character_count" readonly="0" />
+            <field name="segment_count" readonly="0" />
+            <field name="meta_template_name" readonly="0" />
+            <field name="meta_language" readonly="0" />
+            <field name="param_expressions" readonly="0" />
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <record id="view_template_search" model="ir.ui.view">
+    <field name="name">view_template_search</field>
+    <field name="model">earlydryer.notify.template</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="name" />
+      </search>
+    </field>
+  </record>
+  <record id="action_template" model="ir.actions.act_window">
+    <field name="name">Notifications template</field>
+    <field name="res_model">earlydryer.notify.template</field>
+    <field name="view_mode">list,form</field>
+    <field name="search_view_id" ref="view_template_search" />
+  </record>
+  <record id="view_message_list" model="ir.ui.view">
+    <field name="name">view_message_list</field>
+    <field name="model">earlydryer.notify.message</field>
+    <field name="arch" type="xml">
+      <list create="false">
+        <field name="create_date" />
+        <field name="phone" />
+        <field name="channel" />
+        <field name="event_id" />
+        <field name="earlydryer_branch_id" />
+        <field name="state" />
+        <field name="cost" />
+      </list>
+    </field>
+  </record>
+  <record id="view_message_form" model="ir.ui.view">
+    <field name="name">view_message_form</field>
+    <field name="model">earlydryer.notify.message</field>
+    <field name="arch" type="xml">
+      <form create="false">
+        <header />
+        <sheet>
+          <group>
+            <field name="partner_id" readonly="1" />
+            <field name="phone" readonly="1" />
+            <field name="channel" readonly="1" />
+            <field name="provider_id" readonly="1" />
+            <field name="event_id" readonly="1" />
+            <field name="template_id" readonly="1" />
+            <field name="audience" readonly="1" />
+            <field name="earlydryer_branch_id" readonly="1" />
+            <field name="company_id" readonly="1" />
+            <field name="res_model" readonly="1" />
+            <field name="res_id" readonly="1" />
+            <field name="state" readonly="1" />
+            <field name="body" readonly="1" />
+            <field name="params_json" readonly="1" />
+            <field name="external_id" readonly="1" />
+            <field name="error_code" readonly="1" />
+            <field name="error_message" readonly="1" />
+            <field name="attempts" readonly="1" />
+            <field name="eta" readonly="1" />
+            <field name="sent_on" readonly="1" />
+            <field name="delivered_on" readonly="1" />
+            <field name="read_on" readonly="1" />
+            <field name="cost" readonly="1" />
+            <field name="fallback_of_id" readonly="1" />
+            <field name="fallback_id" readonly="1" />
+            <field name="inbound_id" readonly="1" />
+          </group>
+        </sheet>
+        <chatter />
+      </form>
+    </field>
+  </record>
+  <record id="view_message_search" model="ir.ui.view">
+    <field name="name">view_message_search</field>
+    <field name="model">earlydryer.notify.message</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="phone" />
+        <filter name="my_plant" string="My plant" domain="[('earlydryer_branch_id.user_ids','in',[uid])]" />
+      </search>
+    </field>
+  </record>
+  <record id="action_message" model="ir.actions.act_window">
+    <field name="name">Notifications message</field>
+    <field name="res_model">earlydryer.notify.message</field>
+    <field name="view_mode">list,form</field>
+    <field name="search_view_id" ref="view_message_search" />
+  </record>
+  <record id="view_inbound_list" model="ir.ui.view">
+    <field name="name">view_inbound_list</field>
+    <field name="model">earlydryer.notify.inbound</field>
+    <field name="arch" type="xml">
+      <list create="false">
+        <field name="received_on" />
+        <field name="phone" />
+        <field name="partner_id" />
+        <field name="earlydryer_branch_id" />
+        <field name="state" />
+        <field name="assigned_user_id" />
+      </list>
+    </field>
+  </record>
+  <record id="view_inbound_form" model="ir.ui.view">
+    <field name="name">view_inbound_form</field>
+    <field name="model">earlydryer.notify.inbound</field>
+    <field name="arch" type="xml">
+      <form create="false">
+        <header>
+          <button name="action_reply" string="Reply" type="object" groups="earlydryer_base.group_customer_service,earlydryer_base.group_branch_manager" />
+          <button name="action_assign_to_me" string="Assign to me" type="object" groups="earlydryer_base.group_customer_service,earlydryer_base.group_branch_manager" />
+          <button name="action_close" string="Close" type="object" groups="earlydryer_base.group_customer_service,earlydryer_base.group_branch_manager" />
+          <button name="action_open_jobs" string="Open jobs" type="object" />
+          <button name="action_open_messages" string="Recent messages" type="object" />
+        </header>
+        <sheet>
+          <group>
+            <field name="provider_id" readonly="1" />
+            <field name="channel" readonly="1" />
+            <field name="phone" readonly="1" />
+            <field name="partner_id" readonly="1" />
+            <field name="body" readonly="1" />
+            <field name="media" readonly="1" />
+            <field name="received_on" readonly="1" />
+            <field name="external_id" readonly="1" />
+            <field name="earlydryer_branch_id" readonly="1" />
+            <field name="assigned_user_id" readonly="1" />
+            <field name="state" readonly="1" />
+          </group>
+        </sheet>
+        <chatter />
+      </form>
+    </field>
+  </record>
+  <record id="view_inbound_search" model="ir.ui.view">
+    <field name="name">view_inbound_search</field>
+    <field name="model">earlydryer.notify.inbound</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="phone" />
+        <filter name="my_plant" string="My plant" domain="[('earlydryer_branch_id.user_ids','in',[uid])]" />
+        <filter name="needs_reply" string="Needs reply" domain="[('state','=','needs_reply')]" />
+        <filter name="assigned_me" string="Assigned to me" domain="[('assigned_user_id','=',uid)]" />
+      </search>
+    </field>
+  </record>
+  <record id="action_inbound" model="ir.actions.act_window">
+    <field name="name">Notifications inbound</field>
+    <field name="res_model">earlydryer.notify.inbound</field>
+    <field name="view_mode">list,kanban,form</field>
+    <field name="search_view_id" ref="view_inbound_search" />
+  </record>
+  <record id="view_alert_rule_list" model="ir.ui.view">
+    <field name="name">view_alert_rule_list</field>
+    <field name="model">earlydryer.notify.alert.rule</field>
+    <field name="arch" type="xml">
+      <list create="true">
+        <field name="name" />
+        <field name="event_id" />
+        <field name="threshold" />
+        <field name="mode" />
+        <field name="active" />
+      </list>
+    </field>
+  </record>
+  <record id="view_alert_rule_form" model="ir.ui.view">
+    <field name="name">view_alert_rule_form</field>
+    <field name="model">earlydryer.notify.alert.rule</field>
+    <field name="arch" type="xml">
+      <form create="true">
+        <header />
+        <sheet>
+          <group>
+            <field name="name" readonly="0" />
+            <field name="active" readonly="0" />
+            <field name="event_id" readonly="0" />
+            <field name="branch_ids" readonly="0" />
+            <field name="threshold" readonly="0" />
+            <field name="mode" readonly="0" />
+            <field name="digest_times" readonly="0" />
+            <field name="recipient_group_ids" readonly="0" />
+            <field name="recipient_user_ids" readonly="0" />
+            <field name="extra_phones" readonly="0" />
+            <field name="channels" readonly="0" />
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <record id="view_alert_rule_search" model="ir.ui.view">
+    <field name="name">view_alert_rule_search</field>
+    <field name="model">earlydryer.notify.alert.rule</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="name" />
+      </search>
+    </field>
+  </record>
+  <record id="action_alert_rule" model="ir.actions.act_window">
+    <field name="name">Notifications alert.rule</field>
+    <field name="res_model">earlydryer.notify.alert.rule</field>
+    <field name="view_mode">list,form</field>
+    <field name="search_view_id" ref="view_alert_rule_search" />
+  </record>
+  <record id="view_webhook_log_list" model="ir.ui.view">
+    <field name="name">view_webhook_log_list</field>
+    <field name="model">earlydryer.notify.webhook.log</field>
+    <field name="arch" type="xml">
+      <list create="false">
+        <field name="create_date" />
+        <field name="provider_id" />
+        <field name="processed" />
+        <field name="error" />
+      </list>
+    </field>
+  </record>
+  <record id="view_webhook_log_form" model="ir.ui.view">
+    <field name="name">view_webhook_log_form</field>
+    <field name="model">earlydryer.notify.webhook.log</field>
+    <field name="arch" type="xml">
+      <form create="false">
+        <header />
+        <sheet>
+          <group>
+            <field name="provider_id" readonly="1" />
+            <field name="payload" readonly="1" />
+            <field name="processed" readonly="1" />
+            <field name="error" readonly="1" />
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <record id="view_webhook_log_search" model="ir.ui.view">
+    <field name="name">view_webhook_log_search</field>
+    <field name="model">earlydryer.notify.webhook.log</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="provider_id" />
+      </search>
+    </field>
+  </record>
+  <record id="action_webhook_log" model="ir.actions.act_window">
+    <field name="name">Notifications webhook.log</field>
+    <field name="res_model">earlydryer.notify.webhook.log</field>
+    <field name="view_mode">list,form</field>
+    <field name="search_view_id" ref="view_webhook_log_search" />
+  </record>
+  <record id="view_inbound_kanban" model="ir.ui.view">
+    <field name="name">view_inbound_kanban</field>
+    <field name="model">earlydryer.notify.inbound</field>
+    <field name="arch" type="xml">
+      <kanban default_group_by="state">
+        <field name="phone" />
+        <field name="body" />
+        <field name="partner_id" />
+        <field name="state" />
+        <templates>
+          <t t-name="card">
+            <field name="partner_id" />
+            <div>
+              <field name="phone" />
+            </div>
+            <div>
+              <field name="body" />
+            </div>
+          </t>
+        </templates>
+      </kanban>
+    </field>
+  </record>
+  <record id="view_message_pivot" model="ir.ui.view">
+    <field name="name">view_message_pivot</field>
+    <field name="model">earlydryer.notify.message</field>
+    <field name="arch" type="xml">
+      <pivot string="Monthly messaging costs">
+        <field name="create_date" type="row" interval="month" />
+        <field name="earlydryer_branch_id" type="row" />
+        <field name="channel" type="col" />
+        <field name="cost" type="measure" />
+      </pivot>
+    </field>
+  </record>
+  <record id="action_costs" model="ir.actions.act_window">
+    <field name="name">Monthly messaging counts and costs</field>
+    <field name="res_model">earlydryer.notify.message</field>
+    <field name="view_mode">pivot,list,form</field>
+  </record>
+  <record id="view_wizard_reply" model="ir.ui.view">
+    <field name="name">view_wizard_reply</field>
+    <field name="model">earlydryer.notify.reply.wizard</field>
+    <field name="arch" type="xml">
+      <form>
+        <group>
+          <field name="inbound_id" />
+          <field name="provider_id" />
+          <field name="phone" />
+          <field name="body" />
+          <field name="template_id" />
+        </group>
+        <footer>
+          <button name="action_send" string="Queue message" type="object" class="btn-primary" />
+          <button string="Cancel" special="cancel" />
+        </footer>
+      </form>
+    </field>
+  </record>
+  <record id="view_wizard_eod" model="ir.ui.view">
+    <field name="name">view_wizard_eod</field>
+    <field name="model">earlydryer.notify.eod.wizard</field>
+    <field name="arch" type="xml">
+      <form>
+        <group>
+          <field name="branch_id" />
+          <field name="date" />
+        </group>
+        <footer>
+          <button name="action_send" string="Queue report" type="object" class="btn-primary" />
+          <button string="Cancel" special="cancel" />
+        </footer>
+      </form>
+    </field>
+  </record>
+  <menuitem id="menu_notify" name="Notifications" parent="earlydryer_base.menu_earlydryer_root" sequence="80" groups="earlydryer_base.group_front_desk,earlydryer_base.group_customer_service,earlydryer_base.group_branch_manager" />
+  <menuitem id="menu_inbound" name="Inbox" parent="menu_notify" action="action_inbound" />
+  <menuitem id="menu_message" name="Outbox and message log" parent="menu_notify" action="action_message" />
+  <menuitem id="menu_costs" name="Monthly costs" parent="menu_notify" action="action_costs" groups="earlydryer_base.group_branch_manager" />
+  <menuitem id="menu_template" name="Templates" parent="menu_notify" action="action_template" groups="earlydryer_base.group_customer_service,earlydryer_base.group_branch_manager" />
+  <menuitem id="menu_event" name="Events" parent="menu_notify" action="action_event" groups="earlydryer_base.group_customer_service,earlydryer_base.group_branch_manager" />
+  <menuitem id="menu_provider" name="Providers" parent="menu_notify" action="action_provider" groups="earlydryer_base.group_admin" />
+  <menuitem id="menu_alert_rule" name="Alert rules" parent="menu_notify" action="action_alert_rule" groups="earlydryer_base.group_branch_manager" />
+  <menuitem id="menu_webhook_log" name="Webhook receipts" parent="menu_notify" action="action_webhook_log" groups="earlydryer_base.group_admin" />
+</odoo>

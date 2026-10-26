@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+  <record id="audit_provider" model="auditlog.rule">
+    <field name="name">Notification provider</field>
+    <field name="model_id" ref="model_earlydryer_notify_provider" />
+    <field name="log_type">full</field>
+    <field name="log_write" eval="True" />
+    <field name="log_read" eval="False" />
+    <field name="log_create" eval="False" />
+    <field name="log_unlink" eval="False" />
+    <field name="log_export_data" eval="False" />
+    <field name="state">draft</field>
+    <field name="fields_to_exclude_ids" eval="[(6,0,[ref('field_earlydryer_notify_provider__api_token'),ref('field_earlydryer_notify_provider__app_secret'),ref('field_earlydryer_notify_provider__webhook_verify_token'),ref('field_earlydryer_notify_provider__path_token'),ref('field_earlydryer_notify_provider__headers_json'),ref('field_earlydryer_notify_provider__body_template')])]" />
+  </record>
+  <record id="audit_template" model="auditlog.rule">
+    <field name="name">Notification template</field>
+    <field name="model_id" ref="model_earlydryer_notify_template" />
+    <field name="log_type">full</field>
+    <field name="log_write" eval="True" />
+    <field name="log_read" eval="False" />
+    <field name="log_create" eval="False" />
+    <field name="log_unlink" eval="False" />
+    <field name="log_export_data" eval="False" />
+    <field name="state">draft</field>
+  </record>
+  <record id="audit_alert_rule" model="auditlog.rule">
+    <field name="name">Notification alert.rule</field>
+    <field name="model_id" ref="model_earlydryer_notify_alert_rule" />
+    <field name="log_type">full</field>
+    <field name="log_write" eval="True" />
+    <field name="log_read" eval="False" />
+    <field name="log_create" eval="False" />
+    <field name="log_unlink" eval="False" />
+    <field name="log_export_data" eval="False" />
+    <field name="state">draft</field>
+  </record>
+</odoo>
