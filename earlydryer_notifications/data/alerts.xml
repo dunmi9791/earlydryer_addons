@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+  <record id="rule_alert_overdue" model="earlydryer.notify.alert.rule">
+    <field name="name">Overdue orders</field>
+    <field name="event_id" ref="event_alert_overdue" />
+    <field name="mode">digest</field>
+    <field name="threshold">0</field>
+    <field name="recipient_group_ids" eval="[(6,0,[ref('earlydryer_base.group_branch_manager')])]" />
+  </record>
+  <record id="rule_alert_large_discount" model="earlydryer.notify.alert.rule">
+    <field name="name">Large discount</field>
+    <field name="event_id" ref="event_alert_large_discount" />
+    <field name="mode">immediate</field>
+    <field name="threshold">10</field>
+    <field name="recipient_group_ids" eval="[(6,0,[ref('earlydryer_base.group_branch_manager')])]" />
+  </record>
+  <record id="rule_alert_unpaid_release" model="earlydryer.notify.alert.rule">
+    <field name="name">Unpaid release</field>
+    <field name="event_id" ref="event_alert_unpaid_release" />
+    <field name="mode">immediate</field>
+    <field name="threshold">0</field>
+    <field name="recipient_group_ids" eval="[(6,0,[ref('earlydryer_base.group_branch_manager'),ref('earlydryer_base.group_finance')])]" />
+  </record>
+  <record id="rule_alert_scan_mismatch" model="earlydryer.notify.alert.rule">
+    <field name="name">Scan mismatch</field>
+    <field name="event_id" ref="event_alert_scan_mismatch" />
+    <field name="mode">immediate</field>
+    <field name="threshold">0</field>
+    <field name="recipient_group_ids" eval="[(6,0,[ref('earlydryer_base.group_branch_manager')])]" />
+  </record>
+  <record id="rule_alert_damage_found" model="earlydryer.notify.alert.rule">
+    <field name="name">Damage found</field>
+    <field name="event_id" ref="event_alert_damage_found" />
+    <field name="mode">immediate</field>
+    <field name="threshold">0</field>
+    <field name="recipient_group_ids" eval="[(6,0,[ref('earlydryer_base.group_branch_manager')])]" />
+  </record>
+  <record id="rule_alert_wallet_overdraw" model="earlydryer.notify.alert.rule">
+    <field name="name">Wallet overdraw</field>
+    <field name="event_id" ref="event_alert_wallet_overdraw" />
+    <field name="mode">immediate</field>
+    <field name="threshold">0</field>
+    <field name="recipient_group_ids" eval="[(6,0,[ref('earlydryer_base.group_branch_manager')])]" />
+  </record>
+  <record id="rule_alert_job_creation_failed" model="earlydryer.notify.alert.rule">
+    <field name="name">Job creation failed</field>
+    <field name="event_id" ref="event_alert_job_creation_failed" />
+    <field name="mode">immediate</field>
+    <field name="threshold">0</field>
+    <field name="recipient_group_ids" eval="[(6,0,[ref('earlydryer_base.group_admin')])]" />
+  </record>
+  <record id="rule_eod" model="earlydryer.notify.alert.rule">
+    <field name="name">End of day report</field>
+    <field name="event_id" ref="event_eod_report" />
+    <field name="mode">immediate</field>
+    <field name="threshold">0</field>
+    <field name="recipient_group_ids" eval="[(6,0,[ref('earlydryer_base.group_branch_manager')])]" />
+  </record>
+</odoo>
