@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+  <record id="channel_reporting" model="queue.job.channel">
+    <field name="name">earlydryer_reporting</field>
+    <field name="parent_id" ref="queue_job.channel_root" />
+  </record>
+  <record id="job_pack_deliver" model="queue.job.function">
+    <field name="model_id" ref="model_earlydryer_report_pack" />
+    <field name="method">_deliver</field>
+    <field name="channel_id" ref="channel_reporting" />
+    <field name="retry_pattern" eval="{1:60,2:300,3:900,4:3600}" />
+  </record>
+  <record id="job_pack_send_mail" model="queue.job.function">
+    <field name="model_id" ref="model_earlydryer_report_pack" />
+    <field name="method">_send_mail</field>
+    <field name="channel_id" ref="channel_reporting" />
+    <field name="retry_pattern" eval="{1:60,2:300,3:900,4:3600}" />
+  </record>
+  <record id="cron_packs" model="ir.cron">
+    <field name="name">Earlydryer scheduled report packs</field>
+    <field name="model_id" ref="model_earlydryer_report_subscription" />
+    <field name="state">code</field>
+    <field name="code">model._cron_due()</field>
+    <field name="interval_number">15</field>
+    <field name="interval_type">minutes</field>
+    <field name="active" eval="True" />
+  </record>
+</odoo>

@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="action_dashboard" model="ir.actions.client">
+    <field name="name">Earlydryer Dashboard</field>
+    <field name="tag">earlydryer_reporting.dashboard</field>
+    <field name="path">earlydryer-dashboard</field>
+  </record>
+  <record id="view_job_list" model="ir.ui.view">
+    <field name="name">view_job_list</field>
+    <field name="model">earlydryer.report.job</field>
+    <field name="arch" type="xml">
+      <list create="false" edit="false" delete="false">
+        <field name="name" />
+        <field name="earlydryer_branch_id" />
+        <field name="partner_id" />
+        <field name="received_date" />
+        <field name="ready_date" />
+        <field name="state" />
+        <field name="item_count" />
+        <field name="amount_total" />
+        <field name="amount_due" />
+        <field name="turnaround_hours" />
+        <field name="on_time" />
+      </list>
+    </field>
+  </record>
+  <record id="view_job_pivot" model="ir.ui.view">
+    <field name="name">view_job_pivot</field>
+    <field name="model">earlydryer.report.job</field>
+    <field name="arch" type="xml">
+      <pivot>
+        <field name="earlydryer_branch_id" type="row" />
+        <field name="received_date" type="col" interval="month" />
+        <field name="amount_total" type="measure" />
+        <field name="item_count" type="measure" />
+      </pivot>
+    </field>
+  </record>
+  <record id="view_job_graph" model="ir.ui.view">
+    <field name="name">view_job_graph</field>
+    <field name="model">earlydryer.report.job</field>
+    <field name="arch" type="xml">
+      <graph type="bar">
+        <field name="earlydryer_branch_id" />
+        <field name="amount_total" type="measure" />
+      </graph>
+    </field>
+  </record>
+  <record id="view_job_search" model="ir.ui.view">
+    <field name="name">view_job_search</field>
+    <field name="model">earlydryer.report.job</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="earlydryer_branch_id" />
+        <field name="received_date" />
+        <field name="partner_id" />
+      </search>
+    </field>
+  </record>
+  <record id="action_job" model="ir.actions.act_window">
+    <field name="name">Earlydryer job analysis</field>
+    <field name="res_model">earlydryer.report.job</field>
+    <field name="view_mode">pivot,graph,list</field>
+    <field name="search_view_id" ref="view_job_search" />
+  </record>
+  <record id="view_item_list" model="ir.ui.view">
+    <field name="name">view_item_list</field>
+    <field name="model">earlydryer.report.item</field>
+    <field name="arch" type="xml">
+      <list create="false" edit="false" delete="false">
+        <field name="job_id" />
+        <field name="earlydryer_branch_id" />
+        <field name="garment_category_id" />
+        <field name="service_type_id" />
+        <field name="received_date" />
+        <field name="price" />
+        <field name="rework_count" />
+        <field name="missing" />
+        <field name="estimated_weight_kg" />
+      </list>
+    </field>
+  </record>
+  <record id="view_item_pivot" model="ir.ui.view">
+    <field name="name">view_item_pivot</field>
+    <field name="model">earlydryer.report.item</field>
+    <field name="arch" type="xml">
+      <pivot>
+        <field name="service_type_id" type="row" />
+        <field name="received_date" type="col" interval="month" />
+        <field name="price" type="measure" />
+        <field name="estimated_weight_kg" type="measure" />
+      </pivot>
+    </field>
+  </record>
+  <record id="view_item_graph" model="ir.ui.view">
+    <field name="name">view_item_graph</field>
+    <field name="model">earlydryer.report.item</field>
+    <field name="arch" type="xml">
+      <graph type="bar">
+        <field name="service_type_id" />
+        <field name="price" type="measure" />
+      </graph>
+    </field>
+  </record>
+  <record id="view_item_search" model="ir.ui.view">
+    <field name="name">view_item_search</field>
+    <field name="model">earlydryer.report.item</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="earlydryer_branch_id" />
+        <field name="received_date" />
+        <field name="service_type_id" />
+      </search>
+    </field>
+  </record>
+  <record id="action_item" model="ir.actions.act_window">
+    <field name="name">Earlydryer item analysis</field>
+    <field name="res_model">earlydryer.report.item</field>
+    <field name="view_mode">pivot,graph,list</field>
+    <field name="search_view_id" ref="view_item_search" />
+  </record>
+  <record id="view_stage_list" model="ir.ui.view">
+    <field name="name">view_stage_list</field>
+    <field name="model">earlydryer.report.stage</field>
+    <field name="arch" type="xml">
+      <list create="false" edit="false" delete="false">
+        <field name="job_id" />
+        <field name="earlydryer_branch_id" />
+        <field name="local_date" />
+        <field name="employee_id" />
+        <field name="user_id" />
+        <field name="from_state" />
+        <field name="to_state" />
+        <field name="items_moved" />
+        <field name="hours_in_stage" />
+        <field name="source" />
+        <field name="no_employee" />
+        <field name="outside_plant" />
+        <field name="fast_move" />
+      </list>
+    </field>
+  </record>
+  <record id="view_stage_pivot" model="ir.ui.view">
+    <field name="name">view_stage_pivot</field>
+    <field name="model">earlydryer.report.stage</field>
+    <field name="arch" type="xml">
+      <pivot>
+        <field name="employee_id" type="row" />
+        <field name="from_state" type="col" />
+        <field name="moves" type="measure" />
+        <field name="items_moved" type="measure" />
+        <field name="hours_in_stage" type="measure" />
+      </pivot>
+    </field>
+  </record>
+  <record id="view_stage_graph" model="ir.ui.view">
+    <field name="name">view_stage_graph</field>
+    <field name="model">earlydryer.report.stage</field>
+    <field name="arch" type="xml">
+      <graph type="bar">
+        <field name="employee_id" />
+        <field name="moves" type="measure" />
+      </graph>
+    </field>
+  </record>
+  <record id="view_stage_search" model="ir.ui.view">
+    <field name="name">view_stage_search</field>
+    <field name="model">earlydryer.report.stage</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="earlydryer_branch_id" />
+        <field name="local_date" />
+        <field name="employee_id" />
+        <field name="from_state" />
+        <field name="to_state" />
+        <field name="source" />
+        <filter name="unassigned" string="Moves without employee" domain="[('no_employee','=',True)]" />
+        <filter name="outside" string="Outside employee plant" domain="[('outside_plant','=',True)]" />
+        <filter name="fast" string="Unusually fast" domain="[('fast_move','=',True)]" />
+        <filter name="by_day" string="Per day" context="{'group_by':'local_date:day'}" />
+        <filter name="by_employee" string="Employee" context="{'group_by':'employee_id'}" />
+      </search>
+    </field>
+  </record>
+  <record id="action_stage" model="ir.actions.act_window">
+    <field name="name">Staff productivity</field>
+    <field name="res_model">earlydryer.report.stage</field>
+    <field name="view_mode">pivot,graph,list</field>
+    <field name="search_view_id" ref="view_stage_search" />
+  </record>
+  <record id="view_sales_list" model="ir.ui.view">
+    <field name="name">view_sales_list</field>
+    <field name="model">earlydryer.report.sales</field>
+    <field name="arch" type="xml">
+      <list create="false" edit="false" delete="false">
+        <field name="earlydryer_branch_id" />
+        <field name="date" />
+        <field name="product_id" />
+        <field name="product_kind" />
+        <field name="service_line_id" />
+        <field name="partner_id" />
+        <field name="channel" />
+        <field name="origin" />
+        <field name="quantity" />
+        <field name="gross" />
+        <field name="discount" />
+        <field name="net" />
+      </list>
+    </field>
+  </record>
+  <record id="view_sales_pivot" model="ir.ui.view">
+    <field name="name">view_sales_pivot</field>
+    <field name="model">earlydryer.report.sales</field>
+    <field name="arch" type="xml">
+      <pivot>
+        <field name="earlydryer_branch_id" type="row" />
+        <field name="date" type="col" interval="month" />
+        <field name="net" type="measure" />
+        <field name="quantity" type="measure" />
+        <field name="discount" type="measure" />
+      </pivot>
+    </field>
+  </record>
+  <record id="view_sales_graph" model="ir.ui.view">
+    <field name="name">view_sales_graph</field>
+    <field name="model">earlydryer.report.sales</field>
+    <field name="arch" type="xml">
+      <graph type="bar">
+        <field name="earlydryer_branch_id" />
+        <field name="net" type="measure" />
+      </graph>
+    </field>
+  </record>
+  <record id="view_sales_search" model="ir.ui.view">
+    <field name="name">view_sales_search</field>
+    <field name="model">earlydryer.report.sales</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="earlydryer_branch_id" />
+        <field name="date" />
+        <field name="partner_id" />
+      </search>
+    </field>
+  </record>
+  <record id="action_sales" model="ir.actions.act_window">
+    <field name="name">Earlydryer sales analysis</field>
+    <field name="res_model">earlydryer.report.sales</field>
+    <field name="view_mode">pivot,graph,list</field>
+    <field name="search_view_id" ref="view_sales_search" />
+  </record>
+  <record id="view_discount_list" model="ir.ui.view">
+    <field name="name">view_discount_list</field>
+    <field name="model">earlydryer.report.discount</field>
+    <field name="arch" type="xml">
+      <list create="false" edit="false" delete="false">
+        <field name="earlydryer_branch_id" />
+        <field name="date" />
+        <field name="product_id" />
+        <field name="origin" />
+        <field name="gross" />
+        <field name="discount" />
+        <field name="net" />
+      </list>
+    </field>
+  </record>
+  <record id="view_discount_pivot" model="ir.ui.view">
+    <field name="name">view_discount_pivot</field>
+    <field name="model">earlydryer.report.discount</field>
+    <field name="arch" type="xml">
+      <pivot>
+        <field name="earlydryer_branch_id" type="row" />
+        <field name="date" type="col" interval="month" />
+        <field name="discount" type="measure" />
+        <field name="gross" type="measure" />
+      </pivot>
+    </field>
+  </record>
+  <record id="view_discount_graph" model="ir.ui.view">
+    <field name="name">view_discount_graph</field>
+    <field name="model">earlydryer.report.discount</field>
+    <field name="arch" type="xml">
+      <graph type="bar">
+        <field name="earlydryer_branch_id" />
+        <field name="discount" type="measure" />
+      </graph>
+    </field>
+  </record>
+  <record id="view_discount_search" model="ir.ui.view">
+    <field name="name">view_discount_search</field>
+    <field name="model">earlydryer.report.discount</field>
+    <field name="arch" type="xml">
+      <search>
+        <field name="earlydryer_branch_id" />
+        <field name="date" />
+        <field name="product_id" />
+      </search>
+    </field>
+  </record>
+  <record id="action_discount" model="ir.actions.act_window">
+    <field name="name">Earlydryer discount analysis</field>
+    <field name="res_model">earlydryer.report.discount</field>
+    <field name="view_mode">pivot,graph,list</field>
+    <field name="search_view_id" ref="view_discount_search" />
+  </record>
+  <record id="action_exceptions" model="ir.actions.act_window">
+    <field name="name">Productivity exceptions</field>
+    <field name="res_model">earlydryer.report.stage</field>
+    <field name="view_mode">list,pivot</field>
+    <field name="domain">['|','|',('no_employee','=',True),('outside_plant','=',True),('fast_move','=',True)]</field>
+  </record>
+  <record id="view_productivity_wizard" model="ir.ui.view">
+    <field name="name">view_productivity_wizard</field>
+    <field name="model">earlydryer.productivity.wizard</field>
+    <field name="arch" type="xml">
+      <form>
+        <group>
+          <field name="branch_ids" />
+          <field name="date_from" />
+          <field name="date_to" />
+        </group>
+        <footer>
+          <button name="action_export" string="Export XLSX" type="object" />
+          <button string="Cancel" special="cancel" />
+        </footer>
+      </form>
+    </field>
+  </record>
+  <record id="action_productivity_export" model="ir.actions.act_window">
+    <field name="name">Export productivity</field>
+    <field name="res_model">earlydryer.productivity.wizard</field>
+    <field name="view_mode">form</field>
+    <field name="target">new</field>
+  </record>
+  <menuitem id="menu_reporting" name="Reporting" parent="earlydryer_base.menu_earlydryer_root" sequence="90" groups="earlydryer_base.group_hr,earlydryer_base.group_admin,earlydryer_base.group_branch_manager,earlydryer_base.group_finance,earlydryer_base.group_operations_manager,earlydryer_base.group_management" />
+  <menuitem id="menu_dashboard" name="Owner dashboard" parent="menu_reporting" action="action_dashboard" groups="earlydryer_base.group_branch_manager,earlydryer_base.group_operations_manager,earlydryer_base.group_finance,earlydryer_base.group_management,earlydryer_base.group_admin" />
+  <menuitem id="menu_job" name="Orders" parent="menu_reporting" action="action_job" groups="earlydryer_base.group_branch_manager,earlydryer_base.group_operations_manager,earlydryer_base.group_finance,earlydryer_base.group_management,earlydryer_base.group_admin" />
+  <menuitem id="menu_item" name="Garments" parent="menu_reporting" action="action_item" groups="earlydryer_base.group_branch_manager,earlydryer_base.group_operations_manager,earlydryer_base.group_finance,earlydryer_base.group_management,earlydryer_base.group_admin" />
+  <menuitem id="menu_sales" name="Operational sales" parent="menu_reporting" action="action_sales" groups="earlydryer_base.group_branch_manager,earlydryer_base.group_operations_manager,earlydryer_base.group_finance,earlydryer_base.group_management,earlydryer_base.group_admin" />
+  <menuitem id="menu_discount" name="Discounts" parent="menu_reporting" action="action_discount" groups="earlydryer_base.group_branch_manager,earlydryer_base.group_operations_manager,earlydryer_base.group_finance,earlydryer_base.group_management,earlydryer_base.group_admin" />
+  <menuitem id="menu_stage" name="Staff productivity" parent="menu_reporting" action="action_stage" groups="earlydryer_base.group_branch_manager,earlydryer_base.group_operations_manager,earlydryer_base.group_hr,earlydryer_base.group_management,earlydryer_base.group_admin" />
+  <menuitem id="menu_exceptions" name="Productivity exceptions" parent="menu_reporting" action="action_exceptions" groups="earlydryer_base.group_branch_manager,earlydryer_base.group_operations_manager,earlydryer_base.group_hr,earlydryer_base.group_management,earlydryer_base.group_admin" />
+  <menuitem id="menu_productivity_export" name="Productivity XLSX" parent="menu_reporting" action="action_productivity_export" groups="earlydryer_base.group_branch_manager,earlydryer_base.group_operations_manager,earlydryer_base.group_hr,earlydryer_base.group_management,earlydryer_base.group_admin" />
+  <record id="settings_form_reporting" model="ir.ui.view">
+    <field name="name">Reporting productivity setting</field>
+    <field name="model">res.config.settings</field>
+    <field name="inherit_id" ref="earlydryer_notifications.settings_form_notify" />
+    <field name="arch" type="xml">
+      <xpath expr="//app[@name='earlydryer_notifications']" position="inside">
+        <block title="Productivity">
+          <setting string="Minimum minutes per garment">
+            <field name="earlydryer_min_minutes_per_item" />
+          </setting>
+        </block>
+      </xpath>
+    </field>
+  </record>
+</odoo>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="action_pack_pdf" model="ir.actions.report">
+    <field name="name">Earlydryer performance pack</field>
+    <field name="model">earlydryer.report.pack</field>
+    <field name="report_type">qweb-pdf</field>
+    <field name="report_name">earlydryer_reporting.pack_document</field>
+    <field name="report_file">earlydryer_reporting.pack_document</field>
+  </record>
+  <record id="action_productivity_xlsx" model="ir.actions.report">
+    <field name="name">Staff productivity XLSX</field>
+    <field name="model">earlydryer.productivity.wizard</field>
+    <field name="report_type">xlsx</field>
+    <field name="report_name">earlydryer_reporting.productivity_xlsx</field>
+    <field name="report_file">productivity</field>
+  </record>
+  <template id="pack_document">
+    <t t-call="web.html_container">
+      <t t-foreach="reports" t-as="report">
+        <t t-set="o" t-value="report[0]" />
+        <t t-call="web.external_layout">
+          <div class="page">
+            <h2>Earlydryer performance report</h2>
+            <p>
+              <span t-out="o.date_from" />
+              <span> — </span>
+              <span t-out="o.date_to" />
+            </p>
+            <p>Orders taken includes open POS sessions; posted revenue follows posted accounting entries. Point-in-time balances are labelled now.</p>
+            <table class="table table-sm">
+              <thead>
+                <tr>
+                  <th>KPI</th>
+                  <th>Value</th>
+                  <th>Comparison</th>
+                  <th>Change %</th>
+                  <th>Method</th>
+                </tr>
+              </thead>
+              <tbody>
+                <t t-foreach="report[1].items()" t-as="entry">
+                  <tr t-if="not entry[0].startswith('_')">
+                    <td t-out="entry[1]['label']" />
+                    <td t-out="round(entry[1]['value'],2)" />
+                    <td t-out="round(entry[1]['compare_value'],2)" />
+                    <td t-out="entry[1]['delta_pct']" />
+                    <td t-out="entry[1].get('method','')" />
+                  </tr>
+                </t>
+              </tbody>
+            </table>
+            <h3>Plant comparison</h3>
+            <p t-foreach="report[1].get('orders_value',{}).get('breakdown',[])" t-as="plant">
+              <span t-out="plant.get('name','')" />
+              <span t-out="plant['value']" />
+            </p>
+            <h3>Top service types</h3>
+            <table class="table table-sm">
+              <tbody>
+                <tr t-foreach="report[1].get('_meta',{}).get('top_services',[])" t-as="row">
+                  <td t-out="row['name']" />
+                  <td t-out="row['value']" />
+                </tr>
+              </tbody>
+            </table>
+            <h3>Turnaround by service type</h3>
+            <table class="table table-sm">
+              <tbody>
+                <tr t-foreach="report[1].get('_meta',{}).get('services',[])" t-as="row">
+                  <td t-out="row['name']" />
+                  <td t-out="row['hours']" />
+                  <td t-out="row['on_time']" />
+                </tr>
+              </tbody>
+            </table>
+            <h3>Unpaid balances and ageing</h3>
+            <p t-foreach="report[1].get('unpaid_balance',{}).get('ageing',[])" t-as="bucket">
+              <span t-out="bucket['label']" />
+              <span t-out="bucket['value']" />
+            </p>
+            <h3>Expenses: top five accounts</h3>
+            <p t-foreach="report[1].get('expenses',{}).get('accounts',[])" t-as="account">
+              <span t-out="account['name']" />
+              <span t-out="account['value']" />
+            </p>
+            <t t-if="'productivity' in report[1]">
+              <h3>Staff productivity: coaching, not pay</h3>
+              <table class="table table-sm">
+                <tbody>
+                  <tr t-foreach="report[1]['productivity']['rows']" t-as="row">
+                    <td t-out="row['employee']" />
+                    <td t-out="row['stage']" />
+                    <td t-out="row['items']" />
+                    <td t-out="row['moves']" />
+                    <td t-out="row['hours']" />
+                  </tr>
+                </tbody>
+              </table>
+            </t>
+          </div>
+        </t>
+      </t>
+    </t>
+  </template>
+</odoo>
