@@ -28,7 +28,9 @@ class LogisticsCommon(AccountingCommon):
         cls.Message = cls.env["earlydryer.notify.message"]
         cls.Alert = cls.env["earlydryer.notify.alert"]
         cls.reason_absent = cls.env.ref("earlydryer_logistics.fail_reason_absent")
-        cls.reason_unable = cls.env.ref("earlydryer_logistics.fail_reason_unable_to_pay")
+        cls.reason_unable = cls.env.ref(
+            "earlydryer_logistics.fail_reason_unable_to_pay"
+        )
         cls.env["ir.config_parameter"].sudo().set_param(
             "earlydryer_logistics.road_factor", "1.3"
         )
@@ -111,14 +113,16 @@ class LogisticsCommon(AccountingCommon):
             }
         )
         cls.user_cs = cls._new_user(
-            "t_customer_service", "earlydryer_base.group_customer_service", cls.branch_1
+            "t_log_customer_service",
+            "earlydryer_base.group_customer_service",
+            cls.branch_1,
         )
         cls.user_ops = cls._new_user(
-            "t_operations", "earlydryer_base.group_operations_manager", cls.branch_1
+            "t_log_operations", "earlydryer_base.group_operations_manager", cls.branch_1
         )
-        cls.user_rider = cls._new_user("t_rider", "earlydryer_base.group_rider", cls.branch_1)
+        # cls.user_rider (t_rider) comes from the tagging test data
         cls.user_rider_2 = cls._new_user(
-            "t_rider_2", "earlydryer_base.group_rider", cls.branch_1
+            "t_log_rider_2", "earlydryer_base.group_rider", cls.branch_1
         )
         cls.emp_rider = cls.env["hr.employee"].create(
             {
@@ -155,10 +159,37 @@ class LogisticsCommon(AccountingCommon):
         if paid:
             invoice = job.sale_order_id._create_invoices()
             invoice.action_post()
-            self.env["account.payment.register"].with_context(
-                active_model="account.move", active_ids=invoice.ids
-            ).create({"journal_id": self.bank_journal.id})._create_payments()
+            self._pay_invoice(invoice)
+            # amounts are computed (not stored) from invoices and payments
+            job.invalidate_recordset()
         return self._make_ready(job)
+
+    def _pay_invoice(self, invoice):
+        """Paid in cash at the plant (straight to the cash account, like the
+        wallet top-ups), matched with the invoice."""
+        journal = self.journal_cash
+        payment = self.env["account.payment"].create(
+            {
+                "payment_type": "inbound",
+                "partner_type": "customer",
+                "partner_id": invoice.commercial_partner_id.id,
+                "amount": invoice.amount_residual,
+                "journal_id": journal.id,
+                "payment_method_line_id": journal.inbound_payment_method_line_ids[
+                    :1
+                ].id,
+                "force_outstanding_account_id": journal.default_account_id.id,
+            }
+        )
+        payment.action_post()
+        receivable = (payment.move_id.line_ids | invoice.line_ids).filtered(
+            lambda line: (
+                line.account_id.account_type == "asset_receivable"
+                and not line.reconciled
+            )
+        )
+        receivable.reconcile()
+        return payment
 
     def _pos_job(self, account=0.0):
         """A POS job paid in cash (or partly on the customer account)."""
@@ -201,7 +232,9 @@ class LogisticsCommon(AccountingCommon):
             {
                 "earlydryer_branch_id": self.branch_1.id,
                 "date": self.tomorrow,
-                "rider_employee_id": (rider or self.emp_rider).id if not carrier else False,
+                "rider_employee_id": (rider or self.emp_rider).id
+                if not carrier
+                else False,
                 "carrier_partner_id": carrier.id if carrier else False,
                 **vals,
             }

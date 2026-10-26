@@ -19,7 +19,10 @@ class TestFees(LogisticsCommon):
         self.assertTrue(stop.fee_line_ref.startswith("sale.order.line,"))
         self.assertFalse(stop.fee_charged_move_id)
         fee_line = order.order_line.filtered(
-            lambda line: line.product_id == self.env.ref("earlydryer_logistics.product_delivery_fee")
+            lambda line: (
+                line.product_id
+                == self.env.ref("earlydryer_logistics.product_delivery_fee")
+            )
         )
         self.assertEqual(fee_line.price_unit, 1500)
         job.invalidate_recordset()
@@ -61,9 +64,14 @@ class TestFees(LogisticsCommon):
         job = self._sale_job()
         due = job.amount_due
         with self.assertRaises(UserError):
-            self._book("delivery", job, fee_waived=True, fee_waive_reason="Loyal customer")
+            self._book(
+                "delivery", job, fee_waived=True, fee_waive_reason="Loyal customer"
+            )
         stop = self._book(
-            "delivery", job, user=self.user_manager, fee_waived=True,
+            "delivery",
+            job,
+            user=self.user_manager,
+            fee_waived=True,
             fee_waive_reason="Loyal customer",
         )
         self.assertTrue(stop.fee_waived)
@@ -80,7 +88,9 @@ class TestFees(LogisticsCommon):
         )
         with self.assertRaises(UserError):
             self._book("pickup", partner=customer)
-        stop = self._book("pickup", partner=customer, user=self.user_manager, fee_amount=2500)
+        stop = self._book(
+            "pickup", partner=customer, user=self.user_manager, fee_amount=2500
+        )
         self.assertEqual(stop.fee_amount, 2500)
         self.assertEqual(stop.state, "scheduled")
         # a pickup has no job yet: the fee waits for the pricing at the plant

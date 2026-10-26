@@ -46,7 +46,9 @@ class TestQuoteSlots(LogisticsCommon):
 
     def test_quote_distance_zone_and_max_km(self):
         customer = self._customer(self.area_far)  # no GPS: centre of the area
-        straight = self.Quote._earlydryer_haversine_km((9.0790, 7.4700), (9.1550, 7.3220))
+        straight = self.Quote._earlydryer_haversine_km(
+            (9.0790, 7.4700), (9.1550, 7.3220)
+        )
         distance = round(straight * 1.3, 2)
         quote = self._quote(customer)
         self.assertTrue(quote["served"])
@@ -109,8 +111,11 @@ class TestQuoteSlots(LogisticsCommon):
         template = self.Slot.browse(morning["template_id"])
         template.capacity = 1
         stop = self.Stop.create(
-            {"stop_type": "pickup", "partner_id": self.partner.id,
-             "earlydryer_branch_id": self.branch_1.id}
+            {
+                "stop_type": "pickup",
+                "partner_id": self.partner.id,
+                "earlydryer_branch_id": self.branch_1.id,
+            }
         )
         stop._earlydryer_set_slot(morning["key"])
         keys = [
@@ -136,14 +141,20 @@ class TestQuoteSlots(LogisticsCommon):
         start, _end = morning._earlydryer_bounds(self.tomorrow)
         # one hour before the start: inside the 2 h cut-off
         slots = self.Slot.available_slots(
-            self.branch_1, "delivery", self.tomorrow, self.tomorrow,
+            self.branch_1,
+            "delivery",
+            self.tomorrow,
+            self.tomorrow,
             now=start - timedelta(hours=1),
         )
         self.assertEqual([slot["name"] for slot in slots], ["Afternoon"])
         # after the day: nothing
         self.assertFalse(
             self.Slot.available_slots(
-                self.branch_1, "delivery", self.tomorrow, self.tomorrow,
+                self.branch_1,
+                "delivery",
+                self.tomorrow,
+                self.tomorrow,
                 now=start + timedelta(days=1),
             )
         )
