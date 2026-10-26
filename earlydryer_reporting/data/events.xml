@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+  <record id="event_report_weekly" model="earlydryer.notify.event">
+    <field name="name">Weekly performance report</field>
+    <field name="code">report_weekly</field>
+    <field name="audience">staff</field>
+    <field name="allow_repeat" eval="True" />
+    <field name="channels">whatsapp,sms</field>
+  </record>
+  <record id="template_report_weekly_whatsapp" model="earlydryer.notify.template">
+    <field name="name">Weekly report whatsapp</field>
+    <field name="event_id" ref="event_report_weekly" />
+    <field name="channel">whatsapp</field>
+    <field name="body">{{ ctx['plant'] }}: {{ ctx['summary'] }}. Call {{ ctx['plant_phone'] }}.</field>
+    <field name="meta_template_name">earlydryer_report_weekly</field>
+    <field name="meta_language">en</field>
+    <field name="approved" eval="False" />
+    <field name="param_expressions">["ctx[\"plant\"]","ctx[\"summary\"]","ctx[\"plant_phone\"]"]</field>
+  </record>
+  <record id="template_report_weekly_sms" model="earlydryer.notify.template">
+    <field name="name">Weekly report sms</field>
+    <field name="event_id" ref="event_report_weekly" />
+    <field name="channel">sms</field>
+    <field name="body">{{ ctx['plant'] }}: {{ ctx['summary'] }}. Call {{ ctx['plant_phone'] }}.</field>
+    <field name="meta_template_name" />
+    <field name="meta_language">en</field>
+    <field name="approved" eval="False" />
+    <field name="param_expressions">["ctx[\"plant\"]","ctx[\"summary\"]","ctx[\"plant_phone\"]"]</field>
+  </record>
+  <record id="event_report_monthly" model="earlydryer.notify.event">
+    <field name="name">Monthly performance report</field>
+    <field name="code">report_monthly</field>
+    <field name="audience">staff</field>
+    <field name="allow_repeat" eval="True" />
+    <field name="channels">whatsapp,sms</field>
+  </record>
+  <record id="template_report_monthly_whatsapp" model="earlydryer.notify.template">
+    <field name="name">Monthly report whatsapp</field>
+    <field name="event_id" ref="event_report_monthly" />
+    <field name="channel">whatsapp</field>
+    <field name="body">{{ ctx['plant'] }}: {{ ctx['summary'] }}. Call {{ ctx['plant_phone'] }}.</field>
+    <field name="meta_template_name">earlydryer_report_monthly</field>
+    <field name="meta_language">en</field>
+    <field name="approved" eval="False" />
+    <field name="param_expressions">["ctx[\"plant\"]","ctx[\"summary\"]","ctx[\"plant_phone\"]"]</field>
+  </record>
+  <record id="template_report_monthly_sms" model="earlydryer.notify.template">
+    <field name="name">Monthly report sms</field>
+    <field name="event_id" ref="event_report_monthly" />
+    <field name="channel">sms</field>
+    <field name="body">{{ ctx['plant'] }}: {{ ctx['summary'] }}. Call {{ ctx['plant_phone'] }}.</field>
+    <field name="meta_template_name" />
+    <field name="meta_language">en</field>
+    <field name="approved" eval="False" />
+    <field name="param_expressions">["ctx[\"plant\"]","ctx[\"summary\"]","ctx[\"plant_phone\"]"]</field>
+  </record>
+</odoo>

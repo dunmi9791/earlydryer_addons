@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <record id="subscription_list" model="ir.ui.view">
+    <field name="name">subscription_list</field>
+    <field name="model">earlydryer.report.subscription</field>
+    <field name="arch" type="xml">
+      <list>
+        <field name="user_id" />
+        <field name="partner_id" />
+        <field name="frequency" />
+        <field name="send_time" />
+        <field name="branch_ids" />
+        <field name="email" />
+        <field name="whatsapp" />
+        <field name="active" />
+        <field name="last_sent_on" />
+      </list>
+    </field>
+  </record>
+  <record id="subscription_form" model="ir.ui.view">
+    <field name="name">subscription_form</field>
+    <field name="model">earlydryer.report.subscription</field>
+    <field name="arch" type="xml">
+      <form>
+        <header>
+          <button name="action_send_now" string="Send now" type="object" />
+        </header>
+        <sheet>
+          <group>
+            <field name="user_id" />
+            <field name="partner_id" />
+            <field name="company_id" />
+            <field name="frequency" />
+            <field name="send_time" widget="float_time" invisible="frequency == 'daily'" />
+            <field name="branch_ids" />
+            <field name="email" />
+            <field name="whatsapp" />
+            <field name="active" />
+            <field name="last_sent_on" />
+          </group>
+        </sheet>
+      </form>
+    </field>
+  </record>
+  <record id="action_subscriptions" model="ir.actions.act_window">
+    <field name="name">Report subscriptions</field>
+    <field name="res_model">earlydryer.report.subscription</field>
+    <field name="view_mode">list,form</field>
+  </record>
+  <menuitem id="menu_subscriptions" name="Subscriptions" parent="menu_reporting" action="action_subscriptions" />
+  <record id="send_wizard_form" model="ir.ui.view">
+    <field name="name">send_wizard_form</field>
+    <field name="model">earlydryer.report.send.wizard</field>
+    <field name="arch" type="xml">
+      <form>
+        <group>
+          <field name="subscription_id" />
+          <field name="date_from" />
+          <field name="date_to" />
+        </group>
+        <footer>
+          <button name="action_send" string="Queue pack" type="object" />
+          <button string="Cancel" special="cancel" />
+        </footer>
+      </form>
+    </field>
+  </record>
+</odoo>

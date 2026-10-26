@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1"><function model="earlydryer.report.subscription" name="_generate_reporting_demo"/></odoo>
