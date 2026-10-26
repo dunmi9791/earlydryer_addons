@@ -1,0 +1,45 @@
+# Copyright 2026 Secteur
+# License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl).
+{
+    "name": "Earlydryer Laundry Orders",
+    "summary": "Laundry jobs: every customer order through the plant, garment "
+    "by garment, from drop-off to collection or delivery",
+    "version": "19.0.1.0.0",
+    "category": "Earlydryer",
+    "author": "Secteur",
+    "license": "LGPL-3",
+    "depends": [
+        "earlydryer_base",
+        "earlydryer_service_catalog",
+        "sale",
+        "point_of_sale",
+        "hr",
+        "mail",
+        "auditlog",
+    ],
+    "data": [
+        "security/laundry_job_security.xml",
+        "security/ir.model.access.csv",
+        "security/laundry_job_rules.xml",
+        "data/ir_config_parameter_data.xml",
+        "data/ir_cron_data.xml",
+        "data/earlydryer_approval_rule_data.xml",
+        "data/auditlog_rule_data.xml",
+        "wizards/laundry_job_move_wizard_views.xml",
+        "wizards/laundry_job_qc_wizard_views.xml",
+        "wizards/laundry_job_request_wizard_views.xml",
+        "views/laundry_job_item_views.xml",
+        "views/laundry_job_stage_log_views.xml",
+        "views/laundry_job_views.xml",
+        "views/sale_order_views.xml",
+        "views/hr_employee_views.xml",
+        "views/earlydryer_service_type_views.xml",
+        "views/res_config_settings_views.xml",
+        "views/earlydryer_laundry_menus.xml",
+    ],
+    "demo": [
+        "demo/hr_employee_demo.xml",
+        "demo/laundry_job_demo.xml",
+    ],
+    "post_init_hook": "post_init_hook",
+}

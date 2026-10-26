@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_branch_shelf_generate_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.branch.shelf.generate.form</field>
+        <field name="model">earlydryer.branch.shelf.generate</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="branch_id" readonly="1" force_save="1"/>
+                        <field name="prefix"/>
+                        <field name="separator"/>
+                    </group>
+                    <group>
+                        <field name="start"/>
+                        <field name="count"/>
+                        <field name="padding"/>
+                        <field name="preview"/>
+                    </group>
+                </group>
+                <p class="text-muted">Shelves that already exist on the branch are skipped.</p>
+                <footer>
+                    <button name="action_generate" type="object" string="Generate" class="btn-primary" data-hotkey="q"/>
+                    <button special="cancel" string="Cancel" data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

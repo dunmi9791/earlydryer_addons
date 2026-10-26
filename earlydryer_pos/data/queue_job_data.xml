@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo noupdate="1">
+    <record id="queue_job_channel_earlydryer_pos" model="queue.job.channel">
+        <field name="name">earlydryer_pos</field>
+        <field name="parent_id" ref="queue_job.channel_root"/>
+    </record>
+    <record id="queue_job_function_create_job_from_pos" model="queue.job.function">
+        <field name="model_id" ref="point_of_sale.model_pos_order"/>
+        <field name="method">_earlydryer_create_job_from_pos</field>
+        <field name="channel_id" ref="queue_job_channel_earlydryer_pos"/>
+        <field name="retry_pattern" eval="{1: 60, 3: 300, 5: 1800}"/>
+    </record>
+</odoo>

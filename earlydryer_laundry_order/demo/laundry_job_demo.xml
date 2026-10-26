@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="partner_customer_adaeze" model="res.partner">
+        <field name="name">Adaeze Nnamdi</field>
+        <field name="phone">+234 803 000 1001</field>
+        <field name="city">Abuja</field>
+        <field name="country_id" ref="base.ng"/>
+    </record>
+    <record id="partner_customer_kabir" model="res.partner">
+        <field name="name">Kabir Lawal</field>
+        <field name="phone">+234 803 000 1002</field>
+        <field name="city">Abuja</field>
+        <field name="country_id" ref="base.ng"/>
+    </record>
+    <record id="partner_customer_funmi" model="res.partner">
+        <field name="name">Funmilayo Ade</field>
+        <field name="phone">+234 803 000 1003</field>
+        <field name="city">Abuja</field>
+        <field name="country_id" ref="base.ng"/>
+    </record>
+    <record id="partner_customer_samuel" model="res.partner">
+        <field name="name">Samuel Okon</field>
+        <field name="phone">+234 803 000 1004</field>
+        <field name="city">Abuja</field>
+        <field name="country_id" ref="base.ng"/>
+    </record>
+
+    <!-- Confirmed sales orders producing jobs in different stages (see
+         laundry.job._earlydryer_load_demo_jobs) -->
+    <function model="laundry.job" name="_earlydryer_load_demo_jobs"/>
+</odoo>

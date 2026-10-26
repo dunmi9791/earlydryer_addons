@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <!-- Plant staff; most have no Odoo login: the front desk records their work -->
+    <record id="employee_front_desk_p1" model="hr.employee">
+        <field name="name">Amaka Obi</field>
+        <field name="job_title">Front Desk</field>
+        <field name="user_id" ref="earlydryer_base.user_front_desk_p1"/>
+        <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_1"/>
+    </record>
+    <record id="employee_branch_manager_p1" model="hr.employee">
+        <field name="name">Tunde Bakare</field>
+        <field name="job_title">Branch Manager</field>
+        <field name="user_id" ref="earlydryer_base.user_branch_manager_p1"/>
+        <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_1"/>
+    </record>
+    <record id="employee_washer_p1" model="hr.employee">
+        <field name="name">Chidi Eze</field>
+        <field name="job_title">Washer</field>
+        <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_1"/>
+    </record>
+    <record id="employee_ironer_p1" model="hr.employee">
+        <field name="name">Bola Adeyemi</field>
+        <field name="job_title">Ironer</field>
+        <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_1"/>
+    </record>
+    <record id="employee_qc_p1" model="hr.employee">
+        <field name="name">Ngozi Okafor</field>
+        <field name="job_title">Quality Control</field>
+        <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_1"/>
+    </record>
+    <record id="employee_production_p1" model="hr.employee">
+        <field name="name">Ibrahim Yusuf</field>
+        <field name="job_title">Sorter</field>
+        <field name="user_id" ref="earlydryer_base.user_production_p1"/>
+        <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_1"/>
+    </record>
+    <record id="employee_washer_p2" model="hr.employee">
+        <field name="name">Musa Bello</field>
+        <field name="job_title">Washer</field>
+        <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_2"/>
+    </record>
+    <record id="employee_ironer_p2" model="hr.employee">
+        <field name="name">Hauwa Sani</field>
+        <field name="job_title">Ironer</field>
+        <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_2"/>
+    </record>
+    <record id="employee_qc_p2" model="hr.employee">
+        <field name="name">Emeka Nwosu</field>
+        <field name="job_title">Quality Control</field>
+        <field name="user_id" ref="earlydryer_base.user_qc_p2"/>
+        <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_2"/>
+    </record>
+</odoo>

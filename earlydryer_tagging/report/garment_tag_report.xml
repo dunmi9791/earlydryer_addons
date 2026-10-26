@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="action_report_garment_tag" model="ir.actions.report">
+        <field name="name">Garment Tags</field>
+        <field name="model">laundry.job.item</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">earlydryer_tagging.report_garment_tag</field>
+        <field name="report_file">earlydryer_tagging.report_garment_tag</field>
+        <field name="paperformat_id" ref="paperformat_tag_thermal_50x25"/>
+        <field name="print_report_name">'Tags - %s' % (object.job_id.name or '').replace('/', '-')</field>
+        <!-- printed through the job buttons, which log reprints -->
+        <field name="binding_model_id" eval="False"/>
+        <field name="group_ids" eval="[(6, 0, [ref('earlydryer_base.group_front_desk'), ref('earlydryer_base.group_production')])]"/>
+    </record>
+
+    <!-- Shared label styles: no bootstrap (labels have no article/layout), inline sizes in mm -->
+    <template id="label_styles">
+        <!-- the label bodies reach wkhtmltopdf without the layout's <head>: declare UTF-8 -->
+        <meta charset="utf-8"/>
+        <style>
+            html, body { margin: 0; padding: 0; }
+            .ed-label { box-sizing: border-box; overflow: hidden; position: relative;
+                        font-family: "DejaVu Sans", Arial, sans-serif; color: #000; line-height: 1.1; }
+            .ed-break { page-break-after: always; }
+            .ed-row { white-space: nowrap; overflow: hidden; }
+            .ed-code { font-family: "DejaVu Sans Mono", "Courier New", monospace; font-weight: bold;
+                       letter-spacing: 0.3mm; }
+            .ed-badge { background: #000; color: #fff; font-weight: bold; padding: 0 0.8mm; }
+            .ed-muted { font-size: 6pt; }
+            .ed-sheet { border-collapse: collapse; table-layout: fixed; }
+            .ed-sheet td { padding: 0; vertical-align: top; border: 0.1mm dashed #bbb; }
+            .ed-barcode img { display: block; }
+        </style>
+    </template>
+
+    <!-- One garment tag, ``w`` x ``h`` mm (standard layout) -->
+    <template id="garment_tag_label">
+        <div class="ed-label" t-attf-style="width: {{w}}mm; height: {{h}}mm; padding: 1mm 2mm;">
+            <div class="ed-row" style="font-size: 7pt;">
+                <b t-out="label['job']"/>
+                <span t-if="label['piece']" t-out="'  ' + label['piece']"/>
+                <span t-if="label['express']" class="ed-badge" style="float: right;" t-out="label['express']"/>
+            </div>
+            <div class="ed-barcode" style="margin-top: 0.5mm;">
+                <t t-out="label['code']"
+                   t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 800, 'height': 160, 'quiet': 0, 'img_style': 'width: %smm; height: %smm;' % (w - 4, round(h * 0.36, 1))}"/>
+            </div>
+            <div class="ed-row ed-code" style="font-size: 10pt; text-align: center;" t-out="label['code']"/>
+            <div class="ed-row" style="font-size: 6.5pt;">
+                <t t-out="label['garment']"/> · <b t-out="label['service']"/> · <t t-out="label['customer']"/>
+            </div>
+            <div class="ed-row ed-muted" t-if="label['promised']">
+                Due <t t-out="label['promised']"/>
+            </div>
+        </div>
+    </template>
+
+    <!-- Narrow heat-seal strip: barcode on the left, details on the right -->
+    <template id="garment_tag_strip">
+        <div class="ed-label" t-attf-style="width: {{w}}mm; height: {{h}}mm; padding: 0.8mm 1.5mm;">
+            <table style="border-collapse: collapse; width: 100%; table-layout: fixed;">
+                <tr>
+                    <td t-attf-style="width: {{round(w * 0.58, 1)}}mm; padding: 0; vertical-align: top;">
+                        <div class="ed-barcode">
+                            <t t-out="label['code']"
+                               t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 800, 'height': 160, 'quiet': 0, 'img_style': 'width: %smm; height: %smm;' % (round(w * 0.56, 1), round(h * 0.55, 1))}"/>
+                        </div>
+                        <div class="ed-row ed-code" style="font-size: 7pt;" t-out="label['code']"/>
+                    </td>
+                    <td style="padding: 0 0 0 1mm; vertical-align: top; font-size: 5.5pt;">
+                        <div class="ed-row"><b t-out="label['job']"/></div>
+                        <div class="ed-row">
+                            <t t-out="label['service']"/> <t t-out="label['piece']"/>
+                            <span t-if="label['express']" class="ed-badge">EXP</span>
+                        </div>
+                        <div class="ed-row" t-out="label['promised']"/>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </template>
+
+    <template id="report_garment_tag">
+        <t t-call="web.html_container">
+            <t t-call="earlydryer_tagging.label_styles"/>
+            <t t-if="layout == 'sheet'">
+                <!-- A4 test sheet: 3 columns of 64 x 33 mm -->
+                <t t-set="w" t-value="64"/>
+                <t t-set="h" t-value="33"/>
+                <t t-foreach="[labels[i:i + 24] for i in range(0, len(labels), 24)]" t-as="page">
+                    <table t-attf-class="ed-sheet {{'ed-break' if not page_last else ''}}">
+                        <t t-foreach="[page[i:i + 3] for i in range(0, len(page), 3)]" t-as="row">
+                            <tr>
+                                <td t-foreach="row" t-as="label" t-attf-style="width: {{w}}mm; height: {{h}}mm;">
+                                    <t t-call="earlydryer_tagging.garment_tag_label"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </table>
+                </t>
+            </t>
+            <t t-else="">
+                <t t-set="w" t-value="paperformat.page_width or 50"/>
+                <!-- a hair below the page height so a label never spills onto a blank page -->
+                <t t-set="h" t-value="(paperformat.page_height or 25) - 0.5"/>
+                <t t-foreach="labels" t-as="label">
+                    <div t-att-class="'ed-break' if not label_last else ''">
+                        <t t-if="layout == 'strip'" t-call="earlydryer_tagging.garment_tag_strip"/>
+                        <t t-else="" t-call="earlydryer_tagging.garment_tag_label"/>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

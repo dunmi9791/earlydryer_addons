@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <menuitem id="menu_earlydryer_orders" name="Orders" parent="earlydryer_base.menu_earlydryer_root"
+              sequence="5"/>
+    <menuitem id="menu_earlydryer_laundry_jobs" name="Laundry Jobs" parent="menu_earlydryer_orders"
+              action="laundry_job_action" sequence="10"
+              groups="earlydryer_base.group_front_desk,earlydryer_base.group_production,earlydryer_base.group_rider,earlydryer_base.group_customer_service,earlydryer_base.group_finance"/>
+    <menuitem id="menu_earlydryer_sale_orders" name="Sales Orders" parent="menu_earlydryer_orders"
+              action="sale.action_quotations_with_onboarding" groups="sales_team.group_sale_salesman" sequence="20"/>
+    <menuitem id="menu_earlydryer_stage_log" name="Stage Log" parent="menu_earlydryer_orders"
+              action="laundry_job_stage_log_action" groups="earlydryer_base.group_branch_manager"
+              sequence="30"/>
+    <menuitem id="menu_earlydryer_config_laundry_settings" name="Laundry Settings"
+              parent="earlydryer_base.menu_earlydryer_configuration"
+              action="res_config_settings_action_earlydryer_laundry"
+              groups="earlydryer_base.group_admin" sequence="70"/>
+</odoo>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="laundry_job_view_form_earlydryer_pos" model="ir.ui.view">
+        <field name="name">laundry.job.form.earlydryer.pos</field>
+        <field name="model">laundry.job</field>
+        <field name="inherit_id" ref="earlydryer_laundry_order.laundry_job_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <div class="alert alert-warning mb-0" role="alert" invisible="not earlydryer_released_unpaid">
+                    Released at a till although the server found it unpaid. Collect the balance or approve the credit.
+                </div>
+            </xpath>
+            <field name="amount_due" position="after">
+                <field name="earlydryer_released_unpaid" invisible="not earlydryer_released_unpaid"/>
+            </field>
+            <xpath expr="//field[@name='item_ids']/list/field[@name='tag_code']" position="after">
+                <field name="earlydryer_tag_conflict" optional="show" decoration-danger="earlydryer_tag_conflict"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="laundry_job_view_search_earlydryer_pos" model="ir.ui.view">
+        <field name="name">laundry.job.search.earlydryer.pos</field>
+        <field name="model">laundry.job</field>
+        <field name="inherit_id" ref="earlydryer_laundry_order.laundry_job_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <filter name="earlydryer_released_unpaid" string="Released Unpaid"
+                        domain="[('earlydryer_released_unpaid', '=', True)]"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

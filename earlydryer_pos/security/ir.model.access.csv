@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_earlydryer_pos_photo_front_desk,earlydryer.pos.photo front desk,model_earlydryer_pos_photo,earlydryer_base.group_front_desk,1,0,0,0
+access_earlydryer_pos_photo_admin,earlydryer.pos.photo admin,model_earlydryer_pos_photo,earlydryer_base.group_admin,1,1,1,1
+access_earlydryer_pos_collection_front_desk,earlydryer.pos.collection front desk,model_earlydryer_pos_collection,earlydryer_base.group_front_desk,1,0,0,0
+access_earlydryer_pos_collection_finance,earlydryer.pos.collection finance,model_earlydryer_pos_collection,earlydryer_base.group_finance,1,0,0,0
+access_earlydryer_pos_collection_admin,earlydryer.pos.collection admin,model_earlydryer_pos_collection,earlydryer_base.group_admin,1,1,1,1
+access_earlydryer_pos_pin_approval_branch_manager,earlydryer.pos.pin.approval branch manager,model_earlydryer_pos_pin_approval,earlydryer_base.group_branch_manager,1,0,0,0
+access_earlydryer_pos_pin_approval_finance,earlydryer.pos.pin.approval finance,model_earlydryer_pos_pin_approval,earlydryer_base.group_finance,1,0,0,0
+access_earlydryer_pos_pin_approval_admin,earlydryer.pos.pin.approval admin,model_earlydryer_pos_pin_approval,earlydryer_base.group_admin,1,1,1,1

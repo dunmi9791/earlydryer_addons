@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="res_config_settings_view_form_earlydryer_accounting" model="ir.ui.view">
+        <field name="name">res.config.settings.form.earlydryer.accounting</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="earlydryer_wallet.res_config_settings_view_form_earlydryer_wallet"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@id='earlydryer_wallet_section']" position="before">
+                <block title="Accounting (Nigeria)" id="earlydryer_accounting_section">
+                    <setting id="earlydryer_accounting_setup" string="Accounting Setup"
+                             help="Accounts, journals per plant, taxes, analytics, fiscal year and POS payment methods. Safe to run again: creates only what is missing.">
+                        <button name="action_earlydryer_accounting_setup" string="Run accounting setup"
+                                type="object" class="btn-link" icon="oi-arrow-right"/>
+                    </setting>
+                    <setting id="earlydryer_vat" string="VAT Registered"
+                             help="VAT 7.5% (rate to confirm) on laundry, surcharge, express, retail and delivery sales. Unconfirmed: keep off until the registration is confirmed.">
+                        <field name="earlydryer_vat_registered"/>
+                        <div class="content-group">
+                            <div class="row mt8">
+                                <label for="earlydryer_prices_include_vat" class="col-lg-5 o_light_label"/>
+                                <field name="earlydryer_prices_include_vat"/>
+                            </div>
+                            <div class="text-warning mt8" invisible="not earlydryer_vat_pending">
+                                Not applied yet. Changes affect new documents only: posted
+                                invoices and open orders keep their taxes.
+                            </div>
+                            <field name="earlydryer_vat_pending" invisible="1"/>
+                            <field name="earlydryer_is_live" invisible="1"/>
+                            <button name="action_earlydryer_apply_vat" string="Apply VAT setting"
+                                    type="object" class="btn-link" icon="oi-arrow-right"/>
+                        </div>
+                    </setting>
+                    <setting id="earlydryer_tax_authority" string="Tax Authority"
+                             help="Partner paid by the WHT remittances.">
+                        <field name="earlydryer_tax_authority_id"/>
+                    </setting>
+                    <setting id="earlydryer_invoice_footer" string="Invoice Footer Note"
+                             help="Printed at the bottom of customer invoices.">
+                        <field name="earlydryer_invoice_footer"/>
+                    </setting>
+                    <setting id="earlydryer_einvoice" string="FIRS E-invoicing (held)"
+                             groups="base.group_no_one"
+                             help="Extension point only: the integration waits for the tax status and the FIRS requirements.">
+                        <field name="earlydryer_einvoice_enabled"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>

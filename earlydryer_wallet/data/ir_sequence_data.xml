@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo noupdate="1">
+    <record id="seq_earlydryer_wallet_transaction" model="ir.sequence">
+        <field name="name">Wallet Transaction</field>
+        <field name="code">earlydryer.wallet.transaction</field>
+        <field name="prefix">WAL/%(year)s/</field>
+        <field name="padding">5</field>
+        <field name="company_id" eval="False"/>
+    </record>
+</odoo>

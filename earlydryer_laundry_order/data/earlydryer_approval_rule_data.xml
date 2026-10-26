@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo noupdate="1">
+    <!-- Placeholder until Earlydryer confirms who approves credit and from what amount -->
+    <record id="approval_rule_credit_laundry_job" model="earlydryer.approval.rule">
+        <field name="name">Release on credit: Branch Manager</field>
+        <field name="sequence">50</field>
+        <field name="approval_type">credit</field>
+        <field name="model_id" ref="model_laundry_job"/>
+        <field name="threshold_kind">amount</field>
+        <field name="min_value">0</field>
+        <field name="max_value">0</field>
+        <field name="approver_group_id" ref="earlydryer_base.group_branch_manager"/>
+        <field name="self_approve" eval="True"/>
+    </record>
+</odoo>

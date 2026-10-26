@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_pos_collection_view_list" model="ir.ui.view">
+        <field name="name">earlydryer.pos.collection.list</field>
+        <field name="model">earlydryer.pos.collection</field>
+        <field name="arch" type="xml">
+            <list create="0" edit="0" decoration-danger="state != 'done'">
+                <field name="collected_on"/>
+                <field name="job_id"/>
+                <field name="pos_config_id"/>
+                <field name="earlydryer_branch_id" optional="hide"/>
+                <field name="employee_id"/>
+                <field name="mode"/>
+                <field name="approver_employee_id" optional="show"/>
+                <field name="amount_due_seen" optional="show"/>
+                <field name="state" widget="badge"/>
+                <field name="message" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="earlydryer_pos_collection_view_search" model="ir.ui.view">
+        <field name="name">earlydryer.pos.collection.search</field>
+        <field name="model">earlydryer.pos.collection</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="job_id"/>
+                <field name="employee_id"/>
+                <field name="pos_config_id"/>
+                <filter name="problems" string="Released Unpaid / Not Recorded" domain="[('state', '!=', 'done')]"/>
+                <filter name="credit" string="Manager Credit" domain="[('mode', '=', 'credit')]"/>
+                <group>
+                    <filter name="group_branch" string="Plant" context="{'group_by': 'earlydryer_branch_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="earlydryer_pos_collection_action" model="ir.actions.act_window">
+        <field name="name">Till Collections</field>
+        <field name="res_model">earlydryer.pos.collection</field>
+        <field name="view_mode">list</field>
+    </record>
+</odoo>

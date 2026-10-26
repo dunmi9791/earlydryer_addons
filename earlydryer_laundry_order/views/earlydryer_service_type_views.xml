@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_service_type_view_form_laundry" model="ir.ui.view">
+        <field name="name">earlydryer.service.type.form.laundry</field>
+        <field name="model">earlydryer.service.type</field>
+        <field name="inherit_id" ref="earlydryer_service_catalog.earlydryer_service_type_view_form"/>
+        <field name="arch" type="xml">
+            <field name="requires_tag" position="after">
+                <label for="uses_wash" string="Production Stages"/>
+                <div class="o_row">
+                    <field name="uses_wash" nolabel="1"/><span>Washed</span>
+                    <field name="uses_dry" nolabel="1"/><span>Dried</span>
+                    <field name="uses_iron" nolabel="1"/><span>Ironed</span>
+                </div>
+            </field>
+        </field>
+    </record>
+</odoo>

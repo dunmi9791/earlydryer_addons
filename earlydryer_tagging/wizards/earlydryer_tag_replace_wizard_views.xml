@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_tag_replace_wizard_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.tag.replace.wizard.form</field>
+        <field name="model">earlydryer.tag.replace.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="item_id"/>
+                    <field name="tag_mode" invisible="1"/>
+                    <field name="old_code"/>
+                    <field name="new_code" required="tag_mode == 'preprinted'"
+                           placeholder="Scan the new tag (empty: print a new code)"/>
+                    <field name="reason"/>
+                </group>
+                <p class="text-muted" invisible="tag_mode != 'printed'">
+                    The old code stays reserved: it will never be given to another garment.
+                </p>
+                <footer>
+                    <button name="action_confirm" type="object" string="Replace Tag" class="btn-primary"
+                            data-hotkey="q"/>
+                    <button special="cancel" string="Cancel" data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

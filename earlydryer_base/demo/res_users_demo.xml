@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <!-- One demo user per main role. Login = password (demo only). -->
+    <record id="user_front_desk_p1" model="res.users">
+        <field name="name">Demo Front Desk (P1)</field>
+        <field name="login">ed_frontdesk</field>
+        <field name="password">ed_frontdesk</field>
+        <field name="group_ids" eval="[(6, 0, [ref('group_front_desk')])]"/>
+        <field name="earlydryer_branch_ids" eval="[(6, 0, [ref('branch_plant_1')])]"/>
+        <field name="earlydryer_branch_id" ref="branch_plant_1"/>
+    </record>
+    <record id="user_production_p1" model="res.users">
+        <field name="name">Demo Production (P1)</field>
+        <field name="login">ed_production</field>
+        <field name="password">ed_production</field>
+        <field name="group_ids" eval="[(6, 0, [ref('group_production')])]"/>
+        <field name="earlydryer_branch_ids" eval="[(6, 0, [ref('branch_plant_1')])]"/>
+        <field name="earlydryer_branch_id" ref="branch_plant_1"/>
+    </record>
+    <record id="user_qc_p2" model="res.users">
+        <field name="name">Demo Quality Control (P2)</field>
+        <field name="login">ed_qc</field>
+        <field name="password">ed_qc</field>
+        <field name="group_ids" eval="[(6, 0, [ref('group_qc')])]"/>
+        <field name="earlydryer_branch_ids" eval="[(6, 0, [ref('branch_plant_2')])]"/>
+        <field name="earlydryer_branch_id" ref="branch_plant_2"/>
+    </record>
+    <record id="user_rider" model="res.users">
+        <field name="name">Demo Rider (P1, P2)</field>
+        <field name="login">ed_rider</field>
+        <field name="password">ed_rider</field>
+        <field name="group_ids" eval="[(6, 0, [ref('group_rider')])]"/>
+        <field name="earlydryer_branch_ids" eval="[(6, 0, [ref('branch_plant_1'), ref('branch_plant_2')])]"/>
+        <field name="earlydryer_branch_id" ref="branch_plant_1"/>
+    </record>
+    <record id="user_customer_service" model="res.users">
+        <field name="name">Demo Customer Service</field>
+        <field name="login">ed_cs</field>
+        <field name="password">ed_cs</field>
+        <field name="group_ids" eval="[(6, 0, [ref('group_customer_service')])]"/>
+        <field name="earlydryer_branch_ids" eval="[(6, 0, [ref('branch_plant_1'), ref('branch_plant_2')])]"/>
+        <field name="earlydryer_branch_id" ref="branch_plant_1"/>
+    </record>
+    <record id="user_branch_manager_p1" model="res.users">
+        <field name="name">Demo Branch Manager (P1)</field>
+        <field name="login">ed_branchmgr</field>
+        <field name="password">ed_branchmgr</field>
+        <field name="group_ids" eval="[(6, 0, [ref('group_branch_manager')])]"/>
+        <field name="earlydryer_branch_ids" eval="[(6, 0, [ref('branch_plant_1')])]"/>
+        <field name="earlydryer_branch_id" ref="branch_plant_1"/>
+    </record>
+    <record id="user_operations_manager" model="res.users">
+        <field name="name">Demo Operations Manager</field>
+        <field name="login">ed_opsmgr</field>
+        <field name="password">ed_opsmgr</field>
+        <field name="group_ids" eval="[(6, 0, [ref('group_operations_manager')])]"/>
+    </record>
+    <record id="user_finance" model="res.users">
+        <field name="name">Demo Finance</field>
+        <field name="login">ed_finance</field>
+        <field name="password">ed_finance</field>
+        <field name="group_ids" eval="[(6, 0, [ref('group_finance')])]"/>
+    </record>
+    <record id="user_hr" model="res.users">
+        <field name="name">Demo HR</field>
+        <field name="login">ed_hr</field>
+        <field name="password">ed_hr</field>
+        <field name="group_ids" eval="[(6, 0, [ref('group_hr')])]"/>
+    </record>
+    <record id="user_management" model="res.users">
+        <field name="name">Demo Management</field>
+        <field name="login">ed_management</field>
+        <field name="password">ed_management</field>
+        <field name="group_ids" eval="[(6, 0, [ref('group_management')])]"/>
+    </record>
+
+    <record id="branch_plant_1" model="earlydryer.branch">
+        <field name="manager_id" ref="user_branch_manager_p1"/>
+    </record>
+</odoo>

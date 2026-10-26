@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_wht_deduction_wizard_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.wht.deduction.wizard.form</field>
+        <field name="model">earlydryer.wht.deduction.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Register WHT Deduction">
+                <group>
+                    <group>
+                        <field name="invoice_id" readonly="1"/>
+                        <field name="partner_id"/>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="amount_residual"/>
+                    </group>
+                    <group>
+                        <field name="rate"/>
+                        <field name="amount"/>
+                        <field name="date"/>
+                        <field name="reference"/>
+                        <field name="certificate_date"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_register" string="Register" type="object" class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="earlydryer_wht_deduction_wizard_action" model="ir.actions.act_window">
+        <field name="name">Register WHT Deduction</field>
+        <field name="res_model">earlydryer.wht.deduction.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

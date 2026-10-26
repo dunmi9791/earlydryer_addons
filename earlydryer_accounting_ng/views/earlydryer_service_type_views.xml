@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_service_type_view_form_accounting" model="ir.ui.view">
+        <field name="name">earlydryer.service.type.form.accounting</field>
+        <field name="model">earlydryer.service.type</field>
+        <field name="inherit_id" ref="earlydryer_service_catalog.earlydryer_service_type_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='code']" position="after">
+                <field name="earlydryer_service_line_id" options="{'no_create': True}"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="earlydryer_service_type_view_list_accounting" model="ir.ui.view">
+        <field name="name">earlydryer.service.type.list.accounting</field>
+        <field name="model">earlydryer.service.type</field>
+        <field name="inherit_id" ref="earlydryer_service_catalog.earlydryer_service_type_view_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='code']" position="after">
+                <field name="earlydryer_service_line_id" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

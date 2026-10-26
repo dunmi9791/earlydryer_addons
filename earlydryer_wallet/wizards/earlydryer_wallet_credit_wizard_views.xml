@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_wallet_credit_wizard_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.wallet.credit.wizard.form</field>
+        <field name="model">earlydryer.wallet.credit.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Credit Wallet">
+                <p class="text-muted">
+                    Goodwill or claim credit (debits the goodwill and claims expense).
+                    It is posted once approved.
+                </p>
+                <group>
+                    <group>
+                        <field name="partner_id" options="{'no_create': True}"/>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="company_id" invisible="1"/>
+                        <field name="amount"/>
+                    </group>
+                    <group>
+                        <field name="laundry_job_id" options="{'no_create': True}"/>
+                        <field name="reference"/>
+                        <field name="earlydryer_branch_id" options="{'no_create': True}"/>
+                    </group>
+                </group>
+                <field name="reason" placeholder="Reason of the credit"/>
+                <footer>
+                    <button name="action_confirm" type="object" string="Credit" class="btn-primary"/>
+                    <button special="cancel" string="Cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="earlydryer_wallet_credit_wizard_action" model="ir.actions.act_window">
+        <field name="name">Credit Wallet</field>
+        <field name="res_model">earlydryer.wallet.credit.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo noupdate="1">
+    <!-- Express is not a surcharge record: its amount comes from the service
+         type (express_surcharge_kind / express_surcharge_value) and it is
+         invoiced on this product, as its own line next to the garment line. -->
+    <record id="product_express" model="product.product">
+        <field name="name">Express Service</field>
+        <field name="default_code">EXPRESS</field>
+        <field name="earlydryer_kind">express</field>
+        <field name="type">service</field>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="False"/>
+        <field name="available_in_pos" eval="True"/>
+        <field name="invoice_policy">order</field>
+        <field name="list_price">0.0</field>
+        <!-- no VAT until Earlydryer's VAT registration is confirmed -->
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="pos_categ_ids" eval="[Command.set([ref('pos_category_extras')])]"/>
+    </record>
+</odoo>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="action_report_daily_cash" model="ir.actions.report">
+        <field name="name">Daily Cash Report</field>
+        <field name="model">earlydryer.branch</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">earlydryer_accounting_ng.report_daily_cash</field>
+        <field name="report_file">earlydryer_accounting_ng.report_daily_cash</field>
+        <field name="print_report_name">'Daily cash - %s' % object.code</field>
+    </record>
+
+    <template id="report_daily_cash_document">
+        <t t-call="web.external_layout">
+            <t t-set="currency" t-value="r['currency']"/>
+            <t t-set="o" t-value="r['branch']"/>
+            <div class="page">
+                <h3>Daily Cash Report: <span t-out="o.display_name"/></h3>
+                <p>Date: <span t-out="r['date']"/> - Cash account: <span t-out="r['account'].display_name"/></p>
+                <table class="table table-sm">
+                    <tbody>
+                        <tr><td><strong>Opening cash</strong></td><td class="text-end" t-out="r['opening']" t-options='{"widget": "monetary", "display_currency": currency}'/></tr>
+                        <tr><td>POS cash takings (sales, settlements, top-ups)</td><td class="text-end" t-out="r['pos_cash']" t-options='{"widget": "monetary", "display_currency": currency}'/></tr>
+                        <tr><td class="ps-4">of which balance settlements</td><td class="text-end" t-out="r['settlements_cash']" t-options='{"widget": "monetary", "display_currency": currency}'/></tr>
+                        <tr><td class="ps-4">of which wallet top-ups in cash</td><td class="text-end" t-out="r['wallet_topups_cash']" t-options='{"widget": "monetary", "display_currency": currency}'/></tr>
+                        <tr><td>Rider handovers</td><td class="text-end" t-out="r['rider_handovers']" t-options='{"widget": "monetary", "display_currency": currency}'/></tr>
+                        <tr><td>Lodgements</td><td class="text-end" t-out="r['lodgements']" t-options='{"widget": "monetary", "display_currency": currency}'/></tr>
+                        <tr><td>Cash differences</td><td class="text-end" t-out="r['differences']" t-options='{"widget": "monetary", "display_currency": currency}'/></tr>
+                        <tr t-if="r['other']"><td>Other movements</td><td class="text-end" t-out="r['other']" t-options='{"widget": "monetary", "display_currency": currency}'/></tr>
+                        <tr><td><strong>Closing cash</strong></td><td class="text-end"><strong t-out="r['closing']" t-options='{"widget": "monetary", "display_currency": currency}'/></td></tr>
+                        <tr><td>Approved float</td><td class="text-end" t-out="r['float']" t-options='{"widget": "monetary", "display_currency": currency}'/></tr>
+                    </tbody>
+                </table>
+                <h5>Non-cash takings</h5>
+                <table class="table table-sm">
+                    <thead><tr><th>Method</th><th>Journal / kind</th><th class="text-end">Orders</th><th class="text-end">Amount</th></tr></thead>
+                    <tbody>
+                        <tr t-foreach="r['non_cash']" t-as="m">
+                            <td t-out="m['method'].name"/>
+                            <td t-out="m['kind']"/>
+                            <td class="text-end" t-out="m['orders']"/>
+                            <td class="text-end" t-out="m['amount']" t-options='{"widget": "monetary", "display_currency": currency}'/>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="text-muted">Sessions: <t t-out="', '.join(r['sessions'].mapped('name')) or '-'"/></p>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_daily_cash">
+        <t t-call="web.html_container">
+            <t t-foreach="reports" t-as="r">
+                <t t-call="earlydryer_accounting_ng.report_daily_cash_document"/>
+            </t>
+        </t>
+    </template>
+</odoo>

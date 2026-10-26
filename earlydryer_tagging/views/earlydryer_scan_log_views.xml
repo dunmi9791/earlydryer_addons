@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_scan_log_view_list" model="ir.ui.view">
+        <field name="name">earlydryer.scan.log.list</field>
+        <field name="model">earlydryer.scan.log</field>
+        <field name="arch" type="xml">
+            <list create="false" edit="false" decoration-danger="is_mismatch"
+                  decoration-warning="result in ('invalid', 'unknown', 'refused')">
+                <field name="date"/>
+                <field name="code"/>
+                <field name="mode"/>
+                <field name="result" widget="badge"
+                       decoration-success="result == 'ok'"
+                       decoration-danger="result in ('wrong_job', 'wrong_branch')"
+                       decoration-warning="result in ('invalid', 'unknown', 'refused', 'duplicate')"/>
+                <field name="is_mismatch" column_invisible="True"/>
+                <field name="job_id"/>
+                <field name="expected_job_id" optional="show"/>
+                <field name="item_id" optional="hide"/>
+                <field name="user_id" widget="many2one_avatar_user"/>
+                <field name="employee_id" optional="hide"/>
+                <field name="earlydryer_branch_id" optional="show"/>
+                <field name="message" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="earlydryer_scan_log_view_pivot" model="ir.ui.view">
+        <field name="name">earlydryer.scan.log.pivot</field>
+        <field name="model">earlydryer.scan.log</field>
+        <field name="arch" type="xml">
+            <pivot sample="1">
+                <field name="date" interval="day" type="row"/>
+                <field name="earlydryer_branch_id" type="col"/>
+                <field name="user_id" type="col"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="earlydryer_scan_log_view_search" model="ir.ui.view">
+        <field name="name">earlydryer.scan.log.search</field>
+        <field name="model">earlydryer.scan.log</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="code"/>
+                <field name="job_id"/>
+                <field name="expected_job_id"/>
+                <field name="user_id"/>
+                <field name="earlydryer_branch_id"/>
+                <filter name="mismatches" string="Mismatches" domain="[('is_mismatch', '=', True)]"/>
+                <filter name="problems" string="Not OK" domain="[('result', '!=', 'ok')]"/>
+                <separator/>
+                <filter name="mode_find" string="Find" domain="[('mode', '=', 'find')]"/>
+                <filter name="mode_move" string="Move" domain="[('mode', '=', 'move')]"/>
+                <filter name="mode_pack" string="Pack" domain="[('mode', '=', 'pack')]"/>
+                <filter name="mode_assign" string="Assign" domain="[('mode', '=', 'assign')]"/>
+                <separator/>
+                <filter name="date" string="Date" date="date"/>
+                <group>
+                    <filter name="group_day" string="Day" context="{'group_by': 'date:day'}"/>
+                    <filter name="group_branch" string="Plant" context="{'group_by': 'earlydryer_branch_id'}"/>
+                    <filter name="group_user" string="User" context="{'group_by': 'user_id'}"/>
+                    <filter name="group_result" string="Result" context="{'group_by': 'result'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="earlydryer_scan_log_action" model="ir.actions.act_window">
+        <field name="name">Scan Log</field>
+        <field name="res_model">earlydryer.scan.log</field>
+        <field name="view_mode">list,pivot</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No scan yet</p>
+            <p>Every scan of the Scan screen, the production board and the POS is logged here.</p>
+        </field>
+    </record>
+
+    <record id="earlydryer_scan_log_action_mismatches" model="ir.actions.act_window">
+        <field name="name">Packing Mismatches</field>
+        <field name="res_model">earlydryer.scan.log</field>
+        <field name="view_mode">pivot,list</field>
+        <field name="context">{'search_default_mismatches': 1}</field>
+    </record>
+</odoo>

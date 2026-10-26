@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_wallet_refund_wizard_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.wallet.refund.wizard.form</field>
+        <field name="model">earlydryer.wallet.refund.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Refund Wallet">
+                <p class="text-muted">
+                    The refund stays in draft until it is approved, then it is posted
+                    automatically.
+                </p>
+                <group>
+                    <group>
+                        <field name="partner_id" options="{'no_create': True}"/>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="company_id" invisible="1"/>
+                        <field name="balance"/>
+                        <field name="amount"/>
+                    </group>
+                    <group>
+                        <field name="journal_id" options="{'no_create': True}"/>
+                        <field name="earlydryer_branch_id" options="{'no_create': True}"/>
+                    </group>
+                </group>
+                <field name="reason" placeholder="Why is the balance refunded?"/>
+                <footer>
+                    <button name="action_confirm" type="object" string="Request Refund" class="btn-primary"/>
+                    <button special="cancel" string="Cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="earlydryer_wallet_refund_wizard_action" model="ir.actions.act_window">
+        <field name="name">Refund Wallet</field>
+        <field name="res_model">earlydryer.wallet.refund.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

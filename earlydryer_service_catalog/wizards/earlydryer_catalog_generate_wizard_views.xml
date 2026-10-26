@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_catalog_generate_wizard_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.catalog.generate.wizard.form</field>
+        <field name="model">earlydryer.catalog.generate.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="category_ids" widget="many2many_tags"/>
+                    <field name="service_type_ids" widget="many2many_tags"/>
+                    <field name="combination_count"/>
+                </group>
+                <group>
+                    <group>
+                        <field name="list_price"/>
+                        <field name="tax_ids" widget="many2many_tags" placeholder="No tax"/>
+                    </group>
+                    <group>
+                        <field name="income_account_id" placeholder="From the product category"/>
+                    </group>
+                </group>
+                <p class="text-muted">
+                    One service product per garment category and service type, respecting the allowed
+                    categories of each service. Existing products (archived ones included) are never changed.
+                </p>
+                <footer>
+                    <button name="action_generate" type="object" string="Generate" class="btn-primary" data-hotkey="q"/>
+                    <button special="cancel" string="Cancel" data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="earlydryer_catalog_generate_wizard_action" model="ir.actions.act_window">
+        <field name="name">Generate Catalogue</field>
+        <field name="res_model">earlydryer.catalog.generate.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

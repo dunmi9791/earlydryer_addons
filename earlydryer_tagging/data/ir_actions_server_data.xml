@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="action_server_laundry_job_print_tags" model="ir.actions.server">
+        <field name="name">Print Tags</field>
+        <field name="model_id" ref="earlydryer_laundry_order.model_laundry_job"/>
+        <field name="binding_model_id" ref="earlydryer_laundry_order.model_laundry_job"/>
+        <field name="binding_view_types">list,kanban</field>
+        <field name="group_ids" eval="[(6, 0, [ref('earlydryer_base.group_front_desk'), ref('earlydryer_base.group_production')])]"/>
+        <field name="state">code</field>
+        <field name="code">action = records.action_print_tags()</field>
+    </record>
+    <record id="action_server_laundry_job_download_zpl" model="ir.actions.server">
+        <field name="name">Download Tags (ZPL)</field>
+        <field name="model_id" ref="earlydryer_laundry_order.model_laundry_job"/>
+        <field name="binding_model_id" ref="earlydryer_laundry_order.model_laundry_job"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="group_ids" eval="[(6, 0, [ref('earlydryer_base.group_front_desk'), ref('earlydryer_base.group_production')])]"/>
+        <field name="state">code</field>
+        <field name="code">action = records.action_download_zpl()</field>
+    </record>
+</odoo>

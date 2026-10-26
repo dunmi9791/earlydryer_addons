@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_accounting_setup_wizard_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.accounting.setup.wizard.form</field>
+        <field name="model">earlydryer.accounting.setup.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Accounting Setup">
+                <field name="state" invisible="1"/>
+                <div class="alert alert-info" role="alert" invisible="state != 'config'">
+                    Creates only what is missing: records are found by their XML id,
+                    then by code. Every rate and code is a placeholder to confirm
+                    with Earlydryer's accountant.
+                </div>
+                <group invisible="state != 'config'">
+                    <group string="Bank and card">
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="bank_name"/>
+                        <field name="bank_acc_number"/>
+                        <field name="card_providers"/>
+                        <field name="transfer_journal_id" options="{'no_create': True}"/>
+                    </group>
+                    <group string="Options">
+                        <field name="separate_discounts"/>
+                    </group>
+                </group>
+                <div invisible="state != 'preview'">
+                    <p>Edit the codes and names of the records to create, then confirm.</p>
+                    <field name="line_ids">
+                        <list editable="bottom" create="false" delete="false"
+                              decoration-muted="status in ('reuse', 'skip')"
+                              decoration-info="status == 'create'">
+                            <field name="sequence" column_invisible="1"/>
+                            <field name="editable" column_invisible="1"/>
+                            <field name="section"/>
+                            <field name="code" readonly="not editable"/>
+                            <field name="name" readonly="not editable"/>
+                            <field name="account_type"/>
+                            <field name="reconcile" optional="hide"/>
+                            <field name="branch_id" optional="show"/>
+                            <field name="status" readonly="1"/>
+                            <field name="existing" optional="show"/>
+                            <field name="note" optional="show"/>
+                        </list>
+                    </field>
+                </div>
+                <div invisible="state != 'done'">
+                    <field name="summary" nolabel="1"/>
+                    <separator string="POS payment methods"/>
+                    <field name="pos_line_ids">
+                        <list create="false" delete="false">
+                            <field name="config_id"/>
+                            <field name="kind"/>
+                            <field name="method_id"/>
+                            <field name="journal_id"/>
+                            <field name="action"/>
+                        </list>
+                    </field>
+                    <field name="line_ids" readonly="1">
+                        <list create="false" delete="false" decoration-success="status == 'done'"
+                              decoration-muted="status != 'done'">
+                            <field name="section"/>
+                            <field name="code"/>
+                            <field name="name"/>
+                            <field name="status"/>
+                            <field name="existing"/>
+                        </list>
+                    </field>
+                </div>
+                <footer>
+                    <button name="action_preview" string="Preview" type="object" class="btn-primary"
+                            invisible="state != 'config'"/>
+                    <button name="action_apply" string="Confirm" type="object" class="btn-primary"
+                            invisible="state != 'preview'"/>
+                    <button name="action_back" string="Back" type="object" invisible="state != 'preview'"/>
+                    <button string="Close" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_branch_view_form_production" model="ir.ui.view">
+        <field name="name">earlydryer.branch.form.production</field>
+        <field name="model">earlydryer.branch</field>
+        <field name="inherit_id" ref="earlydryer_base.earlydryer_branch_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='notes']" position="before">
+                <page string="Production" name="earlydryer_production">
+                    <group>
+                        <group string="Stage Board" name="board">
+                            <field name="production_mode" widget="radio"/>
+                            <field name="tablet_idle_seconds" invisible="production_mode == 'front_desk'"/>
+                            <field name="board_refresh_seconds"/>
+                        </group>
+                        <group string="Sorting and QC" name="sorting_qc">
+                            <field name="require_sorting_colour_group"/>
+                            <field name="qc_reason_required"/>
+                        </group>
+                        <group string="Wash and Dry Batches" name="batches">
+                            <field name="use_wash_batches"/>
+                            <field name="batch_moves_stage" invisible="not use_wash_batches"/>
+                            <field name="require_load_weight" invisible="not use_wash_batches"/>
+                            <field name="wash_batch_sequence_id" invisible="not use_wash_batches"
+                                   groups="base.group_no_one"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

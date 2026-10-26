@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo noupdate="1">
+    <!-- Named by the client. Turnaround hours, express settings and allowed
+         categories are PLACEHOLDERS until Earlydryer confirms them. -->
+    <record id="service_type_wash_fold" model="earlydryer.service.type">
+        <field name="name">Wash &amp; Fold</field>
+        <field name="code">WF</field>
+        <field name="sequence">10</field>
+        <field name="description">Washed, dried and folded; no ironing.</field>
+        <field name="standard_turnaround_hours">48</field>
+        <field name="express_available" eval="True"/>
+        <field name="express_turnaround_hours">24</field>
+        <field name="express_surcharge_kind">percent</field>
+        <field name="express_surcharge_value">50</field>
+        <field name="pos_category_id" ref="pos_category_wash_fold"/>
+        <field name="allowed_category_ids" eval="[Command.set([ref('garment_category_shirt'), ref('garment_category_trouser'), ref('garment_category_agbada'), ref('garment_category_senator'), ref('garment_category_gown'), ref('garment_category_suit'), ref('garment_category_jeans'), ref('garment_category_kaftan'), ref('garment_category_suit_3piece'), ref('garment_category_jacket'), ref('garment_category_skirt'), ref('garment_category_blouse'), ref('garment_category_tie'), ref('garment_category_towel'), ref('garment_category_bed_sheet')])]"/>
+    </record>
+    <record id="service_type_wash_iron" model="earlydryer.service.type">
+        <field name="name">Wash &amp; Iron</field>
+        <field name="code">WI</field>
+        <field name="sequence">20</field>
+        <field name="description">Washed, dried and pressed.</field>
+        <field name="standard_turnaround_hours">72</field>
+        <field name="express_available" eval="True"/>
+        <field name="express_turnaround_hours">24</field>
+        <field name="express_surcharge_kind">percent</field>
+        <field name="express_surcharge_value">50</field>
+        <field name="pos_category_id" ref="pos_category_wash_iron"/>
+        <field name="allowed_category_ids" eval="[Command.set([ref('garment_category_shirt'), ref('garment_category_trouser'), ref('garment_category_agbada'), ref('garment_category_senator'), ref('garment_category_gown'), ref('garment_category_suit'), ref('garment_category_jeans'), ref('garment_category_kaftan'), ref('garment_category_suit_3piece'), ref('garment_category_jacket'), ref('garment_category_skirt'), ref('garment_category_blouse'), ref('garment_category_tie'), ref('garment_category_towel'), ref('garment_category_bed_sheet'), ref('garment_category_curtain')])]"/>
+    </record>
+    <record id="service_type_dry_cleaning" model="earlydryer.service.type">
+        <field name="name">Dry Cleaning</field>
+        <field name="code">DC</field>
+        <field name="sequence">30</field>
+        <field name="description">Solvent cleaning and pressing.</field>
+        <field name="standard_turnaround_hours">72</field>
+        <field name="express_available" eval="True"/>
+        <field name="express_turnaround_hours">24</field>
+        <field name="express_surcharge_kind">percent</field>
+        <field name="express_surcharge_value">50</field>
+        <field name="pos_category_id" ref="pos_category_dry_cleaning"/>
+        <field name="allowed_category_ids" eval="[Command.set([ref('garment_category_shirt'), ref('garment_category_trouser'), ref('garment_category_agbada'), ref('garment_category_senator'), ref('garment_category_gown'), ref('garment_category_suit'), ref('garment_category_jeans'), ref('garment_category_kaftan'), ref('garment_category_suit_3piece'), ref('garment_category_jacket'), ref('garment_category_skirt'), ref('garment_category_blouse'), ref('garment_category_tie'), ref('garment_category_duvet'), ref('garment_category_curtain')])]"/>
+    </record>
+    <record id="service_type_ironing_only" model="earlydryer.service.type">
+        <field name="name">Ironing Only</field>
+        <field name="code">IO</field>
+        <field name="sequence">40</field>
+        <field name="description">Pressing of clean garments.</field>
+        <field name="standard_turnaround_hours">24</field>
+        <field name="express_available" eval="True"/>
+        <field name="express_turnaround_hours">6</field>
+        <field name="express_surcharge_kind">percent</field>
+        <field name="express_surcharge_value">50</field>
+        <field name="pos_category_id" ref="pos_category_ironing_only"/>
+        <field name="allowed_category_ids" eval="[Command.set([ref('garment_category_shirt'), ref('garment_category_trouser'), ref('garment_category_agbada'), ref('garment_category_senator'), ref('garment_category_gown'), ref('garment_category_suit'), ref('garment_category_jeans'), ref('garment_category_kaftan'), ref('garment_category_suit_3piece'), ref('garment_category_jacket'), ref('garment_category_skirt'), ref('garment_category_blouse'), ref('garment_category_tie'), ref('garment_category_towel'), ref('garment_category_bed_sheet'), ref('garment_category_curtain')])]"/>
+    </record>
+    <record id="service_type_stain_treatment" model="earlydryer.service.type">
+        <field name="name">Stain Treatment</field>
+        <field name="code">ST</field>
+        <field name="sequence">50</field>
+        <field name="description">Spot treatment of stains.</field>
+        <field name="standard_turnaround_hours">72</field>
+        <field name="express_available" eval="False"/>
+        <field name="express_turnaround_hours">0</field>
+        <field name="express_surcharge_kind">percent</field>
+        <field name="express_surcharge_value">0</field>
+        <field name="pos_category_id" ref="pos_category_stain_treatment"/>
+        <field name="allowed_category_ids" eval="[Command.set([ref('garment_category_shirt'), ref('garment_category_trouser'), ref('garment_category_agbada'), ref('garment_category_senator'), ref('garment_category_gown'), ref('garment_category_suit'), ref('garment_category_jeans'), ref('garment_category_kaftan'), ref('garment_category_suit_3piece'), ref('garment_category_jacket'), ref('garment_category_skirt'), ref('garment_category_blouse'), ref('garment_category_tie'), ref('garment_category_towel'), ref('garment_category_bed_sheet'), ref('garment_category_duvet'), ref('garment_category_curtain'), ref('garment_category_rug')])]"/>
+    </record>
+    <record id="service_type_duvet_curtain" model="earlydryer.service.type">
+        <field name="name">Duvet / Curtain Cleaning</field>
+        <field name="code">DCC</field>
+        <field name="sequence">60</field>
+        <field name="description">Cleaning of duvets and curtains.</field>
+        <field name="standard_turnaround_hours">96</field>
+        <field name="express_available" eval="False"/>
+        <field name="express_turnaround_hours">0</field>
+        <field name="express_surcharge_kind">percent</field>
+        <field name="express_surcharge_value">0</field>
+        <field name="pos_category_id" ref="pos_category_duvet_curtain"/>
+        <field name="allowed_category_ids" eval="[Command.set([ref('garment_category_duvet'), ref('garment_category_curtain'), ref('garment_category_bed_sheet')])]"/>
+    </record>
+    <record id="service_type_rug_cleaning" model="earlydryer.service.type">
+        <field name="name">Rug Cleaning</field>
+        <field name="code">RUGC</field>
+        <field name="sequence">70</field>
+        <field name="description">Deep cleaning of rugs.</field>
+        <field name="standard_turnaround_hours">168</field>
+        <field name="express_available" eval="False"/>
+        <field name="express_turnaround_hours">0</field>
+        <field name="express_surcharge_kind">percent</field>
+        <field name="express_surcharge_value">0</field>
+        <field name="pos_category_id" ref="pos_category_rug_cleaning"/>
+        <field name="allowed_category_ids" eval="[Command.set([ref('garment_category_rug')])]"/>
+    </record>
+    <record id="service_type_shoe_cleaning" model="earlydryer.service.type">
+        <field name="name">Shoe Cleaning</field>
+        <field name="code">SHOEC</field>
+        <field name="sequence">80</field>
+        <field name="description">Cleaning of a pair of shoes.</field>
+        <field name="standard_turnaround_hours">72</field>
+        <field name="express_available" eval="True"/>
+        <field name="express_turnaround_hours">24</field>
+        <field name="express_surcharge_kind">fixed</field>
+        <field name="express_surcharge_value">1000</field>
+        <field name="pos_category_id" ref="pos_category_shoe_cleaning"/>
+        <field name="allowed_category_ids" eval="[Command.set([ref('garment_category_shoes')])]"/>
+    </record>
+    <record id="service_type_bag_cleaning" model="earlydryer.service.type">
+        <field name="name">Bag Cleaning</field>
+        <field name="code">BAGC</field>
+        <field name="sequence">90</field>
+        <field name="description">Cleaning of bags and travelling boxes.</field>
+        <field name="standard_turnaround_hours">96</field>
+        <field name="express_available" eval="False"/>
+        <field name="express_turnaround_hours">0</field>
+        <field name="express_surcharge_kind">percent</field>
+        <field name="express_surcharge_value">0</field>
+        <field name="pos_category_id" ref="pos_category_bag_cleaning"/>
+        <field name="allowed_category_ids" eval="[Command.set([ref('garment_category_bag'), ref('garment_category_travelling_box')])]"/>
+    </record>
+    <record id="service_type_alterations" model="earlydryer.service.type">
+        <field name="name">Alterations</field>
+        <field name="code">ALT</field>
+        <field name="sequence">100</field>
+        <field name="description">Repairs and alterations. Whether alterations get a garment tag is not confirmed.</field>
+        <field name="standard_turnaround_hours">72</field>
+        <field name="express_available" eval="False"/>
+        <field name="express_turnaround_hours">0</field>
+        <field name="express_surcharge_kind">percent</field>
+        <field name="express_surcharge_value">0</field>
+        <field name="pos_category_id" ref="pos_category_alterations"/>
+        <field name="allowed_category_ids" eval="[Command.set([ref('garment_category_shirt'), ref('garment_category_trouser'), ref('garment_category_agbada'), ref('garment_category_senator'), ref('garment_category_gown'), ref('garment_category_suit'), ref('garment_category_jeans'), ref('garment_category_kaftan'), ref('garment_category_suit_3piece'), ref('garment_category_jacket'), ref('garment_category_skirt'), ref('garment_category_blouse'), ref('garment_category_tie')])]"/>
+    </record>
+</odoo>

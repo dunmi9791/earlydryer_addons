@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="res_config_settings_view_form_earlydryer_laundry" model="ir.ui.view">
+        <field name="name">res.config.settings.form.earlydryer.laundry</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Earlydryer" string="Earlydryer" name="earlydryer_laundry_order"
+                     groups="earlydryer_base.group_admin">
+                    <block title="Laundry Orders" name="earlydryer_laundry_section">
+                        <setting id="earlydryer_uncollected_days_setting" string="Uncollected Orders"
+                                 help="Days after an order is ready before it becomes Uncollected (Earlydryer's liability ends).">
+                            <field name="earlydryer_uncollected_days"/>
+                        </setting>
+                        <setting id="earlydryer_uncollected_reminder_setting" string="Collection Reminders"
+                                 help="Days after ready on which the customer is reminded, comma-separated (e.g. 3,7,12).">
+                            <field name="earlydryer_uncollected_reminder_days"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="res_config_settings_action_earlydryer_laundry" model="ir.actions.act_window">
+        <field name="name">Laundry Settings</field>
+        <field name="res_model">res.config.settings</field>
+        <field name="view_mode">form</field>
+        <field name="context">{'module': 'earlydryer_laundry_order', 'bin_size': False}</field>
+    </record>
+</odoo>

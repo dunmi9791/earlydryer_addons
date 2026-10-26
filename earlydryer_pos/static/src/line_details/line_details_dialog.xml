@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="earlydryer_pos.EdLineDetailsDialog">
+        <Dialog title="line.getFullProductName()" size="'lg'">
+            <div class="ed-line-details d-flex flex-column gap-3">
+                <div t-if="line.qty > 1" class="alert alert-info py-2 m-0">
+                    These details apply to all <b t-esc="line.qty"/> items. Split the line if one is different.
+                </div>
+                <section t-if="surcharges.length">
+                    <h5>Surcharges</h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button t-foreach="surcharges" t-as="surcharge" t-key="surcharge.id" class="btn btn-lg ed-surcharge-chip" t-att-class="state.surchargeIds.has(surcharge.id) ? 'btn-primary' : 'btn-outline-secondary'" t-att-data-code="surcharge.code" t-on-click="() => this.toggleSurcharge(surcharge)">
+                            <t t-esc="surcharge.name"/>
+                            <small t-esc="surchargeLabel(surcharge)"/>
+                        </button>
+                    </div>
+                </section>
+                <section>
+                    <h5>Colour</h5>
+                    <div class="d-flex flex-wrap gap-2 mb-2">
+                        <button t-foreach="colours" t-as="colour" t-key="colour[0]" class="btn ed-swatch border" t-att-title="colour[0]" t-att-class="state.colour === colour[0] ? 'border-3 border-primary' : ''" t-attf-style="background: {{colour[1]}};" t-on-click="() => this.state.colour = colour[0]"/>
+                    </div>
+                    <input class="form-control form-control-lg ed-colour" t-model="state.colour" placeholder="Colour"/>
+                </section>
+                <section>
+                    <h5>Brand</h5>
+                    <input class="form-control form-control-lg ed-brand" t-model="state.brand" placeholder="Brand (optional)"/>
+                </section>
+                <section>
+                    <h5>Condition</h5>
+                    <div class="d-flex flex-wrap gap-2 mb-2">
+                        <button t-foreach="conditions" t-as="word" t-key="word" class="btn btn-outline-danger ed-condition-chip" t-on-click="() => this.addCondition(word)">
+                            <t t-esc="word"/>
+                        </button>
+                    </div>
+                    <textarea class="form-control ed-condition" rows="2" t-model="state.condition" placeholder="Stains, tears, missing buttons..."/>
+                </section>
+                <section>
+                    <h5>Photos <span class="badge text-bg-secondary ed-photo-count" t-esc="state.photoCount"/>
+                    </h5>
+                    <label class="btn btn-secondary btn-lg ed-photo-button">
+                        <i t-attf-class="fa {{state.busy ? 'fa-spin fa-circle-o-notch' : 'fa-camera'}} me-1"/>Take photo
+                        <input type="file" accept="image/*" capture="environment" class="d-none" multiple="multiple" t-on-change="onPhoto"/>
+                    </label>
+                </section>
+                <section t-if="preprinted" class="ed-codes">
+                    <h5>Tags (scan each piece)</h5>
+                    <div class="d-flex flex-column gap-2">
+                        <div t-foreach="state.codes" t-as="code" t-key="code_index" class="input-group">
+                            <span class="input-group-text">Piece <t t-esc="code_index + 1"/>
+                            </span>
+                            <input class="form-control form-control-lg ed-code-input" t-att-value="code" t-on-input="(ev) => this.state.codes[code_index] = ev.target.value" t-on-keydown="(ev) => this.onCodeKeydown(ev, code_index)"/>
+                        </div>
+                    </div>
+                </section>
+                <div t-if="state.error" class="text-danger fw-bold" t-esc="state.error"/>
+            </div>
+            <t t-set-slot="footer">
+                <button class="btn btn-primary btn-lg ed-details-apply" t-on-click="apply">Done</button>
+                <button class="btn btn-secondary btn-lg" t-on-click="props.close">Cancel</button>
+            </t>
+        </Dialog>
+    </t>
+</templates>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <!--
+        No new group: earlydryer_base maps Finance to account.group_account_manager
+        (implied) and gives Branch Managers POS Manager only, so accounting
+        access is not widened here. What each role may do (setup, WHT,
+        lodgement, handover, cash report, checklist) is enforced in Python.
+
+        Journals: Front Desk, Branch Managers and every user outside
+        "See all branches" see the cash journals of their plants plus the
+        company-wide journals.
+    -->
+    <record id="account_journal_rule_branch" model="ir.rule">
+        <field name="name">Journals: own plants and company-wide</field>
+        <field name="model_id" ref="account.model_account_journal"/>
+        <field name="domain_force">['|', ('earlydryer_branch_id', '=', False), ('earlydryer_branch_id', 'in', earlydryer_branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="account_journal_rule_all_branches" model="ir.rule">
+        <field name="name">Journals: all plants</field>
+        <field name="model_id" ref="account.model_account_journal"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('earlydryer_base.group_all_branches'))]"/>
+    </record>
+
+    <record id="earlydryer_close_checklist_rule_company" model="ir.rule">
+        <field name="name">Month-end checklist: multi-company</field>
+        <field name="model_id" ref="model_earlydryer_close_checklist"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+</odoo>

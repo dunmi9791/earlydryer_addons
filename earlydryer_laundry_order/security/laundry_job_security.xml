@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <!--
+        Front Desk and Customer Service take pickup, phone, WhatsApp and
+        corporate orders as quotations: they need the Sales rights (all
+        documents: the counter serves every customer of the plant).
+    -->
+    <record id="earlydryer_base.group_front_desk" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('sales_team.group_sale_salesman_all_leads'))]"/>
+    </record>
+    <record id="earlydryer_base.group_customer_service" model="res.groups">
+        <field name="implied_ids" eval="[(4, ref('sales_team.group_sale_salesman_all_leads'))]"/>
+    </record>
+</odoo>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo noupdate="1">
+    <!-- Placeholders until Earlydryer gives its own QC failure reasons -->
+    <record id="rework_reason_stain" model="earlydryer.rework.reason">
+        <field name="name">Stain remains</field>
+        <field name="code">STAIN</field>
+        <field name="sequence">10</field>
+        <field name="default_return_state">sorted</field>
+    </record>
+    <record id="rework_reason_not_clean" model="earlydryer.rework.reason">
+        <field name="name">Not clean</field>
+        <field name="code">NOTCLEAN</field>
+        <field name="sequence">20</field>
+        <field name="default_return_state">washed</field>
+    </record>
+    <record id="rework_reason_poor_ironing" model="earlydryer.rework.reason">
+        <field name="name">Poor ironing</field>
+        <field name="code">IRON</field>
+        <field name="sequence">30</field>
+        <field name="default_return_state">ironed</field>
+    </record>
+    <record id="rework_reason_wrong_fold" model="earlydryer.rework.reason">
+        <field name="name">Wrong fold</field>
+        <field name="code">FOLD</field>
+        <field name="sequence">40</field>
+        <field name="default_return_state">ironed</field>
+    </record>
+    <record id="rework_reason_colour_run" model="earlydryer.rework.reason">
+        <field name="name">Colour run</field>
+        <field name="code">COLOUR</field>
+        <field name="sequence">50</field>
+        <field name="default_return_state">sorted</field>
+    </record>
+    <record id="rework_reason_damage" model="earlydryer.rework.reason">
+        <field name="name">Damage found</field>
+        <field name="code">DAMAGE</field>
+        <field name="sequence">60</field>
+        <field name="default_return_state">ironed</field>
+        <field name="is_damage" eval="True"/>
+    </record>
+    <record id="rework_reason_missing_accessory" model="earlydryer.rework.reason">
+        <field name="name">Missing button or accessory</field>
+        <field name="code">ACCESSORY</field>
+        <field name="sequence">70</field>
+        <field name="default_return_state">ironed</field>
+        <field name="is_damage" eval="True"/>
+    </record>
+</odoo>

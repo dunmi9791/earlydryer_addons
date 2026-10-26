@@ -1,0 +1,28 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_laundry_job_front_desk,laundry.job front desk,model_laundry_job,earlydryer_base.group_front_desk,1,1,1,0
+access_laundry_job_production,laundry.job production,model_laundry_job,earlydryer_base.group_production,1,1,0,0
+access_laundry_job_rider,laundry.job rider,model_laundry_job,earlydryer_base.group_rider,1,0,0,0
+access_laundry_job_customer_service,laundry.job customer service,model_laundry_job,earlydryer_base.group_customer_service,1,1,0,0
+access_laundry_job_branch_manager,laundry.job branch manager,model_laundry_job,earlydryer_base.group_branch_manager,1,1,1,0
+access_laundry_job_finance,laundry.job finance,model_laundry_job,earlydryer_base.group_finance,1,0,0,0
+access_laundry_job_admin,laundry.job admin,model_laundry_job,earlydryer_base.group_admin,1,1,1,1
+access_laundry_job_item_front_desk,laundry.job.item front desk,model_laundry_job_item,earlydryer_base.group_front_desk,1,1,1,0
+access_laundry_job_item_production,laundry.job.item production,model_laundry_job_item,earlydryer_base.group_production,1,1,0,0
+access_laundry_job_item_rider,laundry.job.item rider,model_laundry_job_item,earlydryer_base.group_rider,1,0,0,0
+access_laundry_job_item_customer_service,laundry.job.item customer service,model_laundry_job_item,earlydryer_base.group_customer_service,1,0,0,0
+access_laundry_job_item_branch_manager,laundry.job.item branch manager,model_laundry_job_item,earlydryer_base.group_branch_manager,1,1,1,1
+access_laundry_job_item_finance,laundry.job.item finance,model_laundry_job_item,earlydryer_base.group_finance,1,0,0,0
+access_laundry_job_item_admin,laundry.job.item admin,model_laundry_job_item,earlydryer_base.group_admin,1,1,1,1
+access_laundry_job_stage_log_front_desk,laundry.job.stage.log front desk,model_laundry_job_stage_log,earlydryer_base.group_front_desk,1,0,1,0
+access_laundry_job_stage_log_production,laundry.job.stage.log production,model_laundry_job_stage_log,earlydryer_base.group_production,1,0,1,0
+access_laundry_job_stage_log_rider,laundry.job.stage.log rider,model_laundry_job_stage_log,earlydryer_base.group_rider,1,0,0,0
+access_laundry_job_stage_log_customer_service,laundry.job.stage.log customer service,model_laundry_job_stage_log,earlydryer_base.group_customer_service,1,0,0,0
+access_laundry_job_stage_log_branch_manager,laundry.job.stage.log branch manager,model_laundry_job_stage_log,earlydryer_base.group_branch_manager,1,0,1,0
+access_laundry_job_stage_log_finance,laundry.job.stage.log finance,model_laundry_job_stage_log,earlydryer_base.group_finance,1,0,0,0
+access_laundry_job_stage_log_admin,laundry.job.stage.log admin,model_laundry_job_stage_log,earlydryer_base.group_admin,1,1,1,1
+access_laundry_job_move_wizard_front_desk,laundry.job.move.wizard front desk,model_laundry_job_move_wizard,earlydryer_base.group_front_desk,1,1,1,1
+access_laundry_job_move_wizard_production,laundry.job.move.wizard production,model_laundry_job_move_wizard,earlydryer_base.group_production,1,1,1,1
+access_laundry_job_qc_wizard_production,laundry.job.qc.wizard production,model_laundry_job_qc_wizard,earlydryer_base.group_production,1,1,1,1
+access_laundry_job_qc_wizard_front_desk,laundry.job.qc.wizard front desk,model_laundry_job_qc_wizard,earlydryer_base.group_front_desk,1,1,1,1
+access_laundry_job_request_wizard_front_desk,laundry.job.request.wizard front desk,model_laundry_job_request_wizard,earlydryer_base.group_front_desk,1,1,1,1
+access_laundry_job_request_wizard_customer_service,laundry.job.request.wizard customer service,model_laundry_job_request_wizard,earlydryer_base.group_customer_service,1,1,1,1

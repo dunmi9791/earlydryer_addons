@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="earlydryer_pos.EdIntakePanel">
+        <div class="ed-intake d-flex flex-column gap-2 p-2 border-bottom bg-view">
+            <div class="d-flex flex-wrap align-items-center gap-2">
+                <button class="btn btn-lg ed-customer-button" t-att-class="pos.edCustomerLabel() ? 'btn-success' : 'btn-warning'" t-on-click="() => pos.edSelectCustomer()">
+                    <i class="fa fa-user me-1"/>
+                    <t t-if="pos.edCustomerLabel()" t-esc="pos.edCustomerLabel()"/>
+                    <t t-else="">Customer</t>
+                </button>
+                <div class="btn-group ms-auto" role="group">
+                    <button class="btn btn-lg ed-tab-laundry" t-att-class="pos.edIntakeTab === 'laundry' ? 'btn-primary' : 'btn-secondary'" t-on-click="() => pos.edIntakeTab = 'laundry'">Laundry</button>
+                    <button class="btn btn-lg ed-tab-retail" t-att-class="pos.edIntakeTab === 'retail' ? 'btn-primary' : 'btn-secondary'" t-on-click="() => pos.edIntakeTab = 'retail'">Retail</button>
+                </div>
+            </div>
+            <div t-if="order and order.edIsLaundry" class="d-flex flex-wrap align-items-center gap-2 ed-order-options">
+                <div class="form-check form-switch fs-5 m-0">
+                    <input class="form-check-input ed-express-toggle" type="checkbox" id="ed_express" t-att-checked="order.earlydryer_express" t-on-change="(ev) => pos.edSetExpress(order, ev.target.checked)"/>
+                    <label class="form-check-label fw-bold" for="ed_express">Express</label>
+                </div>
+                <select class="form-select w-auto ed-fulfilment" t-on-change="(ev) => order.earlydryer_fulfilment = ev.target.value">
+                    <option value="collect" t-att-selected="order.earlydryer_fulfilment !== 'deliver'">Collect at plant</option>
+                    <option value="deliver" t-att-selected="order.earlydryer_fulfilment === 'deliver'">Delivery</option>
+                </select>
+                <button class="btn btn-secondary ed-note-button" t-on-click="editNote">
+                    <i class="fa fa-sticky-note-o me-1"/>
+                    <t t-if="order.earlydryer_customer_note">Note ✓</t>
+                    <t t-else="">Note</t>
+                </button>
+                <button class="btn btn-secondary ed-order-discount" t-on-click="orderDiscount">
+                    <i class="fa fa-percent me-1"/>Discount
+                </button>
+                <button t-if="selectedGarment" class="btn btn-secondary ed-details-button" t-on-click="() => pos.edOpenLineDetails(selectedGarment)">
+                    <i class="fa fa-pencil me-1"/>Details
+                </button>
+                <span class="ms-auto text-muted ed-promise">
+                    Ready (estimated): <b t-esc="pos.edPromiseLabel(order)"/>
+                </span>
+            </div>
+            <t t-if="pos.edIntakeTab === 'laundry'">
+                <div t-if="!category" class="ed-garment-grid d-grid gap-2">
+                    <button t-foreach="categories" t-as="cat" t-key="cat.id" class="btn btn-light border ed-garment d-flex flex-column align-items-center justify-content-center p-2" t-att-data-code="cat.code" t-on-click="() => this.state.categoryId = cat.id">
+                        <img t-if="cat._image" t-att-src="cat._image" alt="" class="ed-garment-img"/>
+                        <i t-else="" class="fa fa-3x fa-shirtsinbulk text-muted"/>
+                        <span class="fw-bold mt-1 text-wrap" t-esc="cat.name"/>
+                        <small t-if="cat.piece_count > 1" class="text-muted">
+                            <t t-esc="cat.piece_count"/> pieces</small>
+                    </button>
+                </div>
+                <div t-else="" class="ed-services d-flex flex-column gap-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <button class="btn btn-secondary btn-lg" t-on-click="() => this.state.categoryId = false">
+                            <i class="fa fa-arrow-left"/>
+                        </button>
+                        <span class="fs-4 fw-bold" t-esc="category.name"/>
+                    </div>
+                    <div class="d-grid gap-2 ed-service-grid">
+                        <button t-foreach="services" t-as="entry" t-key="entry.product.id" class="btn btn-light border btn-lg ed-service d-flex justify-content-between p-3" t-att-data-code="entry.service.code" t-on-click="() => this.addService(entry.product)">
+                            <span class="fw-bold" t-esc="entry.service.name"/>
+                            <span t-esc="priceOf(entry.product)"/>
+                        </button>
+                    </div>
+                </div>
+            </t>
+        </div>
+    </t>
+</templates>

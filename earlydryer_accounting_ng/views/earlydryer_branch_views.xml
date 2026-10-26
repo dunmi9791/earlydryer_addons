@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_branch_view_form_accounting" model="ir.ui.view">
+        <field name="name">earlydryer.branch.form.accounting</field>
+        <field name="model">earlydryer.branch</field>
+        <field name="inherit_id" ref="earlydryer_base.earlydryer_branch_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='accounting']//field[@name='cash_journal_id']" position="after">
+                <field name="earlydryer_rider_journal_id"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="earlydryer_cash_float"/>
+            </xpath>
+            <xpath expr="//header" position="inside">
+                <button name="action_earlydryer_lodgement" string="Cash Lodgement" type="object"
+                        groups="earlydryer_base.group_branch_manager,earlydryer_base.group_finance"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

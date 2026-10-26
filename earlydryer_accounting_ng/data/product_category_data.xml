@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo noupdate="1">
+    <!-- Delivery fee products of the logistics module go here: the setup
+         wizard sets the category's income account to Delivery Fee Revenue. -->
+    <record id="product_category_delivery" model="product.category">
+        <field name="name">Delivery Fees</field>
+        <field name="earlydryer_service_line_id" ref="service_line_delivery"/>
+    </record>
+</odoo>

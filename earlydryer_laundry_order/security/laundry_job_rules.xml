@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <!-- earlydryer_base branch pattern: own plants, all plants for group_all_branches -->
+
+    <!-- laundry.job -->
+    <record id="laundry_job_rule_company" model="ir.rule">
+        <field name="name">Laundry job: multi-company</field>
+        <field name="model_id" ref="model_laundry_job"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="laundry_job_rule_branch" model="ir.rule">
+        <field name="name">Laundry job: allowed branches</field>
+        <field name="model_id" ref="model_laundry_job"/>
+        <field name="domain_force">[('earlydryer_branch_id', 'in', earlydryer_branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="laundry_job_rule_all_branches" model="ir.rule">
+        <field name="name">Laundry job: all branches</field>
+        <field name="model_id" ref="model_laundry_job"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('earlydryer_base.group_all_branches'))]"/>
+    </record>
+
+    <!-- laundry.job.item -->
+    <record id="laundry_job_item_rule_branch" model="ir.rule">
+        <field name="name">Laundry job item: allowed branches</field>
+        <field name="model_id" ref="model_laundry_job_item"/>
+        <field name="domain_force">[('earlydryer_branch_id', 'in', earlydryer_branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="laundry_job_item_rule_all_branches" model="ir.rule">
+        <field name="name">Laundry job item: all branches</field>
+        <field name="model_id" ref="model_laundry_job_item"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('earlydryer_base.group_all_branches'))]"/>
+    </record>
+
+    <!-- laundry.job.stage.log -->
+    <record id="laundry_job_stage_log_rule_branch" model="ir.rule">
+        <field name="name">Laundry job stage log: allowed branches</field>
+        <field name="model_id" ref="model_laundry_job_stage_log"/>
+        <field name="domain_force">[('earlydryer_branch_id', 'in', earlydryer_branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="laundry_job_stage_log_rule_all_branches" model="ir.rule">
+        <field name="name">Laundry job stage log: all branches</field>
+        <field name="model_id" ref="model_laundry_job_stage_log"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('earlydryer_base.group_all_branches'))]"/>
+    </record>
+</odoo>

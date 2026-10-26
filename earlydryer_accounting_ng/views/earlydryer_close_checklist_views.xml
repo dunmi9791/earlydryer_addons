@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_close_checklist_view_list" model="ir.ui.view">
+        <field name="name">earlydryer.close.checklist.list</field>
+        <field name="model">earlydryer.close.checklist</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="date_from"/>
+                <field name="date_to"/>
+                <field name="progress" widget="progressbar"/>
+                <field name="state" widget="badge" decoration-success="state == 'done'"/>
+                <field name="company_id" groups="base.group_multi_company"/>
+            </list>
+        </field>
+    </record>
+    <record id="earlydryer_close_checklist_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.close.checklist.form</field>
+        <field name="model">earlydryer.close.checklist</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_check_all" string="Run Checks" type="object" class="btn-primary"
+                            invisible="state != 'open'"/>
+                    <button name="action_close" string="Close Period" type="object" invisible="state != 'open'"/>
+                    <button name="action_reopen" string="Reopen" type="object" invisible="state != 'done'"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="date_range_id" options="{'no_create': True}"/>
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                        </group>
+                        <group>
+                            <field name="progress" widget="progressbar"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <field name="line_ids" readonly="state == 'done'">
+                        <list editable="bottom" create="false" delete="false"
+                              decoration-success="status == 'ok'" decoration-danger="status == 'issue'"
+                              decoration-muted="status == 'na'">
+                            <field name="sequence" column_invisible="1"/>
+                            <field name="done" widget="boolean_toggle"/>
+                            <field name="name" readonly="1"/>
+                            <field name="check_code" column_invisible="1"/>
+                            <field name="status" readonly="1"/>
+                            <field name="status_message" readonly="1"/>
+                            <button name="action_check" string="Check" type="object" icon="fa-search"
+                                    invisible="check_code in (False, 'manual')"/>
+                            <button name="action_open_tool" string="Open" type="object" icon="fa-external-link"
+                                    invisible="check_code in (False, 'manual', 'bank_reconciled', 'vat_return')"/>
+                            <field name="done_by_id" readonly="1" optional="show"/>
+                            <field name="done_on" readonly="1" optional="hide"/>
+                            <field name="note"/>
+                        </list>
+                    </field>
+                    <field name="note" placeholder="Notes"/>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+    <record id="earlydryer_close_checklist_action" model="ir.actions.act_window">
+        <field name="name">Month-end Checklist</field>
+        <field name="res_model">earlydryer.close.checklist</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    <record id="earlydryer_close_checklist_item_view_list" model="ir.ui.view">
+        <field name="name">earlydryer.close.checklist.item.list</field>
+        <field name="model">earlydryer.close.checklist.item</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="check_code"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+    <record id="earlydryer_close_checklist_item_action" model="ir.actions.act_window">
+        <field name="name">Checklist Steps</field>
+        <field name="res_model">earlydryer.close.checklist.item</field>
+        <field name="view_mode">list</field>
+        <field name="context">{'active_test': False}</field>
+    </record>
+</odoo>

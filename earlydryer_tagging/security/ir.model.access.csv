@@ -1,0 +1,12 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_earlydryer_tag_range_front_desk,earlydryer.tag.range front desk,model_earlydryer_tag_range,earlydryer_base.group_front_desk,1,0,0,0
+access_earlydryer_tag_range_branch_manager,earlydryer.tag.range branch manager,model_earlydryer_tag_range,earlydryer_base.group_branch_manager,1,1,1,0
+access_earlydryer_tag_range_admin,earlydryer.tag.range admin,model_earlydryer_tag_range,earlydryer_base.group_admin,1,1,1,1
+access_earlydryer_tag_history_user,earlydryer.tag.history user,model_earlydryer_tag_history,base.group_user,1,0,0,0
+access_earlydryer_tag_history_admin,earlydryer.tag.history admin,model_earlydryer_tag_history,earlydryer_base.group_admin,1,1,1,1
+access_earlydryer_scan_log_front_desk,earlydryer.scan.log front desk,model_earlydryer_scan_log,earlydryer_base.group_front_desk,1,0,0,0
+access_earlydryer_scan_log_production,earlydryer.scan.log production,model_earlydryer_scan_log,earlydryer_base.group_production,1,0,0,0
+access_earlydryer_scan_log_admin,earlydryer.scan.log admin,model_earlydryer_scan_log,earlydryer_base.group_admin,1,1,1,1
+access_earlydryer_tag_assign_wizard_front_desk,earlydryer.tag.assign.wizard front desk,model_earlydryer_tag_assign_wizard,earlydryer_base.group_front_desk,1,1,1,1
+access_earlydryer_tag_assign_wizard_line_front_desk,earlydryer.tag.assign.wizard.line front desk,model_earlydryer_tag_assign_wizard_line,earlydryer_base.group_front_desk,1,1,1,1
+access_earlydryer_tag_replace_wizard_front_desk,earlydryer.tag.replace.wizard front desk,model_earlydryer_tag_replace_wizard,earlydryer_base.group_front_desk,1,1,1,1

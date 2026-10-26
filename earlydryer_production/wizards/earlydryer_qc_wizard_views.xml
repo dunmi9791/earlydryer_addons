@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_qc_wizard_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.qc.wizard.form</field>
+        <field name="model">earlydryer.qc.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="job_id" options="{'no_open': True}"/>
+                    </group>
+                    <group>
+                        <field name="employee_id" options="{'no_create': True}"/>
+                    </group>
+                </group>
+                <field name="line_ids" nolabel="1">
+                    <list editable="bottom" create="false" delete="false">
+                        <field name="item_id" readonly="1" force_save="1"/>
+                        <field name="colour" readonly="1" optional="show"/>
+                        <field name="rework_count" readonly="1" optional="hide" string="Reworks"/>
+                        <field name="result" widget="selection_badge" options="{'horizontal': true}"/>
+                        <field name="reason_id" options="{'no_create': True}"
+                               invisible="result != 'fail'" required="result == 'fail'"/>
+                        <field name="return_state" invisible="result != 'fail'" required="result == 'fail'"/>
+                        <field name="photo" widget="image" options="{'size': [0, 48]}"
+                               invisible="result != 'fail'" optional="show"/>
+                        <field name="note" invisible="result != 'fail'" optional="show"/>
+                    </list>
+                </field>
+                <footer>
+                    <button name="action_confirm_pack" type="object" string="All Passed → Pack"
+                            class="btn-primary" invisible="failed_count" data-hotkey="p"/>
+                    <button name="action_confirm" type="object" string="Confirm"
+                            class="btn-primary" invisible="not failed_count" data-hotkey="q"/>
+                    <button name="action_confirm" type="object" string="Pass Only"
+                            invisible="failed_count"/>
+                    <button string="Discard" special="cancel" data-hotkey="x"/>
+                    <field name="failed_count" invisible="1"/>
+                    <field name="passed_count" invisible="1"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

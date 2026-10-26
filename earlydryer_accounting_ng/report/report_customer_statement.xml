@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="action_report_customer_statement" model="ir.actions.report">
+        <field name="name">Customer Statement</field>
+        <field name="model">res.partner</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">earlydryer_accounting_ng.report_customer_statement</field>
+        <field name="report_file">earlydryer_accounting_ng.report_customer_statement</field>
+        <field name="print_report_name">'Statement - %s' % object.name</field>
+        <field name="binding_model_id" ref="base.model_res_partner"/>
+        <field name="binding_type">report</field>
+        <field name="group_ids" eval="[(4, ref('account.group_account_invoice'))]"/>
+    </record>
+
+    <template id="report_customer_statement_document">
+        <t t-call="web.external_layout">
+            <t t-set="st" t-value="statements[o.id]"/>
+            <t t-set="currency" t-value="st['currency']"/>
+            <div class="page">
+                <h3>Statement of Account</h3>
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <div t-out="st['partner']" t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True}'/>
+                        <div t-if="st['partner'].vat">TIN: <span t-out="st['partner'].vat"/></div>
+                    </div>
+                    <div class="col-6 text-end">
+                        <div>As of <span t-out="st['date_to']"/></div>
+                        <div>Amount due: <strong t-out="st['due']" t-options='{"widget": "monetary", "display_currency": currency}'/></div>
+                        <div>Wallet balance: <strong t-out="st['wallet_balance']" t-options='{"widget": "monetary", "display_currency": currency}'/></div>
+                    </div>
+                </div>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Document</th>
+                            <th>Reference</th>
+                            <th>Due</th>
+                            <th class="text-end">Invoiced</th>
+                            <th class="text-end">Paid</th>
+                            <th class="text-end">Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="st['rows']" t-as="row">
+                            <td t-out="row['date']"/>
+                            <td t-out="row['ref']"/>
+                            <td t-out="row['label']"/>
+                            <td t-out="row['due'] or ''"/>
+                            <td class="text-end" t-out="row['debit']" t-options='{"widget": "monetary", "display_currency": currency}'/>
+                            <td class="text-end" t-out="row['credit']" t-options='{"widget": "monetary", "display_currency": currency}'/>
+                            <td class="text-end" t-out="row['balance']" t-options='{"widget": "monetary", "display_currency": currency}'/>
+                        </tr>
+                    </tbody>
+                </table>
+                <h5>Ageing (days overdue)</h5>
+                <table class="table table-sm">
+                    <thead>
+                        <tr><th t-foreach="st['ageing']" t-as="bucket" class="text-end" t-out="bucket['label']"/></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td t-foreach="st['ageing']" t-as="bucket" class="text-end" t-out="bucket['amount']" t-options='{"widget": "monetary", "display_currency": currency}'/></tr>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_customer_statement">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="earlydryer_accounting_ng.report_customer_statement_document" t-lang="o.lang"/>
+            </t>
+        </t>
+    </template>
+</odoo>

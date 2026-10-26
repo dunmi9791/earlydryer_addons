@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <menuitem id="menu_earlydryer_root" name="Earlydryer"
+              web_icon="earlydryer_base,static/description/icon.png"
+              groups="base.group_user" sequence="5"/>
+
+    <menuitem id="menu_earlydryer_branch_overview" name="Branches" parent="menu_earlydryer_root"
+              action="earlydryer_branch_action" groups="group_branch_manager" sequence="10"/>
+
+    <menuitem id="menu_earlydryer_approvals" name="Approvals" parent="menu_earlydryer_root" sequence="20"/>
+    <menuitem id="menu_earlydryer_approval_to_approve" parent="menu_earlydryer_approvals"
+              action="earlydryer_approval_request_action_to_approve" sequence="10"/>
+    <menuitem id="menu_earlydryer_approval_mine" parent="menu_earlydryer_approvals"
+              action="earlydryer_approval_request_action_mine" sequence="20"/>
+    <menuitem id="menu_earlydryer_approval_all" parent="menu_earlydryer_approvals"
+              action="earlydryer_approval_request_action_all" groups="group_branch_manager" sequence="30"/>
+
+    <menuitem id="menu_earlydryer_configuration" name="Configuration" parent="menu_earlydryer_root"
+              groups="group_management" sequence="90"/>
+    <menuitem id="menu_earlydryer_config_branch" parent="menu_earlydryer_configuration"
+              action="earlydryer_branch_action" sequence="10"/>
+    <menuitem id="menu_earlydryer_config_shelf" parent="menu_earlydryer_configuration"
+              action="earlydryer_branch_shelf_action" sequence="20"/>
+    <menuitem id="menu_earlydryer_config_approval_rule" parent="menu_earlydryer_configuration"
+              action="earlydryer_approval_rule_action" sequence="30"/>
+</odoo>

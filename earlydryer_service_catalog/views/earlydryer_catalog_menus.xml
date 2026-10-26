@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <menuitem id="menu_earlydryer_catalogue" name="Catalogue" parent="earlydryer_base.menu_earlydryer_root"
+              groups="earlydryer_base.group_branch_manager" sequence="30"/>
+    <menuitem id="menu_earlydryer_catalogue_laundry" parent="menu_earlydryer_catalogue"
+              action="product_template_action_laundry" sequence="10"/>
+    <menuitem id="menu_earlydryer_catalogue_retail" parent="menu_earlydryer_catalogue"
+              action="product_template_action_retail" sequence="20"/>
+    <menuitem id="menu_earlydryer_catalogue_surcharge" parent="menu_earlydryer_catalogue"
+              action="earlydryer_surcharge_action" sequence="30"/>
+    <menuitem id="menu_earlydryer_catalogue_pricelist" parent="menu_earlydryer_catalogue"
+              action="product_pricelist_action_earlydryer" sequence="40"/>
+    <menuitem id="menu_earlydryer_catalogue_price_check" parent="menu_earlydryer_catalogue"
+              action="earlydryer_price_check_wizard_action" sequence="50"/>
+
+    <menuitem id="menu_earlydryer_config_garment_category" parent="earlydryer_base.menu_earlydryer_configuration"
+              action="earlydryer_garment_category_action" sequence="40"/>
+    <menuitem id="menu_earlydryer_config_service_type" parent="earlydryer_base.menu_earlydryer_configuration"
+              action="earlydryer_service_type_action" sequence="50"/>
+    <menuitem id="menu_earlydryer_config_generate_catalogue" parent="earlydryer_base.menu_earlydryer_configuration"
+              action="earlydryer_catalog_generate_wizard_action" sequence="60"/>
+</odoo>

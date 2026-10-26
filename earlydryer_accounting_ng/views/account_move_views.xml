@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="view_move_form_earlydryer" model="ir.ui.view">
+        <field name="name">account.move.form.earlydryer.accounting</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='button_draft']" position="before">
+                <button name="action_earlydryer_wht_deduction" string="Register WHT Deduction"
+                        type="object" groups="earlydryer_base.group_finance"
+                        invisible="move_type != 'out_invoice' or state != 'posted' or payment_state in ('paid', 'reversed')"/>
+                <button name="action_earlydryer_wht_removal" string="Remove WHT"
+                        type="object" groups="earlydryer_base.group_finance"
+                        invisible="move_type not in ('in_invoice', 'in_refund') or state != 'draft' or not earlydryer_wht_amount"/>
+                <button name="action_earlydryer_wht_certificate_received" string="WHT Certificate Received"
+                        type="object" groups="earlydryer_base.group_finance"
+                        invisible="earlydryer_kind != 'wht_deduction' or earlydryer_wht_certificate_date"/>
+            </xpath>
+            <xpath expr="//div[@name='journal_div']" position="after">
+                <field name="earlydryer_branch_id" options="{'no_create': True}"
+                       readonly="state != 'draft'"/>
+            </xpath>
+            <xpath expr="//page[@id='other_tab_entry']//field[@name='company_id']" position="after">
+                <field name="earlydryer_branch_id" options="{'no_create': True}" readonly="state != 'draft'"/>
+                <field name="earlydryer_kind" invisible="not earlydryer_kind"/>
+                <field name="earlydryer_lodgement_journal_id" invisible="earlydryer_kind != 'lodgement'"/>
+                <field name="earlydryer_rider_employee_id" invisible="earlydryer_kind != 'rider_handover'"/>
+                <field name="earlydryer_wht_invoice_id" invisible="earlydryer_kind != 'wht_deduction'"/>
+                <field name="earlydryer_wht_reference" invisible="earlydryer_kind != 'wht_deduction'"/>
+                <field name="earlydryer_wht_certificate_date" invisible="earlydryer_kind != 'wht_deduction'"/>
+            </xpath>
+            <xpath expr="//field[@name='tax_totals']" position="after">
+                <field name="earlydryer_wht_amount" invisible="not earlydryer_wht_amount" class="oe_subtotal_footer_separator"/>
+                <field name="earlydryer_wht_deducted" invisible="not earlydryer_wht_deducted"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_account_move_filter_earlydryer" model="ir.ui.view">
+        <field name="name">account.move.search.earlydryer.accounting</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_account_move_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='journal_id']" position="after">
+                <field name="earlydryer_branch_id"/>
+            </xpath>
+            <xpath expr="//filter[@name='posted']" position="after">
+                <filter name="earlydryer_lodgements" string="Cash Lodgements" domain="[('earlydryer_kind', '=', 'lodgement')]"/>
+                <filter name="earlydryer_handovers" string="Rider Handovers" domain="[('earlydryer_kind', '=', 'rider_handover')]"/>
+            </xpath>
+            <xpath expr="//group" position="inside">
+                <filter name="group_earlydryer_branch" string="Plant" context="{'group_by': 'earlydryer_branch_id'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="action_earlydryer_lodgements" model="ir.actions.act_window">
+        <field name="name">Cash Lodgements</field>
+        <field name="res_model">account.move</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('earlydryer_kind', 'in', ('lodgement', 'rider_handover'))]</field>
+        <field name="context">{'create': False}</field>
+    </record>
+</odoo>

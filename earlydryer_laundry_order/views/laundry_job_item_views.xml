@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="laundry_job_item_view_list" model="ir.ui.view">
+        <field name="name">laundry.job.item.list</field>
+        <field name="model">laundry.job.item</field>
+        <field name="arch" type="xml">
+            <list create="false">
+                <field name="currency_id" column_invisible="True"/>
+                <field name="job_id"/>
+                <field name="tag_code"/>
+                <field name="product_id"/>
+                <field name="piece_index" optional="hide"/>
+                <field name="colour" optional="show"/>
+                <field name="earlydryer_branch_id" optional="show"/>
+                <field name="job_state" optional="show"/>
+                <field name="qc_state" widget="badge"
+                       decoration-success="qc_state == 'passed'" decoration-warning="qc_state == 'rework'"/>
+                <field name="rework_count" optional="hide"/>
+                <field name="missing" optional="show"/>
+                <field name="price_unit" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="laundry_job_item_view_form" model="ir.ui.view">
+        <field name="name">laundry.job.item.form</field>
+        <field name="model">laundry.job.item</field>
+        <field name="arch" type="xml">
+            <form create="false">
+                <sheet>
+                    <field name="currency_id" invisible="1"/>
+                    <field name="job_state" invisible="1"/>
+                    <group>
+                        <group>
+                            <field name="job_id" readonly="1"/>
+                            <field name="product_id" readonly="job_state != 'received'"/>
+                            <field name="garment_category_id"/>
+                            <field name="service_type_id"/>
+                            <field name="piece_index" readonly="job_state != 'received'"/>
+                            <field name="piece_count" readonly="job_state != 'received'"/>
+                            <field name="surcharge_ids" widget="many2many_tags"
+                                   readonly="job_state != 'received'"/>
+                            <field name="express"/>
+                        </group>
+                        <group>
+                            <field name="tag_code"/>
+                            <field name="colour" readonly="job_state != 'received'"/>
+                            <field name="brand" readonly="job_state != 'received'"/>
+                            <field name="price_unit"/>
+                            <field name="qc_state"/>
+                            <field name="qc_employee_id" invisible="not qc_employee_id"/>
+                            <field name="qc_date" invisible="not qc_date"/>
+                            <field name="rework_count"/>
+                            <field name="missing"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="condition_note"/>
+                        <field name="photo_ids" widget="many2many_binary"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="laundry_job_item_view_search" model="ir.ui.view">
+        <field name="name">laundry.job.item.search</field>
+        <field name="model">laundry.job.item</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="tag_code"/>
+                <field name="job_id"/>
+                <field name="product_id"/>
+                <field name="garment_category_id"/>
+                <field name="service_type_id"/>
+                <filter name="rework" string="Rework" domain="[('qc_state', '=', 'rework')]"/>
+                <filter name="missing" string="Missing" domain="[('missing', '=', True)]"/>
+                <group>
+                    <filter name="group_job" string="Job" context="{'group_by': 'job_id'}"/>
+                    <filter name="group_state" string="Job Stage" context="{'group_by': 'job_state'}"/>
+                    <filter name="group_service" string="Service" context="{'group_by': 'service_type_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+</odoo>

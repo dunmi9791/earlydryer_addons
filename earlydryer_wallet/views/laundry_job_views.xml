@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="laundry_job_view_form_earlydryer_wallet" model="ir.ui.view">
+        <field name="name">laundry.job.form.earlydryer.wallet</field>
+        <field name="model">laundry.job</field>
+        <field name="inherit_id" ref="earlydryer_laundry_order.laundry_job_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <field name="earlydryer_wallet_can_pay" invisible="1"/>
+                <button name="action_earlydryer_wallet_pay" type="object" string="Pay from Wallet"
+                        invisible="not earlydryer_wallet_can_pay"
+                        groups="earlydryer_base.group_front_desk,earlydryer_base.group_finance"/>
+            </xpath>
+            <field name="amount_due" position="after">
+                <field name="earlydryer_wallet_balance"
+                       decoration-success="earlydryer_wallet_balance &gt; 0"/>
+            </field>
+        </field>
+    </record>
+</odoo>

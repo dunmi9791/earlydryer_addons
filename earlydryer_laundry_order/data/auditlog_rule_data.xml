@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo noupdate="1">
+    <!-- confirmed (subscribed) by the post_init_hook, see hooks.py -->
+    <record id="auditlog_rule_laundry_job" model="auditlog.rule">
+        <field name="name">Laundry jobs</field>
+        <field name="model_id" ref="model_laundry_job"/>
+        <field name="log_type">full</field>
+        <field name="log_create" eval="False"/>
+        <field name="log_write" eval="True"/>
+        <field name="log_unlink" eval="True"/>
+        <field name="log_read" eval="False"/>
+        <field name="log_export_data" eval="False"/>
+        <field name="capture_record" eval="True"/>
+    </record>
+    <record id="auditlog_rule_laundry_job_item" model="auditlog.rule">
+        <field name="name">Laundry job items</field>
+        <field name="model_id" ref="model_laundry_job_item"/>
+        <field name="log_type">full</field>
+        <field name="log_create" eval="False"/>
+        <field name="log_write" eval="True"/>
+        <field name="log_unlink" eval="True"/>
+        <field name="log_read" eval="False"/>
+        <field name="log_export_data" eval="False"/>
+        <field name="capture_record" eval="True"/>
+    </record>
+</odoo>

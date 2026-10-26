@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <!-- auditlog allows one rule per model, and account.tax / account.account
+         may already have one: the rules are created (or reused) by the
+         post_init_hook, see hooks.py. The company tax settings are logged by
+         the res.company rule of earlydryer_wallet (write). -->
+</odoo>

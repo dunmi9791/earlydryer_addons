@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="pos_config_view_form_earlydryer_pos" model="ir.ui.view">
+        <field name="name">pos.config.form.earlydryer.pos</field>
+        <field name="model">pos.config</field>
+        <field name="inherit_id" ref="earlydryer_base.pos_config_view_form_earlydryer"/>
+        <field name="arch" type="xml">
+            <field name="earlydryer_branch_id" position="after">
+                <field name="earlydryer_enabled"/>
+            </field>
+        </field>
+    </record>
+</odoo>

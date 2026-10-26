@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo noupdate="1">
+    <record id="pos_category_laundry" model="pos.category">
+        <field name="name">Laundry</field>
+        <field name="sequence">10</field>
+    </record>
+    <record id="pos_category_wash_fold" model="pos.category">
+        <field name="name">Wash &amp; Fold</field>
+        <field name="parent_id" ref="pos_category_laundry"/>
+        <field name="sequence">10</field>
+    </record>
+    <record id="pos_category_wash_iron" model="pos.category">
+        <field name="name">Wash &amp; Iron</field>
+        <field name="parent_id" ref="pos_category_laundry"/>
+        <field name="sequence">20</field>
+    </record>
+    <record id="pos_category_dry_cleaning" model="pos.category">
+        <field name="name">Dry Cleaning</field>
+        <field name="parent_id" ref="pos_category_laundry"/>
+        <field name="sequence">30</field>
+    </record>
+    <record id="pos_category_ironing_only" model="pos.category">
+        <field name="name">Ironing Only</field>
+        <field name="parent_id" ref="pos_category_laundry"/>
+        <field name="sequence">40</field>
+    </record>
+    <record id="pos_category_stain_treatment" model="pos.category">
+        <field name="name">Stain Treatment</field>
+        <field name="parent_id" ref="pos_category_laundry"/>
+        <field name="sequence">50</field>
+    </record>
+    <record id="pos_category_duvet_curtain" model="pos.category">
+        <field name="name">Duvet / Curtain Cleaning</field>
+        <field name="parent_id" ref="pos_category_laundry"/>
+        <field name="sequence">60</field>
+    </record>
+    <record id="pos_category_rug_cleaning" model="pos.category">
+        <field name="name">Rug Cleaning</field>
+        <field name="parent_id" ref="pos_category_laundry"/>
+        <field name="sequence">70</field>
+    </record>
+    <record id="pos_category_shoe_cleaning" model="pos.category">
+        <field name="name">Shoe Cleaning</field>
+        <field name="parent_id" ref="pos_category_laundry"/>
+        <field name="sequence">80</field>
+    </record>
+    <record id="pos_category_bag_cleaning" model="pos.category">
+        <field name="name">Bag Cleaning</field>
+        <field name="parent_id" ref="pos_category_laundry"/>
+        <field name="sequence">90</field>
+    </record>
+    <record id="pos_category_alterations" model="pos.category">
+        <field name="name">Alterations</field>
+        <field name="parent_id" ref="pos_category_laundry"/>
+        <field name="sequence">100</field>
+    </record>
+    <record id="pos_category_extras" model="pos.category">
+        <field name="name">Surcharges &amp; Express</field>
+        <field name="sequence">80</field>
+    </record>
+    <record id="pos_category_retail" model="pos.category">
+        <field name="name">Retail</field>
+        <field name="sequence">90</field>
+    </record>
+</odoo>

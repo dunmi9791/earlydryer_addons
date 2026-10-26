@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_wht_report_wizard_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.wht.report.wizard.form</field>
+        <field name="model">earlydryer.wht.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="WHT Remittance">
+                <group>
+                    <group>
+                        <field name="date_range_id" options="{'no_create': True}"/>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                        <field name="only_unremitted"/>
+                    </group>
+                    <group>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="total_base"/>
+                        <field name="total_wht"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_print_pdf" string="PDF" type="object" class="btn-primary"/>
+                    <button name="action_export_xlsx" string="XLSX" type="object"/>
+                    <button name="action_view_lines" string="Lines" type="object"/>
+                    <button name="action_mark_remitted" string="Mark Remitted" type="object"/>
+                    <button string="Close" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="earlydryer_wht_report_wizard_action" model="ir.actions.act_window">
+        <field name="name">WHT Remittance</field>
+        <field name="res_model">earlydryer.wht.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

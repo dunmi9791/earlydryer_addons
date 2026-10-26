@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_garment_category_view_list" model="ir.ui.view">
+        <field name="name">earlydryer.garment.category.list</field>
+        <field name="model">earlydryer.garment.category</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="garment_group"/>
+                <field name="piece_count"/>
+                <field name="average_weight_kg" optional="hide"/>
+                <field name="product_count" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="earlydryer_garment_category_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.garment.category.form</field>
+        <field name="model">earlydryer.garment.category</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_products" type="object" class="oe_stat_button" icon="fa-tags">
+                            <field name="product_count" widget="statinfo" string="Products"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <field name="active" invisible="1"/>
+                    <field name="image_128" widget="image" class="oe_avatar"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Shirt"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code" placeholder="e.g. SHIRT"/>
+                            <field name="garment_group"/>
+                        </group>
+                        <group>
+                            <field name="piece_count"/>
+                            <field name="average_weight_kg"/>
+                        </group>
+                    </group>
+                    <field name="note" placeholder="Notes"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="earlydryer_garment_category_view_search" model="ir.ui.view">
+        <field name="name">earlydryer.garment.category.search</field>
+        <field name="model">earlydryer.garment.category</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" filter_domain="['|', ('name', 'ilike', self), ('code', 'ilike', self)]"/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <group>
+                    <filter string="Group" name="group_garment_group" context="{'group_by': 'garment_group'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="earlydryer_garment_category_action" model="ir.actions.act_window">
+        <field name="name">Garment Categories</field>
+        <field name="res_model">earlydryer.garment.category</field>
+        <field name="view_mode">list,form</field>
+    </record>
+</odoo>

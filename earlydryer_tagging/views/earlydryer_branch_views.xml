@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_branch_view_form_tagging" model="ir.ui.view">
+        <field name="name">earlydryer.branch.form.tagging</field>
+        <field name="model">earlydryer.branch</field>
+        <field name="inherit_id" ref="earlydryer_base.earlydryer_branch_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_tag_ranges" type="object" class="oe_stat_button"
+                        icon="fa-barcode" groups="earlydryer_base.group_front_desk"
+                        invisible="tag_mode != 'printed'">
+                    <field name="tag_range_count" widget="statinfo" string="Tag Ranges"/>
+                </button>
+            </xpath>
+            <xpath expr="//page[@name='notes']" position="before">
+                <page string="Tagging" name="earlydryer_tagging">
+                    <group>
+                        <group string="Tags" name="tags">
+                            <field name="tag_mode" widget="radio"/>
+                            <field name="tag_prefix" invisible="tag_mode != 'printed'"
+                                   required="tag_mode == 'printed'"/>
+                            <field name="tag_check_digit" invisible="tag_mode != 'printed'"/>
+                            <field name="tag_sequence_id" invisible="tag_mode != 'printed'"
+                                   groups="base.group_no_one"/>
+                            <field name="tag_auto_assign" invisible="tag_mode != 'printed'"/>
+                            <field name="tag_preprinted_pattern" invisible="tag_mode != 'preprinted'"/>
+                        </group>
+                        <group string="Scanning" name="scanning">
+                            <field name="tag_require_packing_scan"/>
+                            <field name="tag_move_commit_per_scan"/>
+                        </group>
+                        <group string="Labels" name="labels">
+                            <field name="tag_label_paperformat_id"/>
+                            <field name="bag_label_paperformat_id"/>
+                        </group>
+                        <group string="Offline POS" name="tag_ranges" invisible="tag_mode != 'printed'">
+                            <div class="text-muted" colspan="2">
+                                Each till gets a block of tag numbers to print tags while offline.
+                                A new block is allocated when fewer than 20% are left.
+                            </div>
+                            <button name="action_earlydryer_allocate_tag_ranges" type="object"
+                                    string="Allocate Tag Ranges" class="btn-secondary" colspan="2"
+                                    groups="earlydryer_base.group_branch_manager" invisible="not id"/>
+                        </group>
+                    </group>
+                    <group string="ZPL Template (Zebra printers only)" name="zpl" invisible="tag_mode != 'printed'">
+                        <field name="tag_zpl_template" nolabel="1" colspan="2" class="font-monospace"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="view_move_line_list_earlydryer_gaps" model="ir.ui.view">
+        <field name="name">account.move.line.list.earlydryer.gaps</field>
+        <field name="model">account.move.line</field>
+        <field name="priority">90</field>
+        <field name="arch" type="xml">
+            <list string="Analytic Gaps" editable="bottom" create="false" delete="false">
+                <field name="date" readonly="1"/>
+                <field name="move_id" readonly="1"/>
+                <field name="journal_id" readonly="1" optional="show"/>
+                <field name="account_id" readonly="1"/>
+                <field name="partner_id" readonly="1" optional="show"/>
+                <field name="name" readonly="1"/>
+                <field name="earlydryer_branch_id" readonly="1" optional="show"/>
+                <field name="analytic_distribution" widget="analytic_distribution"
+                       options="{'account_field': 'account_id', 'business_domain': 'general'}"/>
+                <field name="company_currency_id" column_invisible="1"/>
+                <field name="balance" readonly="1" sum="Total"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_move_line_list_earlydryer_wht" model="ir.ui.view">
+        <field name="name">account.move.line.list.earlydryer.wht</field>
+        <field name="model">account.move.line</field>
+        <field name="priority">90</field>
+        <field name="arch" type="xml">
+            <list string="WHT Receivable" create="false" delete="false">
+                <field name="date"/>
+                <field name="move_id"/>
+                <field name="partner_id"/>
+                <field name="name"/>
+                <field name="company_currency_id" column_invisible="1"/>
+                <field name="balance" sum="Total"/>
+                <field name="amount_residual" sum="Open"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_earlydryer_analytic_gaps" model="ir.actions.act_window">
+        <field name="name">Analytic Gaps</field>
+        <field name="res_model">account.move.line</field>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_move_line_list_earlydryer_gaps"/>
+        <field name="domain">[('earlydryer_analytic_gap', '=', True)]</field>
+        <field name="context">{'create': False}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No analytic gap</p>
+            <p>Posted income and expense lines without a plant analytic account
+               are listed here. Set their plant in the analytic column.</p>
+        </field>
+    </record>
+
+    <record id="action_earlydryer_wht_awaiting_certificates" model="ir.actions.act_window">
+        <field name="name">WHT Awaiting Certificates</field>
+        <field name="res_model">account.move.line</field>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_move_line_list_earlydryer_wht"/>
+        <field name="domain">[('move_id.earlydryer_kind', '=', 'wht_deduction'), ('move_id.earlydryer_wht_certificate_date', '=', False), ('move_id.state', '=', 'posted'), ('balance', '&gt;', 0)]</field>
+        <field name="context">{'create': False}</field>
+    </record>
+</odoo>

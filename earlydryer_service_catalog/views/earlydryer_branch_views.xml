@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_branch_view_form_catalog" model="ir.ui.view">
+        <field name="name">earlydryer.branch.form.catalog</field>
+        <field name="model">earlydryer.branch</field>
+        <field name="inherit_id" ref="earlydryer_base.earlydryer_branch_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_earlydryer_sync_pos_pricelists" type="object" string="Sync POS Price Lists"
+                        groups="earlydryer_base.group_management" invisible="not id"
+                        confirm="Set the walk-in price list as default and the corporate contract lists as available on every point of sale of this plant?"/>
+            </xpath>
+            <xpath expr="//page[@name='notes']" position="before">
+                <page string="Price Lists" name="earlydryer_pricelists">
+                    <field name="earlydryer_pricelist_ids" readonly="1">
+                        <list>
+                            <field name="name"/>
+                            <field name="earlydryer_channel"/>
+                            <field name="earlydryer_is_contract"/>
+                        </list>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+</odoo>

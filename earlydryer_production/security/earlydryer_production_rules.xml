@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <!-- earlydryer_base branch pattern: own plants, all plants for group_all_branches -->
+
+    <!-- earlydryer.wash.batch -->
+    <record id="earlydryer_wash_batch_rule_company" model="ir.rule">
+        <field name="name">Wash batch: multi-company</field>
+        <field name="model_id" ref="model_earlydryer_wash_batch"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="earlydryer_wash_batch_rule_branch" model="ir.rule">
+        <field name="name">Wash batch: allowed branches</field>
+        <field name="model_id" ref="model_earlydryer_wash_batch"/>
+        <field name="domain_force">[('earlydryer_branch_id', 'in', earlydryer_branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="earlydryer_wash_batch_rule_all_branches" model="ir.rule">
+        <field name="name">Wash batch: all branches</field>
+        <field name="model_id" ref="model_earlydryer_wash_batch"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('earlydryer_base.group_all_branches'))]"/>
+    </record>
+
+    <!-- laundry.job.item.rework -->
+    <record id="laundry_job_item_rework_rule_branch" model="ir.rule">
+        <field name="name">Item rework: allowed branches</field>
+        <field name="model_id" ref="model_laundry_job_item_rework"/>
+        <field name="domain_force">[('earlydryer_branch_id', 'in', earlydryer_branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="laundry_job_item_rework_rule_all_branches" model="ir.rule">
+        <field name="name">Item rework: all branches</field>
+        <field name="model_id" ref="model_laundry_job_item_rework"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('earlydryer_base.group_all_branches'))]"/>
+    </record>
+
+    <!-- earlydryer.tablet.identification -->
+    <record id="earlydryer_tablet_identification_rule_branch" model="ir.rule">
+        <field name="name">Tablet identification: allowed branches</field>
+        <field name="model_id" ref="model_earlydryer_tablet_identification"/>
+        <field name="domain_force">[('earlydryer_branch_id', 'in', earlydryer_branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="earlydryer_tablet_identification_rule_all_branches" model="ir.rule">
+        <field name="name">Tablet identification: all branches</field>
+        <field name="model_id" ref="model_earlydryer_tablet_identification"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('earlydryer_base.group_all_branches'))]"/>
+    </record>
+
+    <!--
+        maintenance.equipment: core lets internal users read only the
+        equipment they follow. Plant staff also read the machines of their
+        plants; Branch Managers configure them. Equipment without a plant
+        keeps the core rules only.
+    -->
+    <record id="maintenance_equipment_rule_earlydryer_branch" model="ir.rule">
+        <field name="name">Equipment: machines of the allowed branches</field>
+        <field name="model_id" ref="maintenance.model_maintenance_equipment"/>
+        <field name="domain_force">[('earlydryer_branch_id', 'in', earlydryer_branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('earlydryer_base.group_front_desk')), (4, ref('earlydryer_base.group_production'))]"/>
+    </record>
+    <record id="maintenance_equipment_rule_earlydryer_all_branches" model="ir.rule">
+        <field name="name">Equipment: machines of all branches</field>
+        <field name="model_id" ref="maintenance.model_maintenance_equipment"/>
+        <field name="domain_force">[('earlydryer_branch_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('earlydryer_base.group_all_branches'))]"/>
+    </record>
+    <!-- maintenance.request: Branch Managers follow the requests of their machines -->
+    <record id="maintenance_request_rule_earlydryer_branch_manager" model="ir.rule">
+        <field name="name">Maintenance request: machines of the managed branches</field>
+        <field name="model_id" ref="maintenance.model_maintenance_request"/>
+        <field name="domain_force">[('equipment_id.earlydryer_branch_id', 'in', earlydryer_branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('earlydryer_base.group_branch_manager'))]"/>
+    </record>
+    <record id="maintenance_request_rule_earlydryer_all_branches" model="ir.rule">
+        <field name="name">Maintenance request: machines of all branches</field>
+        <field name="model_id" ref="maintenance.model_maintenance_request"/>
+        <field name="domain_force">[('equipment_id.earlydryer_branch_id', '!=', False)]</field>
+        <field name="groups" eval="[(4, ref('earlydryer_base.group_operations_manager'))]"/>
+    </record>
+</odoo>

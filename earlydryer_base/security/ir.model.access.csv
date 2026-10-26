@@ -1,0 +1,12 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_earlydryer_branch_user,earlydryer.branch user,model_earlydryer_branch,base.group_user,1,0,0,0
+access_earlydryer_branch_admin,earlydryer.branch admin,model_earlydryer_branch,group_admin,1,1,1,1
+access_earlydryer_branch_shelf_user,earlydryer.branch.shelf user,model_earlydryer_branch_shelf,base.group_user,1,0,0,0
+access_earlydryer_branch_shelf_branch_manager,earlydryer.branch.shelf branch manager,model_earlydryer_branch_shelf,group_branch_manager,1,1,1,0
+access_earlydryer_branch_shelf_admin,earlydryer.branch.shelf admin,model_earlydryer_branch_shelf,group_admin,1,1,1,1
+access_earlydryer_approval_rule_user,earlydryer.approval.rule user,model_earlydryer_approval_rule,base.group_user,1,0,0,0
+access_earlydryer_approval_rule_management,earlydryer.approval.rule management,model_earlydryer_approval_rule,group_management,1,1,1,1
+access_earlydryer_approval_request_user,earlydryer.approval.request user,model_earlydryer_approval_request,base.group_user,1,1,1,0
+access_earlydryer_approval_request_admin,earlydryer.approval.request admin,model_earlydryer_approval_request,group_admin,1,1,1,1
+access_earlydryer_branch_shelf_generate_branch_manager,earlydryer.branch.shelf.generate branch manager,model_earlydryer_branch_shelf_generate,group_branch_manager,1,1,1,1
+access_earlydryer_approval_request_wizard_user,earlydryer.approval.request.wizard user,model_earlydryer_approval_request_wizard,base.group_user,1,1,1,1

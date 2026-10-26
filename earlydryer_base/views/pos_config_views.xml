@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="pos_config_view_form_earlydryer" model="ir.ui.view">
+        <field name="name">pos.config.form.earlydryer</field>
+        <field name="model">pos.config</field>
+        <field name="inherit_id" ref="point_of_sale.pos_config_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='title']" position="after">
+                <group name="earlydryer">
+                    <field name="earlydryer_branch_id" options="{'no_create': True}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="pos_config_view_tree_earlydryer" model="ir.ui.view">
+        <field name="name">pos.config.list.earlydryer</field>
+        <field name="model">pos.config</field>
+        <field name="inherit_id" ref="point_of_sale.view_pos_config_tree"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="earlydryer_branch_id" optional="show"/>
+            </field>
+        </field>
+    </record>
+</odoo>

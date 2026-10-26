@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <!-- Customer invoices and credit notes: RC number, TIN, plant, laundry
+         jobs, bank accounts for transfers and the footer note. Vendor bills:
+         WHT withheld. Inherits the 19 template, never copies it. VAT lines
+         print only when there is VAT, i.e. when Earlydryer is registered
+         (the VAT switch takes the sales VAT off the products otherwise). -->
+    <template id="report_invoice_document_earlydryer" inherit_id="account.report_invoice_document">
+        <xpath expr="//div[@id='informations']" position="before">
+            <t t-set="ed_customer_doc" t-value="o.move_type in ('out_invoice', 'out_refund')"/>
+            <div class="row mb-3" id="earlydryer_identity" t-if="ed_customer_doc">
+                <div class="col-6">
+                    <strong t-field="o.company_id.name"/>
+                    <div t-if="o.company_id.company_registry">RC: <span t-field="o.company_id.company_registry"/></div>
+                    <div t-if="o.company_id.vat">TIN: <span t-field="o.company_id.vat"/></div>
+                </div>
+                <div class="col-6" t-if="o.earlydryer_branch_id" id="earlydryer_plant">
+                    <t t-set="ed_plant" t-value="o.earlydryer_branch_id.sudo()"/>
+                    <strong t-out="ed_plant.name"/>
+                    <div t-if="ed_plant.partner_id" t-out="ed_plant.partner_id"
+                         t-options='{"widget": "contact", "fields": ["address"], "no_marker": True}'/>
+                    <div t-if="ed_plant.phone">Tel: <span t-out="ed_plant.phone"/></div>
+                </div>
+            </div>
+        </xpath>
+        <xpath expr="//div[@id='informations']" position="after">
+            <t t-set="ed_jobs" t-value="o._earlydryer_laundry_jobs() if o.move_type in ('out_invoice', 'out_refund') else []"/>
+            <div class="mb-3" id="earlydryer_jobs" t-if="ed_jobs">
+                <strong>Laundry job(s):</strong>
+                <span t-out="', '.join(ed_jobs.mapped('name'))"/>
+                <span> (<t t-out="sum(ed_jobs.mapped('item_count'))"/> items)</span>
+            </div>
+            <div class="mb-3" id="earlydryer_wht_bill"
+                 t-if="o.move_type in ('in_invoice', 'in_refund') and o.earlydryer_wht_amount">
+                <strong>WHT deducted:</strong>
+                <span t-field="o.earlydryer_wht_amount" t-options='{"widget": "monetary", "display_currency": o.company_id.currency_id}'/>
+                <span>(paid to the tax authority; the vendor is paid the net amount)</span>
+            </div>
+        </xpath>
+        <xpath expr="//div[@id='payment_term']" position="inside">
+            <t t-if="o.move_type == 'out_invoice'">
+                <t t-set="ed_banks" t-value="o._earlydryer_invoice_bank_journals()"/>
+                <div class="mb-3" id="earlydryer_bank_accounts" t-if="ed_banks">
+                    <strong>Pay by bank transfer to:</strong>
+                    <div t-foreach="ed_banks" t-as="ed_bank">
+                        <span t-out="ed_bank.bank_id.name or ed_bank.name"/>:
+                        <span t-out="ed_bank.bank_acc_number"/>
+                        (<span t-out="ed_bank.bank_account_id.partner_id.name or o.company_id.name"/>)
+                    </div>
+                </div>
+            </t>
+            <div class="mb-3" id="earlydryer_footer_note"
+                 t-if="o.move_type in ('out_invoice', 'out_refund') and o.company_id.earlydryer_invoice_footer">
+                <span t-field="o.company_id.earlydryer_invoice_footer"/>
+            </div>
+        </xpath>
+    </template>
+</odoo>

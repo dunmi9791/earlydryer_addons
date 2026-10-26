@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_tag_range_view_list" model="ir.ui.view">
+        <field name="name">earlydryer.tag.range.list</field>
+        <field name="model">earlydryer.tag.range</field>
+        <field name="arch" type="xml">
+            <!-- ranges are allocated from the plant (button, cron, POS opening), never typed -->
+            <list create="false" decoration-muted="state != 'active'"
+                  decoration-warning="state == 'active' and remaining_count &lt; size * 0.2">
+                <field name="branch_id"/>
+                <field name="pos_config_id"/>
+                <field name="first_code"/>
+                <field name="last_code"/>
+                <field name="start_number" optional="hide"/>
+                <field name="end_number" optional="hide"/>
+                <field name="next_number" optional="hide"/>
+                <field name="size" optional="hide"/>
+                <field name="remaining_count"/>
+                <field name="allocated_on" optional="show"/>
+                <field name="allocated_by" widget="many2one_avatar_user" optional="hide"/>
+                <field name="state" widget="badge" decoration-success="state == 'active'"
+                       decoration-danger="state == 'cancelled'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="earlydryer_tag_range_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.tag.range.form</field>
+        <field name="model">earlydryer.tag.range</field>
+        <field name="arch" type="xml">
+            <form create="false">
+                <header>
+                    <button name="action_cancel" type="object" string="Cancel Range"
+                            invisible="state != 'active'" groups="earlydryer_base.group_branch_manager"
+                            confirm="The numbers left in this range will never be used. Cancel it?"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <div class="oe_title"><h1><field name="name"/></h1></div>
+                    <group>
+                        <group>
+                            <field name="branch_id"/>
+                            <field name="pos_config_id" options="{'no_create': True}"
+                                   domain="[('earlydryer_branch_id', '=', branch_id)]"/>
+                            <field name="first_code"/>
+                            <field name="last_code"/>
+                        </group>
+                        <group>
+                            <field name="start_number"/>
+                            <field name="end_number"/>
+                            <field name="next_number"/>
+                            <field name="remaining_count"/>
+                            <field name="allocated_on"/>
+                            <field name="allocated_by"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="earlydryer_tag_range_view_search" model="ir.ui.view">
+        <field name="name">earlydryer.tag.range.search</field>
+        <field name="model">earlydryer.tag.range</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="branch_id"/>
+                <field name="pos_config_id"/>
+                <filter name="active_ranges" string="Active" domain="[('state', '=', 'active')]"/>
+                <filter name="exhausted" string="Exhausted" domain="[('state', '=', 'exhausted')]"/>
+                <filter name="cancelled" string="Cancelled" domain="[('state', '=', 'cancelled')]"/>
+                <group>
+                    <filter name="group_branch" string="Plant" context="{'group_by': 'branch_id'}"/>
+                    <filter name="group_pos" string="Point of Sale" context="{'group_by': 'pos_config_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="earlydryer_tag_range_action" model="ir.actions.act_window">
+        <field name="name">Tag Ranges</field>
+        <field name="res_model">earlydryer.tag.range</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_active_ranges': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No tag range yet</p>
+            <p>Blocks of printed tag numbers held by the tills for offline intake.
+               Allocate them from the plant (Tagging tab); they are topped up automatically.</p>
+        </field>
+    </record>
+</odoo>

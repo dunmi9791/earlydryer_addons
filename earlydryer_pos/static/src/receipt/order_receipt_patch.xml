@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="earlydryer_pos.OrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension">
+        <xpath expr="//ReceiptHeader" position="after">
+            <div t-if="edIsLaundry" class="ed-receipt-head text-center pt-2">
+                <div class="fw-bolder fs-5" t-esc="edBranch.name"/>
+                <div t-if="edBranch.address" t-esc="edBranch.address"/>
+                <div t-if="edBranch.phone">Tel: <t t-esc="edBranch.phone"/>
+                </div>
+                <img t-if="edBarcode" t-att-src="edBarcode" class="ed-receipt-barcode mt-2" alt="barcode"/>
+                <div class="font-monospace" t-esc="order.pos_reference"/>
+                <div class="pt-2 text-start">
+                    <div>Customer: <b class="ed-receipt-customer" t-esc="edCustomer.name"/>
+                    </div>
+                    <div t-if="edCustomer.phone">Phone: <t t-esc="edCustomer.phone"/>
+                    </div>
+                    <div t-if="order.earlydryer_express" class="fw-bolder">EXPRESS</div>
+                    <div t-if="order.earlydryer_fulfilment === 'deliver'">Delivery</div>
+                    <div t-if="order.earlydryer_customer_note">Instructions: <t t-esc="order.earlydryer_customer_note"/>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+        <xpath expr="//Orderline" position="inside">
+            <t t-set="edInfo" t-value="edLineInfo(line)"/>
+            <t t-if="edInfo">
+                <li t-if="edInfo.linkedTo" class="ed-linked fst-italic">for <t t-esc="edInfo.linkedTo"/>
+                </li>
+                <li t-if="edInfo.colour" class="ed-colour" t-esc="edInfo.colour"/>
+                <li t-if="edInfo.condition" class="ed-condition">Condition: <t t-esc="edInfo.condition"/>
+                </li>
+                <li t-if="edInfo.tags" class="ed-tags font-monospace">Tags: <t t-esc="edInfo.tags"/>
+                </li>
+                <li t-if="edInfo.untagged" class="ed-untagged fw-bold">To tag at the counter</li>
+            </t>
+        </xpath>
+        <xpath expr="//div[hasclass('before-footer')]" position="before">
+            <div t-if="edIsLaundry" class="ed-receipt-summary pt-2">
+                <div t-if="edPromise" class="d-flex">
+                    <span>Ready (estimated)</span>
+                    <span class="ms-auto ed-receipt-promise" t-esc="edPromise"/>
+                </div>
+                <div class="d-flex">
+                    <span>Amount paid</span>
+                    <span class="ms-auto font-monospace" t-esc="formatCurrency(edPaid)"/>
+                </div>
+                <div class="d-flex fw-bolder ed-balance-due">
+                    <span>Balance due</span>
+                    <span class="ms-auto font-monospace" t-esc="formatCurrency(edOnAccount)"/>
+                </div>
+            </div>
+        </xpath>
+        <xpath expr="//div[hasclass('after-footer')]" position="before">
+            <div t-if="edIsLaundry and order.config.earlydryer_receipt_terms" class="ed-receipt-terms pt-3 small text-center" style="white-space: pre-line;" t-esc="order.config.earlydryer_receipt_terms"/>
+        </xpath>
+    </t>
+</templates>

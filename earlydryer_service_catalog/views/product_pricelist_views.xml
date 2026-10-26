@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="product_pricelist_view_form_earlydryer" model="ir.ui.view">
+        <field name="name">product.pricelist.form.earlydryer</field>
+        <field name="model">product.pricelist</field>
+        <field name="inherit_id" ref="product.product_pricelist_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_earlydryer_new_version" type="object" string="New Price Version"
+                        groups="earlydryer_base.group_management" invisible="not id or not earlydryer_channel"/>
+            </xpath>
+            <xpath expr="//group[@name='pricelist_settings']" position="inside">
+                <field name="earlydryer_channel"/>
+                <field name="earlydryer_branch_id" invisible="not earlydryer_channel" placeholder="All plants"/>
+                <field name="earlydryer_is_contract" invisible="earlydryer_channel != 'corporate'"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_pricelist_view_list_earlydryer" model="ir.ui.view">
+        <field name="name">product.pricelist.list.earlydryer</field>
+        <field name="model">product.pricelist</field>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="earlydryer_branch_id" placeholder="All plants"/>
+                <field name="earlydryer_channel"/>
+                <field name="earlydryer_is_contract"/>
+                <field name="currency_id" groups="base.group_multi_currency"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="product_pricelist_view_search_earlydryer" model="ir.ui.view">
+        <field name="name">product.pricelist.search.earlydryer</field>
+        <field name="model">product.pricelist</field>
+        <field name="inherit_id" ref="product.product_pricelist_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <field name="earlydryer_branch_id"/>
+                <filter string="Contracts" name="earlydryer_contract" domain="[('earlydryer_is_contract', '=', True)]"/>
+                <group>
+                    <filter string="Plant" name="group_earlydryer_branch" context="{'group_by': 'earlydryer_branch_id'}"/>
+                    <filter string="Channel" name="group_earlydryer_channel" context="{'group_by': 'earlydryer_channel'}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_pricelist_action_earlydryer" model="ir.actions.act_window">
+        <field name="name">Price Lists</field>
+        <field name="res_model">product.pricelist</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('earlydryer_channel', '!=', False)]</field>
+        <field name="context">{'default_earlydryer_channel': 'walk_in', 'default_base': 'list_price'}</field>
+        <field name="view_ids" eval="[
+            Command.clear(),
+            Command.create({'view_mode': 'list', 'view_id': ref('product_pricelist_view_list_earlydryer')}),
+        ]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create a price list per plant and channel</p>
+            <p>Walk-in and pickup price lists per plant (or for all plants), and one contract price list per corporate client.</p>
+        </field>
+    </record>
+</odoo>

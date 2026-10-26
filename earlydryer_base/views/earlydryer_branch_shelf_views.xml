@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_branch_shelf_view_list" model="ir.ui.view">
+        <field name="name">earlydryer.branch.shelf.list</field>
+        <field name="model">earlydryer.branch.shelf</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="branch_id" options="{'no_create': True}"/>
+                <field name="name"/>
+                <field name="capacity"/>
+                <field name="note" optional="hide"/>
+                <field name="active" column_invisible="True"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="earlydryer_branch_shelf_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.branch.shelf.form</field>
+        <field name="model">earlydryer.branch.shelf</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <field name="active" invisible="1"/>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="branch_id" options="{'no_create': True}"/>
+                        </group>
+                        <group>
+                            <field name="capacity"/>
+                            <field name="sequence"/>
+                        </group>
+                    </group>
+                    <field name="note" placeholder="Notes..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="earlydryer_branch_shelf_view_search" model="ir.ui.view">
+        <field name="name">earlydryer.branch.shelf.search</field>
+        <field name="model">earlydryer.branch.shelf</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="branch_id"/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <group>
+                    <filter string="Branch" name="group_branch" context="{'group_by': 'branch_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="earlydryer_branch_shelf_action" model="ir.actions.act_window">
+        <field name="name">Shelves</field>
+        <field name="res_model">earlydryer.branch.shelf</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_group_branch': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Add collection shelves</p>
+            <p>Finished orders wait on numbered shelves until collection. Use "Generate Shelves" on a branch to create many at once.</p>
+        </field>
+    </record>
+</odoo>

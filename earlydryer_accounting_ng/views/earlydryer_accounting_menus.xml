@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="action_earlydryer_accounting_setup" model="ir.actions.server">
+        <field name="name">Run Accounting Setup</field>
+        <field name="model_id" ref="model_earlydryer_accounting_setup_wizard"/>
+        <field name="state">code</field>
+        <field name="code">action = model.action_open()</field>
+        <field name="group_ids" eval="[(4, ref('earlydryer_base.group_finance')), (4, ref('earlydryer_base.group_admin'))]"/>
+    </record>
+
+    <menuitem id="menu_earlydryer_accounting" name="Earlydryer" parent="account.menu_finance"
+              sequence="25" groups="earlydryer_base.group_branch_manager,earlydryer_base.group_finance"/>
+    <menuitem id="menu_earlydryer_cash_lodgement" parent="menu_earlydryer_accounting"
+              action="earlydryer_cash_lodgement_wizard_action" sequence="10"
+              groups="earlydryer_base.group_branch_manager,earlydryer_base.group_finance"/>
+    <menuitem id="menu_earlydryer_rider_handover" parent="menu_earlydryer_accounting"
+              action="earlydryer_rider_handover_wizard_action" sequence="15"
+              groups="earlydryer_base.group_branch_manager,earlydryer_base.group_finance"/>
+    <menuitem id="menu_earlydryer_lodgements" parent="menu_earlydryer_accounting"
+              action="action_earlydryer_lodgements" sequence="18"
+              groups="earlydryer_base.group_finance"/>
+    <menuitem id="menu_earlydryer_daily_cash" parent="menu_earlydryer_accounting"
+              action="earlydryer_daily_cash_wizard_action" sequence="20"/>
+    <menuitem id="menu_earlydryer_close_checklist" parent="menu_earlydryer_accounting"
+              action="earlydryer_close_checklist_action" sequence="30"
+              groups="earlydryer_base.group_finance,earlydryer_base.group_management"/>
+    <menuitem id="menu_earlydryer_analytic_gaps" parent="menu_earlydryer_accounting"
+              action="action_earlydryer_analytic_gaps" sequence="40"
+              groups="earlydryer_base.group_finance"/>
+
+    <menuitem id="menu_earlydryer_wht" name="Withholding Tax" parent="menu_earlydryer_accounting"
+              sequence="50" groups="earlydryer_base.group_finance"/>
+    <menuitem id="menu_earlydryer_wht_report" parent="menu_earlydryer_wht"
+              action="earlydryer_wht_report_wizard_action" sequence="10"/>
+    <menuitem id="menu_earlydryer_wht_awaiting" parent="menu_earlydryer_wht"
+              action="action_earlydryer_wht_awaiting_certificates" sequence="20"/>
+    <menuitem id="menu_earlydryer_wht_category" parent="menu_earlydryer_wht"
+              action="earlydryer_wht_category_action" sequence="30"/>
+
+    <menuitem id="menu_earlydryer_reports" name="Reports" parent="menu_earlydryer_accounting"
+              sequence="60" groups="earlydryer_base.group_finance"/>
+    <menuitem id="menu_earlydryer_trial_balance" parent="menu_earlydryer_reports"
+              action="account_financial_report.action_trial_balance_wizard" sequence="10"/>
+    <menuitem id="menu_earlydryer_general_ledger" parent="menu_earlydryer_reports"
+              action="account_financial_report.action_general_ledger_wizard" sequence="20"/>
+    <menuitem id="menu_earlydryer_open_items" parent="menu_earlydryer_reports"
+              action="account_financial_report.action_open_items_wizard" sequence="30"/>
+    <menuitem id="menu_earlydryer_aged_balance" parent="menu_earlydryer_reports"
+              action="account_financial_report.action_aged_partner_balance_wizard" sequence="40"/>
+    <menuitem id="menu_earlydryer_mis" parent="menu_earlydryer_reports"
+              action="mis_builder.mis_report_instance_view_action" sequence="50"/>
+
+    <menuitem id="menu_earlydryer_accounting_config" name="Configuration" parent="menu_earlydryer_accounting"
+              sequence="90" groups="earlydryer_base.group_finance,earlydryer_base.group_admin"/>
+    <menuitem id="menu_earlydryer_accounting_setup" parent="menu_earlydryer_accounting_config"
+              action="action_earlydryer_accounting_setup" sequence="10"/>
+    <menuitem id="menu_earlydryer_opening_balance" parent="menu_earlydryer_accounting_config"
+              action="earlydryer_opening_balance_wizard_action" sequence="20"/>
+    <menuitem id="menu_earlydryer_checklist_items" parent="menu_earlydryer_accounting_config"
+              action="earlydryer_close_checklist_item_action" sequence="30"/>
+    <menuitem id="menu_earlydryer_distribution_models" parent="menu_earlydryer_accounting_config"
+              action="analytic.action_analytic_distribution_model" sequence="40"/>
+</odoo>

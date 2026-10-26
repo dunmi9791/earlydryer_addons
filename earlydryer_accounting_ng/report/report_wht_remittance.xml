@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="action_report_wht_remittance" model="ir.actions.report">
+        <field name="name">WHT Remittance</field>
+        <field name="model">earlydryer.wht.report.wizard</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">earlydryer_accounting_ng.report_wht_remittance</field>
+        <field name="report_file">earlydryer_accounting_ng.report_wht_remittance</field>
+        <field name="print_report_name">'WHT %s - %s' % (object.date_from, object.date_to)</field>
+    </record>
+    <record id="action_report_wht_remittance_xlsx" model="ir.actions.report">
+        <field name="name">WHT Remittance XLSX</field>
+        <field name="model">earlydryer.wht.report.wizard</field>
+        <field name="report_type">xlsx</field>
+        <field name="report_name">earlydryer_accounting_ng.report_wht_remittance_xlsx</field>
+        <field name="report_file">wht_remittance</field>
+    </record>
+
+    <template id="report_wht_remittance">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="web.external_layout">
+                    <t t-set="currency" t-value="o.currency_id"/>
+                    <t t-set="rows" t-value="rows[o.id]"/>
+                    <div class="page">
+                        <h3>WHT Remittance: <span t-field="o.date_from"/> - <span t-field="o.date_to"/></h3>
+                        <p t-if="o.only_unremitted">WHT not remitted yet.</p>
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Vendor</th>
+                                    <th>TIN</th>
+                                    <th>Invoice</th>
+                                    <th>Date</th>
+                                    <th>Category</th>
+                                    <th class="text-end">Gross</th>
+                                    <th class="text-end">Rate</th>
+                                    <th class="text-end">WHT</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="rows" t-as="row">
+                                    <td t-out="row['vendor']"/>
+                                    <td t-out="row['tin']"/>
+                                    <td><t t-out="row['invoice']"/><br/><small t-out="row['number']"/></td>
+                                    <td t-out="row['date']"/>
+                                    <td><t t-out="row['category']"/> <small>(<t t-out="row['vendor_type']"/>)</small></td>
+                                    <td class="text-end" t-out="row['base']" t-options='{"widget": "monetary", "display_currency": currency}'/>
+                                    <td class="text-end"><t t-out="row['rate']"/>%</td>
+                                    <td class="text-end" t-out="row['wht']" t-options='{"widget": "monetary", "display_currency": currency}'/>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th colspan="5">Total</th>
+                                    <th class="text-end" t-out="sum(r['base'] for r in rows)" t-options='{"widget": "monetary", "display_currency": currency}'/>
+                                    <th/>
+                                    <th class="text-end" t-out="sum(r['wht'] for r in rows)" t-options='{"widget": "monetary", "display_currency": currency}'/>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

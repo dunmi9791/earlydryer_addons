@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <!-- Wallets are usable at every plant: no branch rule, only the company -->
+    <record id="earlydryer_wallet_rule_company" model="ir.rule">
+        <field name="name">Earlydryer wallet: multi-company</field>
+        <field name="model_id" ref="model_earlydryer_wallet"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="earlydryer_wallet_transaction_rule_company" model="ir.rule">
+        <field name="name">Earlydryer wallet transaction: multi-company</field>
+        <field name="model_id" ref="model_earlydryer_wallet_transaction"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+</odoo>

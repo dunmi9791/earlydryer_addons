@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <!--
+        Plant 1: the front desk moves the orders, no batches.
+        Plant 2: front desk and production tablet, wash/dry batches.
+    -->
+    <record id="earlydryer_base.branch_plant_1" model="earlydryer.branch">
+        <field name="production_mode">front_desk</field>
+        <field name="use_wash_batches" eval="False"/>
+    </record>
+    <record id="earlydryer_base.branch_plant_2" model="earlydryer.branch">
+        <field name="production_mode">both</field>
+        <field name="use_wash_batches" eval="True"/>
+    </record>
+
+    <!-- Badges (scan) and PINs (type) of the plant staff -->
+    <record id="earlydryer_laundry_order.employee_washer_p1" model="hr.employee">
+        <field name="barcode">BADGE-P1-01</field>
+        <field name="pin">1101</field>
+    </record>
+    <record id="earlydryer_laundry_order.employee_ironer_p1" model="hr.employee">
+        <field name="barcode">BADGE-P1-02</field>
+        <field name="pin">1102</field>
+    </record>
+    <record id="earlydryer_laundry_order.employee_qc_p1" model="hr.employee">
+        <field name="barcode">BADGE-P1-03</field>
+        <field name="pin">1103</field>
+    </record>
+    <record id="earlydryer_laundry_order.employee_production_p1" model="hr.employee">
+        <field name="barcode">BADGE-P1-04</field>
+        <field name="pin">1104</field>
+    </record>
+    <record id="earlydryer_laundry_order.employee_washer_p2" model="hr.employee">
+        <field name="barcode">BADGE-P2-01</field>
+        <field name="pin">2201</field>
+    </record>
+    <record id="earlydryer_laundry_order.employee_ironer_p2" model="hr.employee">
+        <field name="barcode">BADGE-P2-02</field>
+        <field name="pin">2202</field>
+    </record>
+    <record id="earlydryer_laundry_order.employee_qc_p2" model="hr.employee">
+        <field name="barcode">BADGE-P2-03</field>
+        <field name="pin">2203</field>
+    </record>
+
+    <!-- Tablet logins: one shared Odoo user per plant (login = password, demo only) -->
+    <record id="user_tablet_p1" model="res.users">
+        <field name="name">Production Tablet P1</field>
+        <field name="login">ed_tablet_p1</field>
+        <field name="password">ed_tablet_p1</field>
+        <field name="group_ids" eval="[(6, 0, [ref('earlydryer_base.group_production')])]"/>
+        <field name="earlydryer_branch_ids" eval="[(6, 0, [ref('earlydryer_base.branch_plant_1')])]"/>
+        <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_1"/>
+    </record>
+    <record id="user_tablet_p2" model="res.users">
+        <field name="name">Production Tablet P2</field>
+        <field name="login">ed_tablet_p2</field>
+        <field name="password">ed_tablet_p2</field>
+        <field name="group_ids" eval="[(6, 0, [ref('earlydryer_base.group_qc')])]"/>
+        <field name="earlydryer_branch_ids" eval="[(6, 0, [ref('earlydryer_base.branch_plant_2')])]"/>
+        <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_2"/>
+    </record>
+
+    <!-- Machines (placeholders until Earlydryer lists its equipment) -->
+    <record id="maintenance_team_plants" model="maintenance.team">
+        <field name="name">Plant Maintenance</field>
+    </record>
+    <record id="equipment_category_laundry" model="maintenance.equipment.category">
+        <field name="name">Laundry Machines</field>
+    </record>
+
+    <record id="equipment_washer_p1_a" model="maintenance.equipment">
+        <field name="name">P1 Washer A</field>
+        <field name="category_id" ref="equipment_category_laundry"/>
+        <field name="maintenance_team_id" ref="maintenance_team_plants"/>
+        <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_1"/>
+        <field name="earlydryer_machine_type">washer</field>
+        <field name="earlydryer_capacity_kg">12</field>
+    </record>
+    <record id="equipment_washer_p1_b" model="maintenance.equipment">
+        <field name="name">P1 Washer B</field>
+        <field name="category_id" ref="equipment_category_laundry"/>
+        <field name="maintenance_team_id" ref="maintenance_team_plants"/>
+        <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_1"/>
+        <field name="earlydryer_machine_type">washer</field>
+        <field name="earlydryer_capacity_kg">8</field>
+    </record>
+    <record id="equipment_dryer_p1_a" model="maintenance.equipment">
+        <field name="name">P1 Dryer A</field>
+        <field name="category_id" ref="equipment_category_laundry"/>
+        <field name="maintenance_team_id" ref="maintenance_team_plants"/>
+        <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_1"/>
+        <field name="earlydryer_machine_type">dryer</field>
+        <field name="earlydryer_capacity_kg">15</field>
+    </record>
+    <record id="equipment_press_p1" model="maintenance.equipment">
+        <field name="name">P1 Press</field>
+        <field name="category_id" ref="equipment_category_laundry"/>
+        <field name="maintenance_team_id" ref="maintenance_team_plants"/>
+        <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_1"/>
+        <field name="earlydryer_machine_type">iron_press</field>
+    </record>
+    <record id="equipment_washer_p2_a" model="maintenance.equipment">
+        <field name="name">P2 Washer A</field>
+        <field name="category_id" ref="equipment_category_laundry"/>
+        <field name="maintenance_team_id" ref="maintenance_team_plants"/>
+        <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_2"/>
+        <field name="earlydryer_machine_type">washer</field>
+        <field name="earlydryer_capacity_kg">10</field>
+    </record>
+    <record id="equipment_dryer_p2_a" model="maintenance.equipment">
+        <field name="name">P2 Dryer A</field>
+        <field name="category_id" ref="equipment_category_laundry"/>
+        <field name="maintenance_team_id" ref="maintenance_team_plants"/>
+        <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_2"/>
+        <field name="earlydryer_machine_type">dryer</field>
+        <field name="earlydryer_capacity_kg">12</field>
+    </record>
+    <record id="equipment_press_p2" model="maintenance.equipment">
+        <field name="name">P2 Press</field>
+        <field name="category_id" ref="equipment_category_laundry"/>
+        <field name="maintenance_team_id" ref="maintenance_team_plants"/>
+        <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_2"/>
+        <field name="earlydryer_machine_type">iron_press</field>
+    </record>
+
+    <!-- P1 Washer B is down -->
+    <record id="maintenance_request_washer_p1_b" model="maintenance.request">
+        <field name="name">Breakdown: P1 Washer B</field>
+        <field name="equipment_id" ref="equipment_washer_p1_b"/>
+        <field name="maintenance_type">corrective</field>
+        <field name="maintenance_team_id" ref="maintenance_team_plants"/>
+        <field name="priority">3</field>
+        <field name="description">&lt;p&gt;Door seal leaking during the spin cycle.&lt;/p&gt;&lt;p&gt;&lt;i&gt;Reported from the plant by Chidi Eze.&lt;/i&gt;&lt;/p&gt;</field>
+    </record>
+
+    <!-- batches, colour groups and QC reworks on the demo jobs -->
+    <function model="laundry.job" name="_earlydryer_load_demo_production"/>
+</odoo>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="account_analytic_distribution_model_tree_earlydryer" model="ir.ui.view">
+        <field name="name">account.analytic.distribution.model.list.earlydryer</field>
+        <field name="model">account.analytic.distribution.model</field>
+        <field name="inherit_id" ref="analytic.account_analytic_distribution_model_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="before">
+                <field name="earlydryer_branch_id" optional="show"/>
+                <field name="earlydryer_service_line_id" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="account_analytic_distribution_model_form_earlydryer" model="ir.ui.view">
+        <field name="name">account.analytic.distribution.model.form.earlydryer</field>
+        <field name="model">account.analytic.distribution.model</field>
+        <field name="inherit_id" ref="analytic.account_analytic_distribution_model_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='partner_id']" position="before">
+                <field name="earlydryer_branch_id"/>
+                <field name="earlydryer_service_line_id"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

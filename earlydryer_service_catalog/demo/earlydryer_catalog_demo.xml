@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <!-- PLACEHOLDER prices in Naira: the real price lists replace them. -->
+
+    <!-- Surcharges -->
+    <record id="surcharge_silk" model="earlydryer.surcharge">
+        <field name="name">Silk</field>
+        <field name="code">SILK</field>
+        <field name="sequence">10</field>
+        <field name="kind">fabric</field>
+        <field name="compute_mode">percent</field>
+        <field name="percent">30</field>
+    </record>
+    <record id="surcharge_lace" model="earlydryer.surcharge">
+        <field name="name">Lace</field>
+        <field name="code">LACE</field>
+        <field name="sequence">20</field>
+        <field name="kind">fabric</field>
+        <field name="compute_mode">percent</field>
+        <field name="percent">25</field>
+    </record>
+    <record id="surcharge_beads" model="earlydryer.surcharge">
+        <field name="name">Beads / Stones</field>
+        <field name="code">BEADS</field>
+        <field name="sequence">30</field>
+        <field name="kind">embellishment</field>
+        <field name="compute_mode">fixed</field>
+        <field name="amount">1500</field>
+    </record>
+    <record id="surcharge_oversized" model="earlydryer.surcharge">
+        <field name="name">Oversized</field>
+        <field name="code">OVERS</field>
+        <field name="sequence">40</field>
+        <field name="kind">size</field>
+        <field name="compute_mode">fixed</field>
+        <field name="amount">1000</field>
+    </record>
+
+    <!-- Price lists: Plant 1 walk-in holds fixed prices; the others derive
+         from it (pickup +10%, Plant 2 +5%, corporate contract -15%). -->
+    <record id="pricelist_walk_in_p1" model="product.pricelist">
+        <field name="name">Walk-in - Plant 1</field>
+        <field name="sequence">20</field>
+        <field name="earlydryer_channel">walk_in</field>
+        <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_1"/>
+    </record>
+    <record id="pricelist_pickup_p1" model="product.pricelist">
+        <field name="name">Pickup &amp; Delivery - Plant 1</field>
+        <field name="sequence">21</field>
+        <field name="earlydryer_channel">pickup</field>
+        <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_1"/>
+    </record>
+    <record id="pricelist_item_pickup_p1" model="product.pricelist.item">
+        <field name="pricelist_id" ref="pricelist_pickup_p1"/>
+        <field name="applied_on">3_global</field>
+        <field name="compute_price">formula</field>
+        <field name="base">pricelist</field>
+        <field name="base_pricelist_id" ref="pricelist_walk_in_p1"/>
+        <field name="price_discount">-10</field>
+        <field name="price_round">50</field>
+    </record>
+    <record id="pricelist_walk_in_p2" model="product.pricelist">
+        <field name="name">Walk-in - Plant 2</field>
+        <field name="sequence">22</field>
+        <field name="earlydryer_channel">walk_in</field>
+        <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_2"/>
+    </record>
+    <record id="pricelist_item_walk_in_p2" model="product.pricelist.item">
+        <field name="pricelist_id" ref="pricelist_walk_in_p2"/>
+        <field name="applied_on">3_global</field>
+        <field name="compute_price">formula</field>
+        <field name="base">pricelist</field>
+        <field name="base_pricelist_id" ref="pricelist_walk_in_p1"/>
+        <field name="price_discount">-5</field>
+        <field name="price_round">50</field>
+    </record>
+    <record id="pricelist_pickup_p2" model="product.pricelist">
+        <field name="name">Pickup &amp; Delivery - Plant 2</field>
+        <field name="sequence">23</field>
+        <field name="earlydryer_channel">pickup</field>
+        <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_2"/>
+    </record>
+    <record id="pricelist_item_pickup_p2" model="product.pricelist.item">
+        <field name="pricelist_id" ref="pricelist_pickup_p2"/>
+        <field name="applied_on">3_global</field>
+        <field name="compute_price">formula</field>
+        <field name="base">pricelist</field>
+        <field name="base_pricelist_id" ref="pricelist_walk_in_p2"/>
+        <field name="price_discount">-10</field>
+        <field name="price_round">50</field>
+    </record>
+
+    <record id="partner_corporate_client" model="res.partner">
+        <field name="name">Demo Corporate Client Ltd</field>
+        <field name="is_company" eval="True"/>
+        <field name="city">Abuja</field>
+        <field name="country_id" ref="base.ng"/>
+        <field name="email">facilities@corporate-client.example.com</field>
+    </record>
+    <record id="pricelist_contract_corporate_client" model="product.pricelist">
+        <field name="name">Contract - Demo Corporate Client Ltd</field>
+        <field name="sequence">30</field>
+        <field name="earlydryer_channel">corporate</field>
+        <field name="earlydryer_is_contract" eval="True"/>
+    </record>
+    <record id="pricelist_item_contract_corporate_client" model="product.pricelist.item">
+        <field name="pricelist_id" ref="pricelist_contract_corporate_client"/>
+        <field name="applied_on">3_global</field>
+        <field name="compute_price">formula</field>
+        <field name="base">pricelist</field>
+        <field name="base_pricelist_id" ref="pricelist_walk_in_p1"/>
+        <field name="price_discount">15</field>
+        <field name="price_round">50</field>
+    </record>
+    <record id="partner_corporate_client" model="res.partner">
+        <field name="property_product_pricelist" ref="pricelist_contract_corporate_client"/>
+    </record>
+
+    <!-- Laundry products for every category x allowed service, with fixed
+         walk-in prices for Plant 1 -->
+    <function model="earlydryer.catalog" name="_load_demo_catalog"
+              eval="[ref('pricelist_walk_in_p1')]"/>
+
+    <!-- Retail products sold from stock -->
+    <record id="product_retail_detergent" model="product.product">
+        <field name="name">Detergent 1 kg</field>
+        <field name="default_code">RET-DET1</field>
+        <field name="earlydryer_kind">retail</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="list_price">2500</field>
+        <field name="standard_price">1600</field>
+        <field name="available_in_pos" eval="True"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="pos_categ_ids" eval="[Command.set([ref('pos_category_retail')])]"/>
+    </record>
+    <record id="product_retail_hanger_pack" model="product.product">
+        <field name="name">Hanger Pack (10)</field>
+        <field name="default_code">RET-HANG10</field>
+        <field name="earlydryer_kind">retail</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="list_price">1000</field>
+        <field name="standard_price">600</field>
+        <field name="available_in_pos" eval="True"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="pos_categ_ids" eval="[Command.set([ref('pos_category_retail')])]"/>
+    </record>
+    <record id="product_retail_garment_bag" model="product.product">
+        <field name="name">Garment Bag</field>
+        <field name="default_code">RET-GBAG</field>
+        <field name="earlydryer_kind">retail</field>
+        <field name="type">consu</field>
+        <field name="is_storable" eval="True"/>
+        <field name="list_price">1500</field>
+        <field name="standard_price">900</field>
+        <field name="available_in_pos" eval="True"/>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="pos_categ_ids" eval="[Command.set([ref('pos_category_retail')])]"/>
+    </record>
+
+    <!-- A counter POS for Plant 1, with its price lists synced from the branch -->
+    <record id="pos_payment_method_cash_p1" model="pos.payment.method">
+        <field name="name">Cash Plant 1</field>
+        <field name="journal_id" ref="earlydryer_base.journal_cash_plant_1"/>
+    </record>
+    <record id="pos_config_counter_p1" model="pos.config">
+        <field name="name">Plant 1 Counter</field>
+        <field name="earlydryer_branch_id" ref="earlydryer_base.branch_plant_1"/>
+        <field name="payment_method_ids" eval="[Command.set([ref('pos_payment_method_cash_p1')])]"/>
+    </record>
+    <function model="earlydryer.branch" name="action_earlydryer_sync_pos_pricelists"
+              eval="[[ref('earlydryer_base.branch_plant_1')]]"/>
+</odoo>

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="product_template_form_view_earlydryer" model="ir.ui.view">
+        <field name="name">product.template.form.earlydryer</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='group_general']" position="inside">
+                <field name="earlydryer_kind"/>
+            </xpath>
+            <xpath expr="//page[@name='general_information']/group[1]" position="after">
+                <group name="earlydryer" string="Earlydryer" invisible="not earlydryer_kind">
+                    <group>
+                        <field name="earlydryer_garment_category_id"
+                               invisible="earlydryer_kind != 'laundry'"
+                               required="earlydryer_kind == 'laundry'"/>
+                        <field name="earlydryer_service_type_id"
+                               invisible="earlydryer_kind != 'laundry'"
+                               required="earlydryer_kind == 'laundry'"/>
+                    </group>
+                    <group invisible="earlydryer_kind != 'laundry'">
+                        <field name="earlydryer_turnaround_hours"/>
+                        <field name="earlydryer_turnaround_hours_override"/>
+                        <field name="earlydryer_express_available" invisible="1"/>
+                        <field name="earlydryer_express_turnaround_hours" invisible="not earlydryer_express_available"/>
+                        <field name="earlydryer_express_turnaround_hours_override" invisible="not earlydryer_express_available"/>
+                    </group>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_template_view_list_laundry" model="ir.ui.view">
+        <field name="name">product.template.list.earlydryer.laundry</field>
+        <field name="model">product.template</field>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <list default_group_by="earlydryer_service_type_id">
+                <field name="default_code"/>
+                <field name="name"/>
+                <field name="earlydryer_garment_category_id"/>
+                <field name="earlydryer_service_type_id"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="list_price" widget="monetary" string="Default Price"/>
+                <field name="earlydryer_turnaround_hours"/>
+                <field name="earlydryer_express_turnaround_hours" optional="show"/>
+                <field name="taxes_id" widget="many2many_tags" optional="hide"/>
+                <field name="available_in_pos" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="product_template_view_pivot_laundry" model="ir.ui.view">
+        <field name="name">product.template.pivot.earlydryer.laundry</field>
+        <field name="model">product.template</field>
+        <field name="arch" type="xml">
+            <pivot string="Laundry Prices" disable_linking="0">
+                <field name="earlydryer_garment_category_id" type="row"/>
+                <field name="earlydryer_service_type_id" type="col"/>
+                <field name="list_price" type="measure" string="Default Price"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="product_template_view_search_earlydryer" model="ir.ui.view">
+        <field name="name">product.template.search.earlydryer</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_search_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <field name="earlydryer_garment_category_id"/>
+                <field name="earlydryer_service_type_id"/>
+                <filter string="Laundry Services" name="earlydryer_laundry" domain="[('earlydryer_kind', '=', 'laundry')]"/>
+                <filter string="Retail Products" name="earlydryer_retail" domain="[('earlydryer_kind', '=', 'retail')]"/>
+                <group>
+                    <filter string="Garment Category" name="group_earlydryer_category"
+                            context="{'group_by': 'earlydryer_garment_category_id'}"/>
+                    <filter string="Service Type" name="group_earlydryer_service"
+                            context="{'group_by': 'earlydryer_service_type_id'}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_template_action_laundry" model="ir.actions.act_window">
+        <field name="name">Laundry Services</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">list,pivot,form</field>
+        <field name="domain">[('earlydryer_kind', '=', 'laundry')]</field>
+        <field name="context">{
+            'default_earlydryer_kind': 'laundry',
+            'default_type': 'service',
+            'default_available_in_pos': True,
+            'default_purchase_ok': False,
+        }</field>
+        <field name="view_ids" eval="[
+            Command.clear(),
+            Command.create({'view_mode': 'list', 'view_id': ref('product_template_view_list_laundry')}),
+            Command.create({'view_mode': 'pivot', 'view_id': ref('product_template_view_pivot_laundry')}),
+        ]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No laundry services yet</p>
+            <p>Use Configuration &gt; Generate Catalogue to create one product per garment category and service type.</p>
+        </field>
+    </record>
+
+    <record id="product_template_action_retail" model="ir.actions.act_window">
+        <field name="name">Retail Products</field>
+        <field name="res_model">product.template</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('earlydryer_kind', '=', 'retail')]</field>
+        <field name="context">{
+            'default_earlydryer_kind': 'retail',
+            'default_type': 'consu',
+            'default_is_storable': True,
+            'default_available_in_pos': True,
+        }</field>
+    </record>
+</odoo>

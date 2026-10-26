@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="view_account_journal_form_earlydryer" model="ir.ui.view">
+        <field name="name">account.journal.form.earlydryer.accounting</field>
+        <field name="model">account.journal</field>
+        <field name="inherit_id" ref="account.view_account_journal_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='code']" position="after">
+                <field name="earlydryer_role"/>
+                <field name="earlydryer_branch_id" options="{'no_create': True}"/>
+                <field name="earlydryer_show_on_invoice" invisible="type != 'bank'"/>
+            </xpath>
+        </field>
+    </record>
+    <record id="view_account_journal_tree_earlydryer" model="ir.ui.view">
+        <field name="name">account.journal.list.earlydryer.accounting</field>
+        <field name="model">account.journal</field>
+        <field name="inherit_id" ref="account.view_account_journal_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='code']" position="after">
+                <field name="earlydryer_branch_id" optional="show"/>
+                <field name="earlydryer_role" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

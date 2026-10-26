@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo noupdate="1">
+    <!-- ID-1 card (credit card size), one badge per page, for card printers
+         or for cutting out of a plain sheet -->
+    <record id="paperformat_badge_cr80" model="report.paperformat">
+        <field name="name">Earlydryer Badge: ID card 85.6 × 54 mm</field>
+        <field name="format">custom</field>
+        <field name="page_width">86</field>
+        <field name="page_height">54</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">0</field>
+        <field name="margin_bottom">0</field>
+        <field name="margin_left">0</field>
+        <field name="margin_right">0</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="disable_shrinking" eval="True"/>
+        <field name="dpi">96</field>
+    </record>
+</odoo>

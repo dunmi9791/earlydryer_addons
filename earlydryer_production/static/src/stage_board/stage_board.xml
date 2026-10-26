@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="earlydryer_production.StageBoard">
+        <div class="o_action o_ed_board d-flex flex-column h-100 bg-view">
+            <t t-set="data" t-value="state.data"/>
+            <!-- toolbar: plant, mode, filters -->
+            <div class="o_ed_board_toolbar d-flex flex-wrap align-items-center gap-2 px-3 py-2 border-bottom">
+                <select t-if="data.branches.length" class="form-select form-select-sm w-auto" title="Plant"
+                        t-on-change="onBranchChange">
+                    <t t-foreach="data.branches" t-as="b" t-key="b.id">
+                        <option t-att-value="b.id" t-att-selected="b.id === state.branchId" t-out="b.name"/>
+                    </t>
+                </select>
+                <span t-else="" class="fw-bold" t-out="data.branch.name"/>
+                <button t-if="data.branch.production_mode === 'both'" type="button"
+                        t-attf-class="btn btn-sm {{state.tabletMode ? 'btn-primary' : 'btn-outline-primary'}}"
+                        t-on-click="toggleTabletMode">
+                    <i class="fa fa-tablet me-1"/>Tablet mode
+                </button>
+                <div class="btn-group btn-group-sm" role="group">
+                    <button type="button" t-attf-class="btn {{state.filters.express ? 'btn-warning' : 'btn-outline-secondary'}}"
+                            t-on-click="() => this.toggleFilter('express')">Express</button>
+                    <button type="button" t-attf-class="btn {{state.filters.overdue ? 'btn-danger' : 'btn-outline-secondary'}}"
+                            t-on-click="() => this.toggleFilter('overdue')">Overdue</button>
+                    <button type="button" t-attf-class="btn {{state.filters.due_today ? 'btn-info' : 'btn-outline-secondary'}}"
+                            t-on-click="() => this.toggleFilter('due_today')">Due today</button>
+                </div>
+                <select class="form-select form-select-sm w-auto" t-model="state.filters.channel"
+                        t-on-change="onFilterChange" title="Channel">
+                    <option value="">All channels</option>
+                    <t t-foreach="data.channels" t-as="ch" t-key="ch[0]">
+                        <option t-att-value="ch[0]" t-out="ch[1]"/>
+                    </t>
+                </select>
+                <input type="search" class="form-control form-control-sm w-auto" placeholder="Job, customer or tag"
+                       t-model="state.filters.search" t-on-keydown="onSearchKeydown" t-on-search="onFilterChange"/>
+                <div class="ms-auto d-flex gap-2 text-muted small">
+                    <t t-foreach="data.final_counts" t-as="fc" t-key="fc.state">
+                        <span t-att-title="'Today'"><t t-out="fc.label"/>: <b t-out="fc.count"/></span>
+                    </t>
+                </div>
+            </div>
+
+            <!-- scan bar: keeps the focus when no dialog is open -->
+            <div class="o_ed_scanbar d-flex flex-wrap align-items-center gap-2 px-3 py-2 border-bottom">
+                <t t-if="state.tabletMode">
+                    <div t-if="state.identity" class="d-flex align-items-center gap-2">
+                        <img t-att-src="state.identity.avatar" class="rounded-circle o_ed_avatar_sm" alt=""/>
+                        <b t-out="state.identity.name"/>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" t-on-click="releaseIdentity">Sign out</button>
+                    </div>
+                    <div t-else="" class="d-flex align-items-center gap-2">
+                        <span class="badge text-bg-warning fs-6">Scan your badge</span>
+                        <button type="button" class="btn btn-sm btn-outline-primary" t-on-click="openPinPad">PIN</button>
+                    </div>
+                    <select class="form-select w-auto" t-model="state.targetState" title="Move scanned garments to">
+                        <t t-foreach="data.tablet_states" t-as="ts" t-key="ts[0]">
+                            <option t-att-value="ts[0]" t-out="ts[1]"/>
+                        </t>
+                    </select>
+                </t>
+                <div class="input-group o_ed_scan_group">
+                    <span class="input-group-text"><i class="fa fa-barcode"/></span>
+                    <input t-ref="scanInput" type="text" class="form-control o_ed_scan_input" autocomplete="off"
+                           autocapitalize="characters" spellcheck="false"
+                           t-att-placeholder="state.tabletMode ? 'Scan badge or garment' : 'Scan a tag or job number'"
+                           t-on-keydown="onScanKeydown" t-on-blur="onScanBlur"/>
+                </div>
+                <div t-if="state.scanOffer" class="d-flex align-items-center gap-2">
+                    <span><b t-out="state.scanOffer.name"/> →</span>
+                    <button type="button" class="btn btn-primary" t-on-click="acceptOffer">
+                        Move to <t t-out="state.scanOffer.label"/> <small class="opacity-75">(Enter)</small>
+                    </button>
+                </div>
+                <button t-if="rights.move and state.selected.length" type="button" class="btn btn-secondary"
+                        t-on-click="openMoveMenu">
+                    Move <t t-out="state.selected.length"/> to…
+                </button>
+                <div t-if="state.message" t-attf-class="alert alert-{{state.message.type}} py-1 px-2 mb-0" role="alert"
+                     t-out="state.message.text"/>
+            </div>
+
+            <!-- machines -->
+            <div t-if="data.machines.length or rights.breakdown" class="o_ed_machines d-flex flex-wrap align-items-center gap-1 px-3 py-1 border-bottom">
+                <t t-foreach="data.machines" t-as="m" t-key="m.id">
+                    <span t-attf-class="badge {{machineClass(m)}} o_ed_machine" t-att-title="m.type_label + ': ' + m.status_label"
+                          t-on-click="() => this.reportBreakdown(m)">
+                        <t t-out="m.name"/> · <t t-out="m.status_label"/>
+                    </span>
+                </t>
+                <button t-if="rights.breakdown" type="button" class="btn btn-sm btn-link text-danger ms-auto"
+                        t-on-click="() => this.reportBreakdown(false)">
+                    <i class="fa fa-wrench me-1"/>Report breakdown
+                </button>
+            </div>
+
+            <div t-if="data.truncated" class="alert alert-warning m-2 py-1">Too many jobs: use the filters.</div>
+
+            <!-- columns -->
+            <div class="o_ed_columns d-flex flex-grow-1 overflow-auto gap-2 p-2">
+                <t t-foreach="data.columns" t-as="column" t-key="column.state">
+                    <div class="o_ed_column d-flex flex-column rounded bg-100"
+                         t-on-dragover="onDragOver" t-on-drop="(ev) => this.onDrop(column, ev)">
+                        <div class="o_ed_column_header d-flex align-items-baseline gap-2 px-2 py-1">
+                            <b t-out="column.label"/>
+                            <span class="badge rounded-pill text-bg-secondary" t-out="column.cards.length"/>
+                            <small t-if="column.cards.length" class="text-muted ms-auto" title="Oldest in this stage">
+                                <i class="fa fa-clock-o"/> <t t-out="oldestLabel(column)"/>
+                            </small>
+                        </div>
+                        <div class="o_ed_column_cards flex-grow-1 overflow-auto px-1 pb-2">
+                            <t t-foreach="column.cards" t-as="card" t-key="card.id">
+                                <div t-attf-class="o_ed_card card mb-2 {{card.id === state.highlightId ? 'o_ed_highlight' : ''}} {{isSelected(card) ? 'border-primary' : ''}} {{state.errors[card.id] ? 'border-danger' : ''}}"
+                                     t-att-data-id="card.id" t-att-draggable="rights.move ? 'true' : 'false'"
+                                     t-on-dragstart="(ev) => this.onDragStart(card, ev)"
+                                     t-on-click="() => this.openPanel(card)">
+                                    <div class="card-body p-2">
+                                        <div class="d-flex align-items-center gap-1">
+                                            <input t-if="rights.move" type="checkbox" class="form-check-input mt-0"
+                                                   t-att-checked="isSelected(card)" t-on-click="(ev) => this.toggleSelect(card, ev)"
+                                                   aria-label="Select"/>
+                                            <b class="text-truncate" t-out="card.name"/>
+                                            <span class="ms-auto text-muted small"><i class="fa fa-tags"/> <t t-out="card.item_count"/></span>
+                                        </div>
+                                        <div class="text-truncate" t-out="card.customer"/>
+                                        <div class="d-flex flex-wrap gap-1 mt-1">
+                                            <span t-if="card.overdue" class="badge text-bg-danger">OVERDUE</span>
+                                            <span t-if="card.express" class="badge text-bg-warning">EXPRESS</span>
+                                            <span t-if="card.rework" class="badge text-bg-info">Rework</span>
+                                            <span t-if="card.balance_due" class="badge text-bg-light border border-danger text-danger">Balance due</span>
+                                            <span t-if="card.unsorted and card.state === 'tagged'" class="badge text-bg-light border">To sort: <t t-out="card.unsorted"/></span>
+                                            <span t-if="card.batch_progress" class="badge text-bg-light border" t-out="card.batch_progress"/>
+                                            <span t-if="card.shelf and (card.state === 'ready' or card.state === 'packed')" class="badge text-bg-success">
+                                                <i class="fa fa-th"/> <t t-out="card.shelf"/>
+                                            </span>
+                                        </div>
+                                        <div t-if="card.promised_on" t-attf-class="small mt-1 {{card.overdue ? 'text-danger fw-bold' : 'text-muted'}}">
+                                            <i class="fa fa-calendar-check-o"/> <t t-out="promisedLabel(card)"/>
+                                        </div>
+                                        <div t-if="state.errors[card.id]" class="alert alert-danger small p-1 mt-1 mb-0" role="alert"
+                                             t-out="state.errors[card.id]"/>
+                                    </div>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
+                </t>
+            </div>
+
+            <!-- overlays -->
+            <div t-if="overlayOpen" class="o_ed_overlay" t-on-click.self="closeOverlays">
+                <!-- employee picker -->
+                <div t-if="state.picker" class="o_ed_dialog card shadow">
+                    <div class="card-header d-flex align-items-center">
+                        <b>Who did the work? (<t t-out="state.picker.label"/>)</b>
+                        <button type="button" class="btn-close ms-auto" aria-label="Close" t-on-click="closeOverlays"/>
+                    </div>
+                    <div class="card-body o_ed_employee_grid">
+                        <t t-foreach="data.employees" t-as="e" t-key="e.id">
+                            <button type="button" class="btn btn-outline-primary o_ed_employee" t-on-click="() => this.pickEmployee(e)">
+                                <img t-att-src="e.avatar" class="rounded-circle" alt=""/>
+                                <span t-out="e.name"/>
+                            </button>
+                        </t>
+                        <div t-if="!data.employees.length" class="text-muted">No employee is linked to this plant.</div>
+                    </div>
+                </div>
+                <!-- move to -->
+                <div t-if="state.moveMenu" class="o_ed_dialog card shadow">
+                    <div class="card-header d-flex align-items-center">
+                        <b>Move <t t-out="state.selected.length"/> job(s) to…</b>
+                        <button type="button" class="btn-close ms-auto" aria-label="Close" t-on-click="closeOverlays"/>
+                    </div>
+                    <div class="card-body d-grid gap-2">
+                        <t t-foreach="targetStates" t-as="ts" t-key="ts[0]">
+                            <button type="button" class="btn btn-lg btn-outline-primary" t-on-click="() => this.chooseTarget(ts[0])" t-out="ts[1]"/>
+                        </t>
+                    </div>
+                </div>
+                <!-- PIN pad -->
+                <div t-if="state.pinPad" class="o_ed_dialog o_ed_pinpad card shadow">
+                    <div class="card-header d-flex align-items-center">
+                        <b>Your PIN</b>
+                        <button type="button" class="btn-close ms-auto" aria-label="Close" t-on-click="closeOverlays"/>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-control form-control-lg text-center mb-2 o_ed_pin_display" t-out="'•'.repeat(state.pin.length) or ' '"/>
+                        <div class="o_ed_pin_grid">
+                            <t t-foreach="['1','2','3','4','5','6','7','8','9','C','0']" t-as="d" t-key="d">
+                                <button type="button" class="btn btn-lg btn-outline-secondary" t-on-click="() => this.pressPin(d)" t-out="d"/>
+                            </t>
+                            <button type="button" class="btn btn-lg btn-primary" t-on-click="submitPin">OK</button>
+                        </div>
+                        <div t-if="state.message and state.message.type === 'danger'" class="alert alert-danger mt-2 mb-0 py-1" t-out="state.message.text"/>
+                    </div>
+                </div>
+                <!-- side panel -->
+                <div t-if="state.panel" class="o_ed_panel card shadow">
+                    <t t-set="p" t-value="state.panel"/>
+                    <div class="card-header d-flex align-items-center gap-2">
+                        <b t-out="p.name"/>
+                        <span class="badge text-bg-secondary" t-out="p.state_label"/>
+                        <button type="button" class="btn-close ms-auto" aria-label="Close" t-on-click="closeOverlays"/>
+                    </div>
+                    <div class="card-body overflow-auto">
+                        <div class="mb-2"><t t-out="p.partner"/></div>
+                        <div t-if="p.customer_note" class="alert alert-info py-1" t-out="p.customer_note"/>
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <button type="button" class="btn btn-secondary" t-on-click="() => this.openJob(p.id)">Open Job</button>
+                            <button t-if="p.state === 'tagged' and rights.move" type="button" class="btn btn-primary"
+                                    t-on-click="() => this.openSort(p.id)">Sort</button>
+                            <button t-if="p.state === 'qc' and rights.qc" type="button" class="btn btn-primary"
+                                    t-on-click="() => this.openQc(p.id)">QC</button>
+                            <button t-if="rights.move" type="button" class="btn btn-outline-secondary"
+                                    t-on-click="() => this.printBagLabel(p.id)">Print Bag Label</button>
+                            <button t-if="p.next_state and rights.move" type="button" class="btn btn-outline-primary"
+                                    t-on-click="() => this.panelNext(p)">
+                                Next: <t t-out="stateLabel(p.next_state)"/>
+                            </button>
+                        </div>
+                        <h6>Items</h6>
+                        <table class="table table-sm">
+                            <tbody>
+                                <tr t-foreach="p.items" t-as="item" t-key="item.id" t-att-class="item.missing ? 'table-danger' : ''">
+                                    <td><span class="font-monospace" t-out="item.tag"/></td>
+                                    <td t-out="item.label"/>
+                                    <td class="text-muted" t-out="item.colour_group"/>
+                                    <td>
+                                        <span t-attf-class="badge {{item.qc_state === 'passed' ? 'text-bg-success' : item.qc_state === 'rework' ? 'text-bg-warning' : 'text-bg-light border'}}"
+                                              t-out="item.qc_label"/>
+                                        <span t-if="item.rework_count" class="badge text-bg-info ms-1">×<t t-out="item.rework_count"/></span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <h6>Recent moves</h6>
+                        <ul class="list-unstyled small">
+                            <li t-foreach="p.logs" t-as="log" t-key="log.id" class="mb-1">
+                                <span class="text-muted" t-out="log.date"/> ·
+                                <t t-out="log.from"/> → <b t-out="log.to"/>
+                                <t t-if="log.employee"> · <t t-out="log.employee"/></t>
+                                <span t-if="log.source" class="badge text-bg-light border ms-1" t-out="log.source"/>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

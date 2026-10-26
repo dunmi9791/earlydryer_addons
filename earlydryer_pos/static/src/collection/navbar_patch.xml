@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="earlydryer_pos.Navbar" t-inherit="point_of_sale.Navbar" t-inherit-mode="extension">
+        <xpath expr="//CashierName" position="before">
+            <t t-if="pos.edEnabled">
+                <span t-if="pos.edState.photosPending" class="btn btn-light btn-lg lh-lg pe-none ed-photos-pending" title="Photos waiting for upload">
+                    <i class="fa fa-camera text-warning"/>
+                    <t t-esc="pos.edState.photosPending"/>
+                </span>
+                <span t-if="pos.edState.collectionQueue.length" class="btn btn-light btn-lg lh-lg pe-none ed-collections-pending" title="Collections waiting to be sent">
+                    <i class="fa fa-sign-out text-warning"/>
+                    <t t-esc="pos.edState.collectionQueue.length"/>
+                </span>
+                <button class="btn btn-lg lh-lg btn-primary ed-collect-button" t-on-click="edOpenCollection">
+                    <i class="fa fa-sign-out me-1"/>
+                    <span t-if="!ui.isSmall">Collect</span>
+                </button>
+            </t>
+        </xpath>
+    </t>
+</templates>

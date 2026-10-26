@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo noupdate="1">
+    <!-- Service lines (analytic accounts shared by the companies). Corporate
+         Contracts is optional: archive it if corporate revenue needs no line
+         of its own (open question). -->
+    <record id="service_line_wash_iron" model="account.analytic.account">
+        <field name="name">Wash and Iron</field>
+        <field name="code">WI</field>
+        <field name="plan_id" ref="analytic_plan_service_lines"/>
+        <field name="company_id" eval="False"/>
+    </record>
+    <record id="service_line_dry_cleaning" model="account.analytic.account">
+        <field name="name">Dry Cleaning</field>
+        <field name="code">DC</field>
+        <field name="plan_id" ref="analytic_plan_service_lines"/>
+        <field name="company_id" eval="False"/>
+    </record>
+    <record id="service_line_ironing" model="account.analytic.account">
+        <field name="name">Ironing Only</field>
+        <field name="code">IO</field>
+        <field name="plan_id" ref="analytic_plan_service_lines"/>
+        <field name="company_id" eval="False"/>
+    </record>
+    <record id="service_line_household" model="account.analytic.account">
+        <field name="name">Household Items</field>
+        <field name="code">HH</field>
+        <field name="plan_id" ref="analytic_plan_service_lines"/>
+        <field name="company_id" eval="False"/>
+    </record>
+    <record id="service_line_shoes_bags" model="account.analytic.account">
+        <field name="name">Shoes and Bags</field>
+        <field name="code">SB</field>
+        <field name="plan_id" ref="analytic_plan_service_lines"/>
+        <field name="company_id" eval="False"/>
+    </record>
+    <record id="service_line_alterations" model="account.analytic.account">
+        <field name="name">Alterations</field>
+        <field name="code">ALT</field>
+        <field name="plan_id" ref="analytic_plan_service_lines"/>
+        <field name="company_id" eval="False"/>
+    </record>
+    <record id="service_line_retail" model="account.analytic.account">
+        <field name="name">Retail</field>
+        <field name="code">RET</field>
+        <field name="plan_id" ref="analytic_plan_service_lines"/>
+        <field name="company_id" eval="False"/>
+    </record>
+    <record id="service_line_delivery" model="account.analytic.account">
+        <field name="name">Delivery</field>
+        <field name="code">DEL</field>
+        <field name="plan_id" ref="analytic_plan_service_lines"/>
+        <field name="company_id" eval="False"/>
+    </record>
+    <record id="service_line_corporate" model="account.analytic.account">
+        <field name="name">Corporate Contracts</field>
+        <field name="code">CORP</field>
+        <field name="plan_id" ref="analytic_plan_service_lines"/>
+        <field name="company_id" eval="False"/>
+    </record>
+
+    <!-- Default mapping of the catalogue's service types (editable) -->
+    <record id="earlydryer_service_catalog.service_type_wash_fold" model="earlydryer.service.type">
+        <field name="earlydryer_service_line_id" ref="service_line_wash_iron"/>
+    </record>
+    <record id="earlydryer_service_catalog.service_type_wash_iron" model="earlydryer.service.type">
+        <field name="earlydryer_service_line_id" ref="service_line_wash_iron"/>
+    </record>
+    <record id="earlydryer_service_catalog.service_type_dry_cleaning" model="earlydryer.service.type">
+        <field name="earlydryer_service_line_id" ref="service_line_dry_cleaning"/>
+    </record>
+    <record id="earlydryer_service_catalog.service_type_ironing_only" model="earlydryer.service.type">
+        <field name="earlydryer_service_line_id" ref="service_line_ironing"/>
+    </record>
+    <record id="earlydryer_service_catalog.service_type_stain_treatment" model="earlydryer.service.type">
+        <field name="earlydryer_service_line_id" ref="service_line_dry_cleaning"/>
+    </record>
+    <record id="earlydryer_service_catalog.service_type_duvet_curtain" model="earlydryer.service.type">
+        <field name="earlydryer_service_line_id" ref="service_line_household"/>
+    </record>
+    <record id="earlydryer_service_catalog.service_type_rug_cleaning" model="earlydryer.service.type">
+        <field name="earlydryer_service_line_id" ref="service_line_household"/>
+    </record>
+    <record id="earlydryer_service_catalog.service_type_shoe_cleaning" model="earlydryer.service.type">
+        <field name="earlydryer_service_line_id" ref="service_line_shoes_bags"/>
+    </record>
+    <record id="earlydryer_service_catalog.service_type_bag_cleaning" model="earlydryer.service.type">
+        <field name="earlydryer_service_line_id" ref="service_line_shoes_bags"/>
+    </record>
+    <record id="earlydryer_service_catalog.service_type_alterations" model="earlydryer.service.type">
+        <field name="earlydryer_service_line_id" ref="service_line_alterations"/>
+    </record>
+</odoo>

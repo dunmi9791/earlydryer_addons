@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_wallet_view_list" model="ir.ui.view">
+        <field name="name">earlydryer.wallet.list</field>
+        <field name="model">earlydryer.wallet</field>
+        <field name="arch" type="xml">
+            <list create="false" edit="false" delete="false" decoration-danger="overdrawn"
+                  decoration-muted="state == 'blocked'">
+                <field name="partner_id"/>
+                <field name="partner_phone"/>
+                <field name="last_transaction_date"/>
+                <field name="last_topup_branch_id"/>
+                <field name="company_id" optional="hide" groups="base.group_multi_company"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="overdrawn" column_invisible="1"/>
+                <field name="balance" sum="Total"/>
+                <field name="state" widget="badge" decoration-danger="state == 'blocked'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="earlydryer_wallet_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.wallet.form</field>
+        <field name="model">earlydryer.wallet</field>
+        <field name="arch" type="xml">
+            <form create="false" edit="false" delete="false">
+                <header>
+                    <button name="action_open_topup" type="object" string="Top Up" class="btn-primary"
+                            invisible="state != 'active'"
+                            groups="earlydryer_base.group_front_desk,earlydryer_base.group_finance"/>
+                    <button name="action_open_refund" type="object" string="Refund"
+                            groups="earlydryer_base.group_front_desk,earlydryer_base.group_customer_service,earlydryer_base.group_finance"/>
+                    <button name="action_open_credit" type="object" string="Credit"
+                            groups="earlydryer_base.group_customer_service,earlydryer_base.group_finance"/>
+                    <button name="action_open_statement" type="object" string="Statement"/>
+                    <button name="action_block" type="object" string="Block"
+                            invisible="state != 'active'" groups="earlydryer_base.group_finance"
+                            confirm="A blocked wallet cannot be spent or topped up. Block it?"/>
+                    <button name="action_unblock" type="object" string="Unblock"
+                            invisible="state != 'blocked'" groups="earlydryer_base.group_finance"/>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <div class="alert alert-danger mb-0" role="alert" invisible="not overdrawn">
+                    <strong>Overdrawn</strong>: spent at offline tills beyond the balance.
+                </div>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_transactions" type="object" class="oe_stat_button"
+                                icon="fa-list">
+                            <field name="transaction_count" widget="statinfo" string="Transactions"/>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="partner_id"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="overdrawn" invisible="1"/>
+                            <field name="balance" class="fw-bold fs-4"/>
+                            <field name="partner_phone"/>
+                        </group>
+                        <group>
+                            <field name="last_transaction_date"/>
+                            <field name="last_topup_branch_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Transactions" name="transactions">
+                            <field name="transaction_ids" readonly="1"
+                                   context="{'list_view_ref': 'earlydryer_wallet.earlydryer_wallet_transaction_view_list'}"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="earlydryer_wallet_view_search" model="ir.ui.view">
+        <field name="name">earlydryer.wallet.search</field>
+        <field name="model">earlydryer.wallet</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="partner_id"/>
+                <field name="partner_phone"/>
+                <filter name="with_balance" string="With Balance" domain="[('balance', '!=', 0)]"/>
+                <filter name="overdrawn" string="Overdrawn" domain="[('overdrawn', '=', True)]"/>
+                <filter name="blocked" string="Blocked" domain="[('state', '=', 'blocked')]"/>
+                <group>
+                    <filter name="group_branch" string="Branch of Last Top-up"
+                            context="{'group_by': 'last_topup_branch_id'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="earlydryer_wallet_view_pivot" model="ir.ui.view">
+        <field name="name">earlydryer.wallet.pivot</field>
+        <field name="model">earlydryer.wallet</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="last_topup_branch_id" type="row"/>
+                <field name="balance" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="earlydryer_wallet_action" model="ir.actions.act_window">
+        <field name="name">Wallet Balances</field>
+        <field name="res_model">earlydryer.wallet</field>
+        <field name="view_mode">list,form,pivot</field>
+        <field name="context">{'search_default_with_balance': 1}</field>
+    </record>
+</odoo>

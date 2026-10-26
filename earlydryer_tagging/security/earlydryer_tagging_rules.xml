@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <!-- earlydryer_base branch pattern: own plants, all plants for group_all_branches -->
+
+    <!-- earlydryer.tag.range -->
+    <record id="earlydryer_tag_range_rule_company" model="ir.rule">
+        <field name="name">Tag range: multi-company</field>
+        <field name="model_id" ref="model_earlydryer_tag_range"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="earlydryer_tag_range_rule_branch" model="ir.rule">
+        <field name="name">Tag range: allowed branches</field>
+        <field name="model_id" ref="model_earlydryer_tag_range"/>
+        <field name="domain_force">[('branch_id', 'in', earlydryer_branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="earlydryer_tag_range_rule_all_branches" model="ir.rule">
+        <field name="name">Tag range: all branches</field>
+        <field name="model_id" ref="model_earlydryer_tag_range"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('earlydryer_base.group_all_branches'))]"/>
+    </record>
+
+    <!-- earlydryer.tag.history -->
+    <record id="earlydryer_tag_history_rule_branch" model="ir.rule">
+        <field name="name">Replaced tag: allowed branches</field>
+        <field name="model_id" ref="model_earlydryer_tag_history"/>
+        <field name="domain_force">[('earlydryer_branch_id', 'in', earlydryer_branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="earlydryer_tag_history_rule_all_branches" model="ir.rule">
+        <field name="name">Replaced tag: all branches</field>
+        <field name="model_id" ref="model_earlydryer_tag_history"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('earlydryer_base.group_all_branches'))]"/>
+    </record>
+
+    <!-- earlydryer.scan.log: own rows; managers their plants; all-branch roles everything -->
+    <record id="earlydryer_scan_log_rule_own" model="ir.rule">
+        <field name="name">Scan log: own scans</field>
+        <field name="model_id" ref="model_earlydryer_scan_log"/>
+        <field name="domain_force">[('user_id', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="earlydryer_scan_log_rule_branch_manager" model="ir.rule">
+        <field name="name">Scan log: branch managers see their plants</field>
+        <field name="model_id" ref="model_earlydryer_scan_log"/>
+        <field name="domain_force">['|', ('user_id', '=', user.id), ('earlydryer_branch_id', 'in', earlydryer_branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('earlydryer_base.group_branch_manager'))]"/>
+    </record>
+    <record id="earlydryer_scan_log_rule_all_branches" model="ir.rule">
+        <field name="name">Scan log: all branches</field>
+        <field name="model_id" ref="model_earlydryer_scan_log"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('earlydryer_base.group_all_branches'))]"/>
+    </record>
+</odoo>

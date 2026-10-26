@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="hr_employee_view_form_earlydryer_production" model="ir.ui.view">
+        <field name="name">hr.employee.form.earlydryer.production</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_print_earlydryer_badge" type="object" string="Print Plant Badge"
+                        invisible="not earlydryer_branch_id"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

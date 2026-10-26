@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo noupdate="1">
+    <!-- One plan per reporting axis: core merges one distribution model per
+         root plan, so a line gets its plant and its service line. -->
+    <record id="analytic_plan_plants" model="account.analytic.plan">
+        <field name="name">Plants</field>
+        <field name="default_applicability">optional</field>
+    </record>
+    <record id="analytic_plan_service_lines" model="account.analytic.plan">
+        <field name="name">Service Lines</field>
+        <field name="default_applicability">optional</field>
+    </record>
+</odoo>

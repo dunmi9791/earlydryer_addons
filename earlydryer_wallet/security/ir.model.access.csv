@@ -1,0 +1,15 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_earlydryer_wallet_user,earlydryer.wallet user,model_earlydryer_wallet,base.group_user,1,0,0,0
+access_earlydryer_wallet_admin,earlydryer.wallet admin,model_earlydryer_wallet,earlydryer_base.group_admin,1,1,1,1
+access_earlydryer_wallet_transaction_user,earlydryer.wallet.transaction user,model_earlydryer_wallet_transaction,base.group_user,1,0,0,0
+access_earlydryer_wallet_transaction_admin,earlydryer.wallet.transaction admin,model_earlydryer_wallet_transaction,earlydryer_base.group_admin,1,1,1,1
+access_earlydryer_wallet_topup_wizard,earlydryer.wallet.topup.wizard,model_earlydryer_wallet_topup_wizard,earlydryer_base.group_front_desk,1,1,1,1
+access_earlydryer_wallet_topup_wizard_finance,earlydryer.wallet.topup.wizard finance,model_earlydryer_wallet_topup_wizard,earlydryer_base.group_finance,1,1,1,1
+access_earlydryer_wallet_refund_wizard,earlydryer.wallet.refund.wizard,model_earlydryer_wallet_refund_wizard,base.group_user,1,1,1,1
+access_earlydryer_wallet_credit_wizard,earlydryer.wallet.credit.wizard,model_earlydryer_wallet_credit_wizard,base.group_user,1,1,1,1
+access_earlydryer_wallet_spend_wizard,earlydryer.wallet.spend.wizard,model_earlydryer_wallet_spend_wizard,base.group_user,1,1,1,1
+access_earlydryer_wallet_reverse_wizard,earlydryer.wallet.reverse.wizard,model_earlydryer_wallet_reverse_wizard,earlydryer_base.group_finance,1,1,1,1
+access_earlydryer_wallet_statement_wizard,earlydryer.wallet.statement.wizard,model_earlydryer_wallet_statement_wizard,base.group_user,1,1,1,1
+access_earlydryer_wallet_import_wizard,earlydryer.wallet.import.wizard,model_earlydryer_wallet_import_wizard,earlydryer_base.group_finance,1,1,1,1
+access_earlydryer_wallet_import_line,earlydryer.wallet.import.line,model_earlydryer_wallet_import_line,earlydryer_base.group_finance,1,1,1,1
+access_earlydryer_wallet_control,earlydryer.wallet.control,model_earlydryer_wallet_control,earlydryer_base.group_finance,1,1,1,1

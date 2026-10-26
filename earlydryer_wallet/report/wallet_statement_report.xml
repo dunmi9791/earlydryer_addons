@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="action_report_wallet_statement" model="ir.actions.report">
+        <field name="name">Wallet Statement</field>
+        <field name="model">earlydryer.wallet</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">earlydryer_wallet.report_wallet_statement</field>
+        <field name="report_file">earlydryer_wallet.report_wallet_statement</field>
+        <field name="print_report_name">'Wallet statement - %s' % (object.partner_id.name)</field>
+        <field name="binding_model_id" ref="model_earlydryer_wallet"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_wallet_statement">
+        <t t-call="web.html_container">
+            <t t-foreach="statements" t-as="statement">
+                <t t-set="wallet" t-value="statement['wallet']"/>
+                <t t-set="currency" t-value="wallet.currency_id"/>
+                <t t-call="web.external_layout">
+                    <t t-set="o" t-value="wallet"/>
+                    <div class="page">
+                        <h2>Wallet Statement</h2>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <strong t-field="wallet.partner_id.name"/>
+                                <div t-if="wallet.partner_id.phone" t-field="wallet.partner_id.phone"/>
+                            </div>
+                            <div class="col-6 text-end">
+                                From <span t-esc="statement['date_from']" t-options="{'widget': 'date'}"/>
+                                to <span t-esc="statement['date_to']" t-options="{'widget': 'date'}"/>
+                            </div>
+                        </div>
+                        <table class="table table-sm o_main_table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Reference</th>
+                                    <th>Type</th>
+                                    <th>Branch</th>
+                                    <th class="text-end">Amount</th>
+                                    <th class="text-end">Balance</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="fw-bold">
+                                    <td colspan="5">Opening balance</td>
+                                    <td class="text-end">
+                                        <span t-esc="statement['opening']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                    </td>
+                                </tr>
+                                <tr t-foreach="statement['rows']" t-as="row">
+                                    <t t-set="tx" t-value="row['tx']"/>
+                                    <td><span t-field="tx.date" t-options="{'widget': 'date'}"/></td>
+                                    <td><span t-field="tx.name"/> <span t-if="tx.reference" t-field="tx.reference"/></td>
+                                    <td><span t-field="tx.type"/></td>
+                                    <td><span t-field="tx.earlydryer_branch_id.name"/></td>
+                                    <td class="text-end">
+                                        <span t-esc="tx.signed_amount" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                    </td>
+                                    <td class="text-end">
+                                        <span t-esc="row['balance']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                    </td>
+                                </tr>
+                                <tr class="fw-bold">
+                                    <td colspan="5">Closing balance</td>
+                                    <td class="text-end">
+                                        <span t-esc="statement['closing']" t-options="{'widget': 'monetary', 'display_currency': currency}"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_branch_view_list" model="ir.ui.view">
+        <field name="name">earlydryer.branch.list</field>
+        <field name="model">earlydryer.branch</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="manager_id" widget="many2one_avatar_user" optional="show"/>
+                <field name="warehouse_id" optional="show"/>
+                <field name="cash_journal_id" optional="hide"/>
+                <field name="analytic_account_id" optional="hide"/>
+                <field name="shelf_count" optional="show"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="earlydryer_branch_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.branch.form</field>
+        <field name="model">earlydryer.branch</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_open_generate_shelves" type="object" string="Generate Shelves"
+                            class="btn-primary" groups="earlydryer_base.group_branch_manager" invisible="not id"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_shelves" type="object" class="oe_stat_button" icon="fa-th">
+                            <field name="shelf_count" widget="statinfo" string="Shelves"/>
+                        </button>
+                        <button name="action_view_pos_configs" type="object" class="oe_stat_button"
+                                icon="fa-shopping-basket" groups="point_of_sale.group_pos_user">
+                            <field name="pos_config_count" widget="statinfo" string="Points of Sale"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <field name="active" invisible="1"/>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="e.g. Wuse Plant"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="code" placeholder="e.g. WUS"/>
+                            <field name="partner_id" context="{'default_is_company': True}"/>
+                            <field name="phone" widget="phone" invisible="not partner_id"/>
+                            <field name="email" widget="email" invisible="not partner_id"/>
+                        </group>
+                        <group>
+                            <field name="manager_id" widget="many2one_avatar_user"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="company_id" invisible="1" groups="!base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Operations" name="operations">
+                            <group>
+                                <group>
+                                    <field name="warehouse_id" groups="stock.group_stock_user"/>
+                                    <field name="resource_calendar_id"/>
+                                </group>
+                            </group>
+                            <separator string="Points of Sale" groups="point_of_sale.group_pos_user"/>
+                            <field name="pos_config_ids" readonly="1" groups="point_of_sale.group_pos_user">
+                                <list>
+                                    <field name="name"/>
+                                </list>
+                            </field>
+                            <separator string="Shelves"/>
+                            <field name="shelf_ids" context="{'default_branch_id': id}">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="name"/>
+                                    <field name="capacity"/>
+                                    <field name="note" optional="hide"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Accounting" name="accounting" groups="account.group_account_readonly">
+                            <group>
+                                <group>
+                                    <field name="cash_journal_id"/>
+                                    <field name="analytic_account_id"/>
+                                </group>
+                            </group>
+                        </page>
+                        <page string="Staff" name="staff">
+                            <group>
+                                <field name="manager_id" widget="many2one_avatar_user" string="Branch Manager"/>
+                            </group>
+                            <field name="user_ids" widget="many2many_tags_avatar"/>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="note"/>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="earlydryer_branch_view_kanban" model="ir.ui.view">
+        <field name="name">earlydryer.branch.kanban</field>
+        <field name="model">earlydryer.branch</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile">
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex align-items-baseline gap-2">
+                            <field name="code" class="badge text-bg-primary"/>
+                            <field name="name" class="fw-bold fs-5"/>
+                        </div>
+                        <field name="partner_id" class="text-muted"/>
+                        <footer class="pt-2">
+                            <div class="d-flex gap-3 text-muted">
+                                <span><i class="fa fa-th me-1" title="Shelves"/><field name="shelf_count"/> shelves</span>
+                                <span groups="point_of_sale.group_pos_user"><i class="fa fa-shopping-basket me-1" title="Points of Sale"/><field name="pos_config_count"/> POS</span>
+                            </div>
+                            <field name="manager_id" widget="many2one_avatar_user" class="ms-auto"/>
+                        </footer>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="earlydryer_branch_view_search" model="ir.ui.view">
+        <field name="name">earlydryer.branch.search</field>
+        <field name="model">earlydryer.branch</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" filter_domain="['|', ('name', 'ilike', self), ('code', 'ilike', self)]"/>
+                <field name="manager_id"/>
+                <field name="user_ids"/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <group>
+                    <filter string="Manager" name="group_manager" context="{'group_by': 'manager_id'}"/>
+                    <filter string="Company" name="group_company" context="{'group_by': 'company_id'}" groups="base.group_multi_company"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="earlydryer_branch_action" model="ir.actions.act_window">
+        <field name="name">Branches</field>
+        <field name="res_model">earlydryer.branch</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first plant</p>
+            <p>Each branch is a processing plant with its own warehouse, points of sale, cash journal, analytic account and shelves.</p>
+        </field>
+    </record>
+</odoo>

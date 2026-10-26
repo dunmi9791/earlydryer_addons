@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="earlydryer_pos.ProductScreen" t-inherit="point_of_sale.ProductScreen" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('rightpane')]/div[hasclass('position-relative')]" position="before">
+            <EdIntakePanel t-if="pos.edEnabled"/>
+        </xpath>
+        <xpath expr="//div[hasclass('rightpane')]/div[hasclass('position-relative')]" position="attributes">
+            <attribute name="t-if">!pos.edEnabled or pos.edIntakeTab === 'retail'</attribute>
+        </xpath>
+    </t>
+</templates>

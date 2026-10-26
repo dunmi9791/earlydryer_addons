@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo noupdate="1">
+    <!-- Money put on the customer's wallet at the till. No tax (a top-up is
+         not a sale); its lines credit Customer Advances per customer at
+         session closing, and its income account is Customer Advances too
+         (set per company by the wallet setup) for invoiced orders. -->
+    <record id="product_wallet_topup" model="product.product">
+        <field name="name">Wallet Top-up</field>
+        <field name="default_code">WALLET</field>
+        <field name="earlydryer_kind">wallet_topup</field>
+        <field name="type">service</field>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="False"/>
+        <field name="available_in_pos" eval="True"/>
+        <field name="list_price">0.0</field>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="pos_categ_ids" eval="[Command.set([ref('earlydryer_service_catalog.pos_category_extras')])]"/>
+    </record>
+</odoo>

@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <!-- P&amp;L template, by account type so it works on any chart (generic or
+         l10n_ng). The setup wizard creates the report instances: "P&amp;L by
+         Plant" (one column per plant analytic account plus total) and "P&amp;L
+         by Service Line" (one column per service line plus total). -->
+    <record id="mis_report_pnl" model="mis.report">
+        <field name="name">Earlydryer P&amp;L</field>
+        <field name="description">Profit and loss by account type (Earlydryer)</field>
+    </record>
+    <record id="mis_report_pnl_kpi_revenue" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_pnl"/>
+        <field name="name">revenue</field>
+        <field name="description">Revenue</field>
+        <field name="expression">-balp[('account_type', 'in', ('income', 'income_other'))]</field>
+        <field name="auto_expand_accounts" eval="True"/>
+        <field name="sequence">10</field>
+    </record>
+    <record id="mis_report_pnl_kpi_direct_costs" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_pnl"/>
+        <field name="name">direct_costs</field>
+        <field name="description">Direct costs</field>
+        <field name="expression">balp[('account_type', '=', 'expense_direct_cost')]</field>
+        <field name="auto_expand_accounts" eval="True"/>
+        <field name="sequence">20</field>
+    </record>
+    <record id="mis_report_pnl_kpi_gross_margin" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_pnl"/>
+        <field name="name">gross_margin</field>
+        <field name="description">Gross margin</field>
+        <field name="expression">revenue - direct_costs</field>
+        <field name="auto_expand_accounts" eval="False"/>
+        <field name="sequence">30</field>
+    </record>
+    <record id="mis_report_pnl_kpi_expenses" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_pnl"/>
+        <field name="name">expenses</field>
+        <field name="description">Operating expenses</field>
+        <field name="expression">balp[('account_type', 'in', ('expense', 'expense_depreciation'))]</field>
+        <field name="auto_expand_accounts" eval="True"/>
+        <field name="sequence">40</field>
+    </record>
+    <record id="mis_report_pnl_kpi_net_profit" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_pnl"/>
+        <field name="name">net_profit</field>
+        <field name="description">Net profit</field>
+        <field name="expression">gross_margin - expenses</field>
+        <field name="auto_expand_accounts" eval="False"/>
+        <field name="sequence">50</field>
+    </record>
+
+    <!-- Cash flow summary: movements of the cash and bank accounts by journal type -->
+    <record id="mis_report_cash_flow" model="mis.report">
+        <field name="name">Earlydryer Cash Flow Summary</field>
+        <field name="description">Cash and bank movements by journal type (Earlydryer)</field>
+    </record>
+    <record id="mis_report_cash_flow_kpi_opening" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_cash_flow"/>
+        <field name="name">opening</field>
+        <field name="description">Opening cash and bank</field>
+        <field name="expression">bali[('account_type', '=', 'asset_cash')]</field>
+        <field name="auto_expand_accounts" eval="False"/>
+        <field name="sequence">10</field>
+    </record>
+    <record id="mis_report_cash_flow_kpi_cash_in" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_cash_flow"/>
+        <field name="name">cash_in</field>
+        <field name="description">Cash journals: receipts</field>
+        <field name="expression">debp[('account_type', '=', 'asset_cash')][('journal_id.type', '=', 'cash')]</field>
+        <field name="auto_expand_accounts" eval="False"/>
+        <field name="sequence">20</field>
+    </record>
+    <record id="mis_report_cash_flow_kpi_cash_out" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_cash_flow"/>
+        <field name="name">cash_out</field>
+        <field name="description">Cash journals: payments</field>
+        <field name="expression">-crdp[('account_type', '=', 'asset_cash')][('journal_id.type', '=', 'cash')]</field>
+        <field name="auto_expand_accounts" eval="False"/>
+        <field name="sequence">30</field>
+    </record>
+    <record id="mis_report_cash_flow_kpi_bank_in" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_cash_flow"/>
+        <field name="name">bank_in</field>
+        <field name="description">Bank journals: receipts</field>
+        <field name="expression">debp[('account_type', '=', 'asset_cash')][('journal_id.type', '=', 'bank')]</field>
+        <field name="auto_expand_accounts" eval="False"/>
+        <field name="sequence">40</field>
+    </record>
+    <record id="mis_report_cash_flow_kpi_bank_out" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_cash_flow"/>
+        <field name="name">bank_out</field>
+        <field name="description">Bank journals: payments</field>
+        <field name="expression">-crdp[('account_type', '=', 'asset_cash')][('journal_id.type', '=', 'bank')]</field>
+        <field name="auto_expand_accounts" eval="False"/>
+        <field name="sequence">50</field>
+    </record>
+    <record id="mis_report_cash_flow_kpi_other" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_cash_flow"/>
+        <field name="name">other</field>
+        <field name="description">Other journals</field>
+        <field name="expression">balp[('account_type', '=', 'asset_cash')][('journal_id.type', 'not in', ('cash', 'bank'))]</field>
+        <field name="auto_expand_accounts" eval="False"/>
+        <field name="sequence">60</field>
+    </record>
+    <record id="mis_report_cash_flow_kpi_closing" model="mis.report.kpi">
+        <field name="report_id" ref="mis_report_cash_flow"/>
+        <field name="name">closing</field>
+        <field name="description">Closing cash and bank</field>
+        <field name="expression">bale[('account_type', '=', 'asset_cash')]</field>
+        <field name="auto_expand_accounts" eval="False"/>
+        <field name="sequence">70</field>
+    </record>
+</odoo>

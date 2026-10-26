@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="laundry_job_view_kanban" model="ir.ui.view">
+        <field name="name">laundry.job.kanban</field>
+        <field name="model">laundry.job</field>
+        <field name="arch" type="xml">
+            <!-- basic stage board, replaced later by earlydryer_production -->
+            <kanban default_group_by="state" class="o_kanban_small_column" sample="1"
+                    quick_create="false" group_create="false" group_delete="false"
+                    group_edit="false" records_draggable="false">
+                <field name="currency_id"/>
+                <field name="is_unpaid"/>
+                <progressbar field="activity_state"
+                             colors='{"planned": "success", "today": "warning", "overdue": "danger"}'/>
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex align-items-baseline">
+                            <field name="name" class="fw-bold fs-5 me-2"/>
+                            <span class="badge text-bg-warning ms-auto" invisible="not express">Express</span>
+                        </div>
+                        <field name="partner_id" class="text-truncate"/>
+                        <div class="d-flex text-muted">
+                            <span><field name="item_count"/> items</span>
+                            <field name="shelf_id" class="ms-auto" invisible="not shelf_id"/>
+                        </div>
+                        <div class="d-flex align-items-baseline">
+                            <field name="promised_on" widget="datetime" class="text-muted"/>
+                            <span class="badge text-bg-danger ms-auto" invisible="not is_overdue">Overdue</span>
+                        </div>
+                        <footer>
+                            <field name="activity_ids" widget="kanban_activity"/>
+                            <div class="ms-auto" invisible="not is_unpaid">
+                                <span class="text-danger">Due </span>
+                                <field name="amount_due" widget="monetary" class="text-danger fw-bold"/>
+                            </div>
+                        </footer>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="laundry_job_view_list" model="ir.ui.view">
+        <field name="name">laundry.job.list</field>
+        <field name="model">laundry.job</field>
+        <field name="arch" type="xml">
+            <list decoration-danger="is_overdue" decoration-muted="state == 'cancelled'" sample="1">
+                <field name="currency_id" column_invisible="True"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="partner_phone" optional="hide"/>
+                <field name="earlydryer_branch_id" optional="show"/>
+                <field name="channel" optional="show"/>
+                <field name="fulfilment" optional="hide"/>
+                <field name="express" optional="show"/>
+                <field name="item_count" optional="show"/>
+                <field name="received_on" optional="show"/>
+                <field name="promised_on"/>
+                <field name="is_overdue" column_invisible="True"/>
+                <field name="shelf_id" optional="show"/>
+                <field name="amount_due" optional="show" widget="monetary"/>
+                <field name="state" widget="badge"
+                       decoration-info="state in ('received', 'tagged', 'sorted', 'washed', 'dried', 'ironed', 'qc', 'packed')"
+                       decoration-success="state in ('ready', 'collected', 'delivered')"
+                       decoration-warning="state in ('out_for_delivery', 'uncollected')"
+                       decoration-danger="state == 'cancelled'"/>
+                <field name="activity_ids" widget="list_activity" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="laundry_job_view_form" model="ir.ui.view">
+        <field name="name">laundry.job.form</field>
+        <field name="model">laundry.job</field>
+        <field name="arch" type="xml">
+            <form>
+                <field name="next_state" invisible="1"/>
+                <field name="is_unpaid" invisible="1"/>
+                <field name="sale_order_id" invisible="1"/>
+                <field name="pos_order_id" invisible="1"/>
+                <header>
+                    <button name="action_open_move_wizard" type="object" string="Move to Next Stage"
+                            class="btn-primary"
+                            invisible="not id or state not in ('received', 'tagged', 'sorted', 'washed', 'dried', 'ironed', 'packed')"
+                            groups="earlydryer_base.group_front_desk,earlydryer_base.group_production"/>
+                    <button name="action_next_stage" type="object" string="Next Stage"
+                            invisible="not id or state not in ('received', 'tagged', 'sorted', 'washed', 'dried', 'ironed', 'packed')"
+                            groups="earlydryer_base.group_front_desk,earlydryer_base.group_production"/>
+                    <button name="action_open_qc_wizard" type="object" string="Quality Check"
+                            class="btn-primary" invisible="state != 'qc'"
+                            groups="earlydryer_base.group_qc,earlydryer_base.group_front_desk"/>
+                    <button name="action_open_move_wizard" type="object" string="Pack"
+                            invisible="state != 'qc'"
+                            groups="earlydryer_base.group_front_desk,earlydryer_base.group_production"/>
+                    <button name="action_collect" type="object" string="Collected"
+                            class="btn-primary" invisible="state != 'ready' or fulfilment != 'collect'"
+                            groups="earlydryer_base.group_front_desk"/>
+                    <button name="action_out_for_delivery" type="object" string="Out for Delivery"
+                            class="btn-primary" invisible="state != 'ready' or fulfilment != 'deliver'"
+                            groups="earlydryer_base.group_front_desk"/>
+                    <button name="action_delivered" type="object" string="Delivered"
+                            class="btn-primary" invisible="state != 'out_for_delivery'"
+                            groups="earlydryer_base.group_front_desk"/>
+                    <button name="action_request_credit_approval" type="object" string="Request Credit Approval"
+                            invisible="not is_unpaid or state not in ('packed', 'ready', 'uncollected')"
+                            groups="earlydryer_base.group_front_desk"/>
+                    <button name="action_customer_change_request" type="object" string="Customer Asked to Change"
+                            invisible="not id or state in ('delivered', 'collected', 'cancelled')"
+                            groups="earlydryer_base.group_front_desk,earlydryer_base.group_customer_service"/>
+                    <button name="action_customer_cancel_request" type="object" string="Customer Asked to Cancel"
+                            invisible="not id or state in ('delivered', 'collected', 'uncollected', 'cancelled')"
+                            groups="earlydryer_base.group_front_desk,earlydryer_base.group_customer_service"/>
+                    <button name="action_open_move_wizard" type="object" string="Move to Any Stage"
+                            context="{'default_target_state': False}"
+                            invisible="not id or state == 'cancelled'"
+                            groups="earlydryer_base.group_branch_manager"/>
+                    <button name="action_open_cancel_wizard" type="object" string="Cancel Job"
+                            invisible="not id or state in ('delivered', 'collected', 'uncollected', 'cancelled')"
+                            groups="earlydryer_base.group_branch_manager"/>
+                    <field name="state" widget="statusbar"
+                           statusbar_visible="received,tagged,sorted,washed,dried,ironed,qc,packed,ready"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_source" type="object" class="oe_stat_button"
+                                icon="fa-dollar" invisible="not sale_order_id"
+                                groups="sales_team.group_sale_salesman">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Sales Order</span>
+                            </div>
+                        </button>
+                        <button name="action_view_source" type="object" class="oe_stat_button"
+                                icon="fa-shopping-basket" invisible="not pos_order_id"
+                                groups="point_of_sale.group_pos_user">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">POS Order</span>
+                            </div>
+                        </button>
+                        <button name="action_view_earlydryer_approvals" type="object" class="oe_stat_button"
+                                icon="fa-check-square-o" invisible="earlydryer_approval_count == 0">
+                            <field name="earlydryer_approval_count" widget="statinfo" string="Approvals"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Express" bg_color="text-bg-warning" invisible="not express"/>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group name="customer">
+                            <field name="partner_id" readonly="state != 'received'"
+                                   context="{'res_partner_search_mode': 'customer'}"/>
+                            <field name="partner_phone" widget="phone"/>
+                            <field name="channel" readonly="state != 'received'"/>
+                            <field name="fulfilment"/>
+                            <field name="express" readonly="state != 'received'"/>
+                            <field name="earlydryer_branch_id" readonly="id"
+                                   options="{'no_create': True}"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                        <group name="dates">
+                            <field name="received_on" readonly="state != 'received'"/>
+                            <field name="promised_on"/>
+                            <field name="is_overdue" invisible="not is_overdue"/>
+                            <field name="ready_on" invisible="not ready_on"/>
+                            <field name="closed_on" invisible="not closed_on"/>
+                            <field name="shelf_id" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group name="amounts" string="Payment">
+                            <field name="currency_id" invisible="1"/>
+                            <field name="amount_total"/>
+                            <field name="amount_paid"/>
+                            <field name="amount_due" decoration-danger="is_unpaid" decoration-bf="is_unpaid"/>
+                        </group>
+                        <group name="cancel" string="Cancellation" invisible="state != 'cancelled'">
+                            <field name="cancel_reason" readonly="1" nolabel="1" colspan="2"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Items" name="items">
+                            <field name="correction_reason"
+                                   placeholder="Reason for correcting the items after intake (Branch Manager)"
+                                   invisible="state == 'received'"
+                                   groups="earlydryer_base.group_branch_manager"/>
+                            <field name="item_ids" context="{'default_job_id': id}">
+                                <list editable="bottom">
+                                    <field name="sequence" widget="handle"/>
+                                    <field name="currency_id" column_invisible="True"/>
+                                    <field name="job_state" column_invisible="True"/>
+                                    <field name="tag_code"/>
+                                    <field name="product_id" options="{'no_create': True}"
+                                           readonly="job_state != 'received'"/>
+                                    <field name="piece_index" optional="show" readonly="job_state != 'received'"/>
+                                    <field name="piece_count" optional="hide" readonly="job_state != 'received'"/>
+                                    <field name="surcharge_ids" widget="many2many_tags" optional="show"
+                                           readonly="job_state != 'received'"/>
+                                    <field name="colour" optional="show" readonly="job_state != 'received'"/>
+                                    <field name="brand" optional="hide" readonly="job_state != 'received'"/>
+                                    <field name="condition_note" optional="show"/>
+                                    <field name="photo_ids" widget="many2many_binary" optional="show"/>
+                                    <field name="price_unit" optional="show"/>
+                                    <field name="qc_state" widget="badge"
+                                           decoration-success="qc_state == 'passed'"
+                                           decoration-warning="qc_state == 'rework'"/>
+                                    <field name="rework_count" optional="hide"/>
+                                    <field name="missing" optional="show"/>
+                                </list>
+                            </field>
+                            <group>
+                                <field name="customer_note" placeholder='e.g. "no starch"'/>
+                            </group>
+                        </page>
+                        <page string="Stage History" name="stage_history">
+                            <field name="stage_log_ids">
+                                <list>
+                                    <field name="date"/>
+                                    <field name="from_state"/>
+                                    <field name="to_state"/>
+                                    <field name="employee_id"/>
+                                    <field name="user_id" widget="many2one_avatar_user"/>
+                                    <field name="duration_hours" widget="float_time"/>
+                                    <field name="item_ids" widget="many2many_tags" optional="hide"/>
+                                    <field name="note"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="note" placeholder="Internal notes..."/>
+                            <group invisible="not uncollected_reminders_sent">
+                                <field name="uncollected_reminders_sent"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="laundry_job_view_calendar" model="ir.ui.view">
+        <field name="name">laundry.job.calendar</field>
+        <field name="model">laundry.job</field>
+        <field name="arch" type="xml">
+            <calendar date_start="promised_on" color="state" mode="week" quick_create="0"
+                      event_open_popup="1">
+                <field name="partner_id"/>
+                <field name="item_count"/>
+                <field name="state" filters="1"/>
+                <field name="earlydryer_branch_id" filters="1"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="laundry_job_view_pivot" model="ir.ui.view">
+        <field name="name">laundry.job.pivot</field>
+        <field name="model">laundry.job</field>
+        <field name="arch" type="xml">
+            <pivot sample="1">
+                <field name="earlydryer_branch_id" type="row"/>
+                <field name="state" type="col"/>
+                <field name="item_count" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="laundry_job_view_graph" model="ir.ui.view">
+        <field name="name">laundry.job.graph</field>
+        <field name="model">laundry.job</field>
+        <field name="arch" type="xml">
+            <graph type="bar" sample="1">
+                <field name="state"/>
+                <field name="earlydryer_branch_id"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="laundry_job_view_search" model="ir.ui.view">
+        <field name="name">laundry.job.search</field>
+        <field name="model">laundry.job</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" string="Job"
+                       filter_domain="['|', '|', '|', ('name', 'ilike', self), ('partner_id.name', 'ilike', self), ('partner_phone', 'ilike', self), ('item_ids.tag_code', '=ilike', self)]"/>
+                <field name="partner_id"/>
+                <field name="partner_phone"/>
+                <field name="item_ids" string="Tag" filter_domain="[('item_ids.tag_code', 'ilike', self)]"/>
+                <field name="sale_order_id"/>
+                <field name="pos_order_id"/>
+                <field name="shelf_id"/>
+                <filter name="my_plant" string="My Plant"
+                        domain="[('earlydryer_branch_id.user_ids', 'in', uid)]"/>
+                <separator/>
+                <filter name="in_progress" string="In Progress"
+                        domain="[('state', 'in', ('received', 'tagged', 'sorted', 'washed', 'dried', 'ironed', 'qc', 'packed'))]"/>
+                <filter name="overdue" string="Overdue" domain="[('is_overdue', '=', True)]"/>
+                <filter name="due_today" string="Due Today"
+                        domain="[('promised_on', '&gt;=', 'today'), ('promised_on', '&lt;', 'today +1d'), ('state', 'not in', ('delivered', 'collected', 'uncollected', 'cancelled'))]"/>
+                <filter name="express" string="Express" domain="[('express', '=', True)]"/>
+                <filter name="ready_unpaid" string="Ready and Unpaid"
+                        domain="[('state', '=', 'ready'), ('is_unpaid', '=', True)]"/>
+                <filter name="uncollected" string="Uncollected" domain="[('state', '=', 'uncollected')]"/>
+                <filter name="hide_cancelled" string="Not Cancelled" domain="[('state', '!=', 'cancelled')]"/>
+                <separator/>
+                <filter name="channel_walk_in" string="Walk-in" domain="[('channel', '=', 'walk_in')]"/>
+                <filter name="channel_pickup" string="Pickup" domain="[('channel', '=', 'pickup')]"/>
+                <filter name="channel_website" string="Website" domain="[('channel', '=', 'website')]"/>
+                <filter name="channel_whatsapp" string="WhatsApp" domain="[('channel', '=', 'whatsapp')]"/>
+                <filter name="channel_phone" string="Phone" domain="[('channel', '=', 'phone')]"/>
+                <filter name="channel_corporate" string="Corporate" domain="[('channel', '=', 'corporate')]"/>
+                <separator/>
+                <filter name="received_on" string="Received" date="received_on"/>
+                <group>
+                    <filter name="group_state" string="Stage" context="{'group_by': 'state'}"/>
+                    <filter name="group_branch" string="Plant" context="{'group_by': 'earlydryer_branch_id'}"/>
+                    <filter name="group_shelf" string="Shelf" context="{'group_by': 'shelf_id'}"/>
+                    <filter name="group_channel" string="Channel" context="{'group_by': 'channel'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="laundry_job_action" model="ir.actions.act_window">
+        <field name="name">Laundry Jobs</field>
+        <field name="res_model">laundry.job</field>
+        <field name="view_mode">kanban,list,form,calendar,pivot,graph</field>
+        <field name="search_view_id" ref="laundry_job_view_search"/>
+        <field name="context">{'search_default_hide_cancelled': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No laundry job yet</p>
+            <p>A job is created when a sales order with laundry items is confirmed,
+               or when a POS order syncs. Each garment is one item.</p>
+        </field>
+    </record>
+</odoo>

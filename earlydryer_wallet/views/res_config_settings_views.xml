@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="res_config_settings_view_form_earlydryer_wallet" model="ir.ui.view">
+        <field name="name">res.config.settings.form.earlydryer.wallet</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="priority">60</field>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app data-string="Earlydryer" string="Earlydryer" name="earlydryer_wallet"
+                     groups="earlydryer_base.group_finance,earlydryer_base.group_admin">
+                    <block title="Wallet" id="earlydryer_wallet_section">
+                        <setting id="earlydryer_wallet_accounts" string="Accounting"
+                                 help="Customer advances (a current liability used for nothing else), the Wallet journal, the goodwill and claims expense and the account debited by the migration of old balances.">
+                            <div class="content-group">
+                                <div class="row mt8">
+                                    <label for="earlydryer_wallet_account_id" class="col-lg-5 o_light_label"/>
+                                    <field name="earlydryer_wallet_account_id" options="{'no_create': True}"/>
+                                </div>
+                                <div class="row">
+                                    <label for="earlydryer_wallet_journal_id" class="col-lg-5 o_light_label"/>
+                                    <field name="earlydryer_wallet_journal_id" options="{'no_create': True}"/>
+                                </div>
+                                <div class="row">
+                                    <label for="earlydryer_wallet_credit_account_id" class="col-lg-5 o_light_label"/>
+                                    <field name="earlydryer_wallet_credit_account_id" options="{'no_create': True}"/>
+                                </div>
+                                <div class="row">
+                                    <label for="earlydryer_wallet_opening_account_id" class="col-lg-5 o_light_label"/>
+                                    <field name="earlydryer_wallet_opening_account_id" options="{'no_create': True}"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting id="earlydryer_wallet_auto_apply" string="Apply Wallet to Invoices"
+                                 help="Posting a customer invoice from a sales order or laundry job spends the available wallet balance on it (never POS invoices).">
+                            <field name="earlydryer_wallet_auto_apply"/>
+                        </setting>
+                        <setting id="earlydryer_wallet_min_topup" string="Minimum Top-up"
+                                 help="Smallest amount accepted for a backend top-up.">
+                            <field name="earlydryer_wallet_min_topup"/>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+</odoo>

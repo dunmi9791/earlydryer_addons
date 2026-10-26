@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="action_earlydryer_scan_screen" model="ir.actions.client">
+        <field name="name">Scan</field>
+        <field name="tag">earlydryer_tagging.scan_screen</field>
+    </record>
+
+    <menuitem id="menu_earlydryer_operations" name="Operations" parent="earlydryer_base.menu_earlydryer_root"
+              sequence="7"/>
+    <menuitem id="menu_earlydryer_scan" name="Scan" parent="menu_earlydryer_operations"
+              action="action_earlydryer_scan_screen" sequence="10"
+              groups="earlydryer_base.group_front_desk,earlydryer_base.group_production,earlydryer_base.group_rider"/>
+    <menuitem id="menu_earlydryer_scan_log" name="Scan Log" parent="menu_earlydryer_operations"
+              action="earlydryer_scan_log_action" sequence="20"
+              groups="earlydryer_base.group_front_desk,earlydryer_base.group_production"/>
+    <menuitem id="menu_earlydryer_scan_mismatches" name="Packing Mismatches" parent="menu_earlydryer_operations"
+              action="earlydryer_scan_log_action_mismatches" sequence="30"
+              groups="earlydryer_base.group_branch_manager"/>
+    <menuitem id="menu_earlydryer_tag_ranges" name="Tag Ranges" parent="menu_earlydryer_operations"
+              action="earlydryer_tag_range_action" sequence="40"
+              groups="earlydryer_base.group_front_desk"/>
+</odoo>

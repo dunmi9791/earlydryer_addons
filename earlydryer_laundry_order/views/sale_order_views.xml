@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="sale_order_view_form_earlydryer" model="ir.ui.view">
+        <field name="name">sale.order.form.earlydryer.laundry</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <button name="action_earlydryer_apply_extras" type="object" string="Price Surcharges/Express"
+                        invisible="not earlydryer_has_laundry or state not in ('draft', 'sent')"/>
+            </xpath>
+            <div name="button_box" position="inside">
+                <button name="action_view_laundry_jobs" type="object" class="oe_stat_button"
+                        icon="fa-tags" invisible="laundry_job_count == 0"
+                        groups="earlydryer_base.group_front_desk,earlydryer_base.group_production,earlydryer_base.group_rider,earlydryer_base.group_customer_service,earlydryer_base.group_finance">
+                    <field name="laundry_job_count" widget="statinfo" string="Laundry Jobs"/>
+                </button>
+            </div>
+            <group name="sale_header" position="after">
+                <group name="earlydryer" string="Laundry">
+                    <group>
+                        <field name="earlydryer_has_laundry" invisible="1"/>
+                        <field name="earlydryer_branch_id" options="{'no_create': True}"
+                               required="earlydryer_has_laundry"
+                               readonly="state in ('cancel', 'sale')"/>
+                        <field name="earlydryer_channel" readonly="state in ('cancel', 'sale')"/>
+                    </group>
+                    <group>
+                        <field name="earlydryer_fulfilment" readonly="state in ('cancel', 'sale')"/>
+                        <field name="earlydryer_express" readonly="state in ('cancel', 'sale')"/>
+                    </group>
+                </group>
+            </group>
+            <xpath expr="//field[@name='order_line']/list/field[@name='name']" position="after">
+                <field name="earlydryer_kind" column_invisible="True"/>
+                <field name="earlydryer_parent_line_id" column_invisible="True"/>
+                <field name="earlydryer_surcharge_ids" widget="many2many_tags" optional="show"
+                       invisible="earlydryer_kind != 'laundry'" options="{'no_create': True}"/>
+                <field name="earlydryer_colour" optional="show" invisible="earlydryer_kind != 'laundry'"/>
+                <field name="earlydryer_condition_note" optional="hide" invisible="earlydryer_kind != 'laundry'"/>
+                <button name="action_earlydryer_apply_extras" type="object" icon="fa-plus-square"
+                        title="Add surcharges/express"
+                        invisible="earlydryer_kind != 'laundry' or parent.state not in ('draft', 'sent')"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="sale_order_view_search_earlydryer" model="ir.ui.view">
+        <field name="name">sale.order.search.earlydryer.laundry</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+        <field name="arch" type="xml">
+            <field name="partner_id" position="after">
+                <field name="earlydryer_branch_id"/>
+            </field>
+        </field>
+    </record>
+</odoo>

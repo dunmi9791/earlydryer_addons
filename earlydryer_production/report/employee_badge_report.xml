@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="action_report_employee_badge" model="ir.actions.report">
+        <field name="name">Earlydryer Badge</field>
+        <field name="model">hr.employee</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">earlydryer_production.report_employee_badge</field>
+        <field name="report_file">earlydryer_production.report_employee_badge</field>
+        <field name="paperformat_id" ref="paperformat_badge_cr80"/>
+        <field name="print_report_name">'Badge - %s' % (object.name or '').replace('/', '')</field>
+        <field name="binding_model_id" ref="hr.model_hr_employee"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <!-- name, photo, plant and badge barcode; read with sudo because the
+         badge ID is an HR field -->
+    <template id="report_employee_badge">
+        <t t-call="web.basic_layout">
+            <t t-foreach="docs.sudo()" t-as="employee">
+                <div class="page" style="width: 85mm; height: 53mm; padding: 3mm; font-family: sans-serif; page-break-after: always; overflow: hidden;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr>
+                            <td style="width: 24mm; vertical-align: top;">
+                                <img t-if="employee.image_256" t-att-src="image_data_uri(employee.image_256)"
+                                     style="width: 22mm; height: 22mm; object-fit: cover; border-radius: 2mm;"/>
+                            </td>
+                            <td style="vertical-align: top; padding-left: 2mm;">
+                                <div style="font-size: 7pt; text-transform: uppercase; letter-spacing: 0.1em; color: #555;">Earlydryer</div>
+                                <div style="font-size: 12pt; font-weight: bold; line-height: 1.15;" t-out="employee.name"/>
+                                <div style="font-size: 8pt;" t-out="employee.job_title or ''"/>
+                                <div style="font-size: 8pt; color: #555;" t-out="employee.earlydryer_branch_id.name or ''"/>
+                            </td>
+                        </tr>
+                    </table>
+                    <div t-if="employee.barcode" style="text-align: center; margin-top: 2mm;">
+                        <span t-field="employee.barcode"
+                              t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 900, 'height': 160, 'quiet': 0, 'img_style': 'width: 70mm; height: 13mm;'}"/>
+                        <div style="font-family: monospace; font-size: 8pt; letter-spacing: 0.1em;" t-out="employee.barcode"/>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

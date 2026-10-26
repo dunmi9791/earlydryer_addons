@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="laundry_job_item_view_form_tagging" model="ir.ui.view">
+        <field name="name">laundry.job.item.form.tagging</field>
+        <field name="model">laundry.job.item</field>
+        <field name="inherit_id" ref="earlydryer_laundry_order.laundry_job_item_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="action_open_replace_tag_wizard" type="object" string="Replace Tag"
+                            invisible="not tag_code" groups="earlydryer_base.group_front_desk"/>
+                </header>
+            </xpath>
+            <xpath expr="//field[@name='tag_code']" position="attributes">
+                <attribute name="readonly">tag_code</attribute>
+            </xpath>
+            <xpath expr="//field[@name='tag_code']" position="after">
+                <field name="tag_mode"/>
+                <field name="tag_required"/>
+                <field name="tag_print_count"/>
+                <field name="packed_scanned"/>
+                <field name="packed_scanned_on" invisible="not packed_scanned_on"/>
+            </xpath>
+            <xpath expr="//sheet" position="inside">
+                <group string="Replaced Tags" invisible="not tag_history_ids">
+                    <field name="tag_history_ids" nolabel="1" colspan="2">
+                        <list>
+                            <field name="date"/>
+                            <field name="old_code"/>
+                            <field name="new_code"/>
+                            <field name="reason"/>
+                            <field name="user_id" widget="many2one_avatar_user"/>
+                        </list>
+                    </field>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="laundry_job_item_view_list_tagging" model="ir.ui.view">
+        <field name="name">laundry.job.item.list.tagging</field>
+        <field name="model">laundry.job.item</field>
+        <field name="inherit_id" ref="earlydryer_laundry_order.laundry_job_item_view_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='missing']" position="after">
+                <field name="packed_scanned" optional="hide"/>
+                <field name="tag_print_count" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="laundry_job_item_view_search_tagging" model="ir.ui.view">
+        <field name="name">laundry.job.item.search.tagging</field>
+        <field name="model">laundry.job.item</field>
+        <field name="inherit_id" ref="earlydryer_laundry_order.laundry_job_item_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='missing']" position="after">
+                <filter name="untagged" string="Untagged"
+                        domain="[('tag_code', '=', False), ('service_type_id.requires_tag', '=', True)]"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

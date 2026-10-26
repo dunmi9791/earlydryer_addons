@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo noupdate="1">
+    <!-- price changes must be traceable; confirmed by the post_init_hook -->
+    <record id="auditlog_rule_product_pricelist_item" model="auditlog.rule">
+        <field name="name">Price list items</field>
+        <field name="model_id" ref="product.model_product_pricelist_item"/>
+        <field name="log_type">full</field>
+        <field name="log_create" eval="True"/>
+        <field name="log_write" eval="True"/>
+        <field name="log_unlink" eval="True"/>
+        <field name="log_read" eval="False"/>
+        <field name="log_export_data" eval="False"/>
+        <field name="capture_record" eval="True"/>
+    </record>
+    <record id="auditlog_rule_earlydryer_surcharge" model="auditlog.rule">
+        <field name="name">Earlydryer surcharges</field>
+        <field name="model_id" ref="model_earlydryer_surcharge"/>
+        <field name="log_type">full</field>
+        <field name="log_create" eval="True"/>
+        <field name="log_write" eval="True"/>
+        <field name="log_unlink" eval="True"/>
+        <field name="log_read" eval="False"/>
+        <field name="log_export_data" eval="False"/>
+        <field name="capture_record" eval="True"/>
+    </record>
+    <record id="auditlog_rule_earlydryer_service_type" model="auditlog.rule">
+        <field name="name">Earlydryer service types</field>
+        <field name="model_id" ref="model_earlydryer_service_type"/>
+        <field name="log_type">full</field>
+        <field name="log_create" eval="True"/>
+        <field name="log_write" eval="True"/>
+        <field name="log_unlink" eval="True"/>
+        <field name="log_read" eval="False"/>
+        <field name="log_export_data" eval="False"/>
+        <field name="capture_record" eval="True"/>
+    </record>
+</odoo>

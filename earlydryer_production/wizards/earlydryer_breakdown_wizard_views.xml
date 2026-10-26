@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_breakdown_wizard_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.breakdown.wizard.form</field>
+        <field name="model">earlydryer.breakdown.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="earlydryer_branch_id" invisible="1"/>
+                    <field name="equipment_id" options="{'no_create': True, 'no_open': True}"/>
+                    <field name="description" placeholder="e.g. drum does not turn, water leaking"/>
+                    <field name="photo" widget="image" options="{'size': [0, 120]}"/>
+                    <field name="employee_id" options="{'no_create': True}"/>
+                </group>
+                <footer>
+                    <button name="action_confirm" type="object" string="Report Breakdown"
+                            class="btn-danger" data-hotkey="q"/>
+                    <button string="Discard" special="cancel" data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="earlydryer_breakdown_wizard_action" model="ir.actions.act_window">
+        <field name="name">Report Breakdown</field>
+        <field name="res_model">earlydryer.breakdown.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <!-- Payment advice of a vendor payment: the WHT kept from the vendor -->
+    <template id="report_payment_receipt_document_earlydryer" inherit_id="account.report_payment_receipt_document">
+        <xpath expr="//div[@name='date']" position="after">
+            <div class="row" t-if="o.earlydryer_wht_amount" id="earlydryer_payment_wht">
+                <div class="col-6">
+                    WHT deducted: <span t-field="o.earlydryer_wht_amount"
+                                        t-options="{'widget': 'monetary', 'display_currency': o.company_currency_id}"/>
+                    (<t t-out="', '.join(o.earlydryer_wht_bill_ids.mapped('name'))"/>)
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>

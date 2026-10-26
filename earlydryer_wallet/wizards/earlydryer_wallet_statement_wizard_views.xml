@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_wallet_statement_wizard_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.wallet.statement.wizard.form</field>
+        <field name="model">earlydryer.wallet.statement.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Wallet Statement">
+                <group>
+                    <field name="partner_id" options="{'no_create': True}"/>
+                    <field name="date_from"/>
+                    <field name="date_to"/>
+                </group>
+                <footer>
+                    <button name="action_print" type="object" string="Print" class="btn-primary"/>
+                    <button special="cancel" string="Cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="earlydryer_wallet_statement_wizard_action" model="ir.actions.act_window">
+        <field name="name">Wallet Statement</field>
+        <field name="res_model">earlydryer.wallet.statement.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

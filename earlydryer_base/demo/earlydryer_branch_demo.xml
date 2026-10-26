@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <!-- Placeholder plants: real names and codes come from the client later -->
+    <record id="partner_plant_1" model="res.partner">
+        <field name="name">Earlydryer Plant 1</field>
+        <field name="is_company" eval="True"/>
+        <field name="city">Abuja</field>
+        <field name="country_id" ref="base.ng"/>
+        <field name="phone">+234 800 000 0001</field>
+    </record>
+    <record id="partner_plant_2" model="res.partner">
+        <field name="name">Earlydryer Plant 2</field>
+        <field name="is_company" eval="True"/>
+        <field name="city">Abuja</field>
+        <field name="country_id" ref="base.ng"/>
+        <field name="phone">+234 800 000 0002</field>
+    </record>
+
+    <record id="warehouse_plant_1" model="stock.warehouse">
+        <field name="name">Plant 1</field>
+        <field name="code">EDP1</field>
+        <field name="partner_id" ref="partner_plant_1"/>
+    </record>
+    <record id="warehouse_plant_2" model="stock.warehouse">
+        <field name="name">Plant 2</field>
+        <field name="code">EDP2</field>
+        <field name="partner_id" ref="partner_plant_2"/>
+    </record>
+
+    <record id="analytic_plan_plants" model="account.analytic.plan">
+        <field name="name">Earlydryer Plants</field>
+    </record>
+    <record id="analytic_account_plant_1" model="account.analytic.account">
+        <field name="name">Plant 1</field>
+        <field name="code">P1</field>
+        <field name="plan_id" ref="analytic_plan_plants"/>
+    </record>
+    <record id="analytic_account_plant_2" model="account.analytic.account">
+        <field name="name">Plant 2</field>
+        <field name="code">P2</field>
+        <field name="plan_id" ref="analytic_plan_plants"/>
+    </record>
+
+    <record id="journal_cash_plant_1" model="account.journal">
+        <field name="name">Cash Plant 1</field>
+        <field name="code">CSP1</field>
+        <field name="type">cash</field>
+    </record>
+    <record id="journal_cash_plant_2" model="account.journal">
+        <field name="name">Cash Plant 2</field>
+        <field name="code">CSP2</field>
+        <field name="type">cash</field>
+    </record>
+
+    <record id="branch_plant_1" model="earlydryer.branch">
+        <field name="name">Plant 1</field>
+        <field name="code">P1</field>
+        <field name="sequence">10</field>
+        <field name="partner_id" ref="partner_plant_1"/>
+        <field name="warehouse_id" ref="warehouse_plant_1"/>
+        <field name="cash_journal_id" ref="journal_cash_plant_1"/>
+        <field name="analytic_account_id" ref="analytic_account_plant_1"/>
+        <field name="resource_calendar_id" ref="resource.resource_calendar_std"/>
+    </record>
+    <record id="branch_plant_2" model="earlydryer.branch">
+        <field name="name">Plant 2</field>
+        <field name="code">P2</field>
+        <field name="sequence">20</field>
+        <field name="partner_id" ref="partner_plant_2"/>
+        <field name="warehouse_id" ref="warehouse_plant_2"/>
+        <field name="cash_journal_id" ref="journal_cash_plant_2"/>
+        <field name="analytic_account_id" ref="analytic_account_plant_2"/>
+        <field name="resource_calendar_id" ref="resource.resource_calendar_std"/>
+    </record>
+
+    <!-- 10 shelves each: A-01 .. A-10 -->
+    <function model="earlydryer.branch" name="_generate_shelves"
+              eval="[[ref('branch_plant_1'), ref('branch_plant_2')], 'A', 1, 10, 2]"/>
+</odoo>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="view_partner_form_earlydryer_wallet" model="ir.ui.view">
+        <field name="name">res.partner.form.earlydryer.wallet</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header name="earlydryer_wallet" invisible="not id or parent_id">
+                    <button name="action_earlydryer_wallet_topup" type="object" string="Top Up Wallet"
+                            groups="earlydryer_base.group_front_desk,earlydryer_base.group_finance"/>
+                    <button name="action_earlydryer_wallet_refund" type="object" string="Refund Wallet"
+                            invisible="earlydryer_wallet_balance &lt;= 0"
+                            groups="earlydryer_base.group_front_desk,earlydryer_base.group_customer_service,earlydryer_base.group_finance"/>
+                    <button name="action_earlydryer_wallet_credit" type="object" string="Credit Wallet"
+                            groups="earlydryer_base.group_customer_service,earlydryer_base.group_finance"/>
+                    <button name="action_earlydryer_wallet_statement" type="object" string="Wallet Statement"
+                            invisible="not earlydryer_wallet_id" groups="base.group_user"/>
+                </header>
+            </xpath>
+            <div name="button_box" position="inside">
+                <field name="earlydryer_wallet_id" invisible="1"/>
+                <field name="earlydryer_wallet_currency_id" invisible="1"/>
+                <button name="action_earlydryer_wallet_open" type="object" class="oe_stat_button"
+                        icon="fa-money" invisible="not earlydryer_wallet_id" groups="base.group_user">
+                    <div class="o_stat_info">
+                        <span class="o_stat_value">
+                            <field name="earlydryer_wallet_balance" widget="monetary"
+                                   options="{'currency_field': 'earlydryer_wallet_currency_id'}"/>
+                        </span>
+                        <span class="o_stat_text">Wallet</span>
+                    </div>
+                </button>
+            </div>
+        </field>
+    </record>
+</odoo>

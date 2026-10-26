@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_wallet_import_wizard_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.wallet.import.wizard.form</field>
+        <field name="model">earlydryer.wallet.import.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import Wallet Balances">
+                <field name="state" invisible="1"/>
+                <field name="currency_id" invisible="1"/>
+                <div invisible="state != 'upload'">
+                    <p>
+                        CSV or XLSX with the columns <code>ref</code>, <code>name</code>,
+                        <code>phone</code>, <code>balance</code> and optionally
+                        <code>branch_code</code> and <code>note</code>. Customers are
+                        matched by phone (Nigerian numbers normalised), then by exact
+                        name, else created. A dry run comes first; nothing is posted
+                        before you confirm. Re-importing the same refs adds nothing.
+                    </p>
+                    <group>
+                        <field name="file" filename="filename"/>
+                        <field name="filename" invisible="1"/>
+                        <field name="as_of_date"/>
+                        <field name="company_id" groups="base.group_multi_company"/>
+                    </group>
+                </div>
+                <div invisible="state == 'upload'">
+                    <div class="alert alert-success" role="alert" invisible="state != 'done'">
+                        Imported. Summary entry: <field name="move_id" class="oe_inline"/>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="count_match"/>
+                            <field name="count_create"/>
+                        </group>
+                        <group>
+                            <field name="count_skip"/>
+                            <field name="count_error" decoration-danger="count_error &gt; 0"/>
+                            <field name="total"/>
+                        </group>
+                    </group>
+                    <field name="line_ids" readonly="1">
+                        <list decoration-danger="status == 'error'" decoration-muted="status == 'skip'">
+                            <field name="sequence"/>
+                            <field name="ref"/>
+                            <field name="name"/>
+                            <field name="phone_normalized"/>
+                            <field name="partner_id"/>
+                            <field name="branch_id" optional="show"/>
+                            <field name="balance" sum="Total"/>
+                            <field name="status" widget="badge"/>
+                            <field name="message"/>
+                        </list>
+                    </field>
+                </div>
+                <footer>
+                    <button name="action_preview" type="object" string="Dry Run" class="btn-primary"
+                            invisible="state != 'upload'"/>
+                    <button name="action_import" type="object" string="Confirm and Post" class="btn-primary"
+                            invisible="state != 'preview'"
+                            confirm="Post the matched and new rows as wallet balances?"/>
+                    <button name="action_back" type="object" string="Back" invisible="state != 'preview'"/>
+                    <button special="cancel" string="Close"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="earlydryer_wallet_import_wizard_action" model="ir.actions.act_window">
+        <field name="name">Import Wallet Balances</field>
+        <field name="res_model">earlydryer.wallet.import.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

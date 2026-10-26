@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <t t-name="earlydryer_tagging.ScanScreen">
+        <div class="o_action o_earlydryer_scan h-100 overflow-auto bg-view">
+            <div class="container py-3" style="max-width: 900px;">
+                <!-- mode and settings -->
+                <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+                    <div class="btn-group" role="group">
+                        <t t-foreach="modes" t-as="m" t-key="m.key">
+                            <button type="button" t-attf-class="btn btn-lg {{state.mode === m.key ? 'btn-primary' : 'btn-outline-primary'}}"
+                                    t-on-click="() => this.setMode(m.key)" t-out="m.label"/>
+                        </t>
+                    </div>
+                    <select t-if="ctx.branches.length > 1" class="form-select w-auto ms-auto"
+                            t-model.number="state.branchId" title="Plant">
+                        <t t-foreach="ctx.branches" t-as="b" t-key="b.id">
+                            <option t-att-value="b.id" t-out="b.name"/>
+                        </t>
+                    </select>
+                </div>
+
+                <div t-if="state.mode !== 'find'" class="row g-2 mb-3">
+                    <div t-if="state.mode === 'move'" class="col-sm-4">
+                        <label class="form-label small text-muted">Move to</label>
+                        <select class="form-select" t-model="state.targetState">
+                            <option value="">Choose a stage…</option>
+                            <t t-foreach="ctx.stages" t-as="stage" t-key="stage[0]">
+                                <option t-att-value="stage[0]" t-out="stage[1]"/>
+                            </t>
+                        </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="form-label small text-muted">Work done by</label>
+                        <select class="form-select" t-model.number="state.employeeId">
+                            <option value="">—</option>
+                            <t t-foreach="employees" t-as="e" t-key="e.id">
+                                <option t-att-value="e.id" t-out="e.name"/>
+                            </t>
+                        </select>
+                    </div>
+                    <div t-if="state.mode === 'move'" class="col-sm-4">
+                        <label class="form-label small text-muted">Note (backward moves, skips)</label>
+                        <input type="text" class="form-control" t-model="state.note"/>
+                    </div>
+                </div>
+
+                <!-- scanner input: keeps the focus; scanners send Enter -->
+                <div class="input-group input-group-lg mb-3">
+                    <span class="input-group-text"><i class="fa fa-barcode"/></span>
+                    <input t-ref="scanInput" type="text" class="form-control o_earlydryer_scan_input"
+                           autocomplete="off" autocapitalize="characters" spellcheck="false"
+                           t-att-placeholder="state.mode === 'pack' and !state.pack ? 'Scan the bag label or job number' : 'Scan or type a tag / job number, then Enter'"
+                           t-on-keydown="onKeydown" t-on-blur="onBlur"/>
+                </div>
+
+                <div t-if="state.message" t-attf-class="alert alert-{{state.message.type}}" role="alert"
+                     t-out="state.message.text"/>
+
+                <!-- FIND -->
+                <div t-if="state.mode === 'find' and state.card" class="card shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex align-items-baseline gap-2">
+                            <h2 class="mb-0" t-out="state.card.job_name"/>
+                            <span class="badge text-bg-info fs-6" t-out="state.card.state_label"/>
+                            <span t-if="state.card.express" class="badge text-bg-warning fs-6">Express</span>
+                        </div>
+                        <div t-if="state.card.item_label" class="text-muted mt-1" t-out="state.card.item_label"/>
+                        <dl class="row mt-3 mb-0">
+                            <dt class="col-4">Customer</dt><dd class="col-8" t-out="state.card.customer"/>
+                            <dt class="col-4">Plant</dt><dd class="col-8" t-out="state.card.branch_name"/>
+                            <dt class="col-4">Shelf</dt><dd class="col-8" t-out="state.card.shelf or '—'"/>
+                            <dt class="col-4">Items</dt><dd class="col-8" t-out="state.card.item_count"/>
+                            <dt class="col-4">Amount due</dt>
+                            <dd t-attf-class="col-8 {{state.card.amount_due > 0 ? 'text-danger fw-bold' : ''}}"
+                                t-out="state.card.amount_due_display"/>
+                        </dl>
+                        <button class="btn btn-primary mt-2" t-on-click="() => this.openJob(state.card.job_id)">
+                            Open Job
+                        </button>
+                    </div>
+                </div>
+
+                <!-- MOVE -->
+                <t t-if="state.mode === 'move'">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="text-muted" t-if="branch.commit_per_scan">Each scan moves its job at once.</span>
+                        <span class="text-muted" t-else=""><t t-out="pendingMoves.length"/> to move</span>
+                        <button t-if="!branch.commit_per_scan" class="btn btn-primary ms-auto"
+                                t-att-disabled="!pendingMoves.length or state.busy"
+                                t-on-click="() => this.commitMoves()">Done</button>
+                        <button class="btn btn-secondary" t-att-class="{'ms-auto': branch.commit_per_scan}"
+                                t-on-click="clearMoves">Clear</button>
+                    </div>
+                    <ul class="list-group">
+                        <t t-foreach="state.moves" t-as="m" t-key="m_index">
+                            <li class="list-group-item d-flex align-items-start gap-2">
+                                <span t-attf-class="badge {{resultClass(m.result)}}" t-out="m.result"/>
+                                <span class="font-monospace fw-bold" t-out="m.code"/>
+                                <span class="text-muted" t-out="m.job_name or ''"/>
+                                <div class="ms-auto text-end small">
+                                    <div t-out="m.message"/>
+                                    <div t-if="m.warning" class="text-warning" t-out="m.warning"/>
+                                </div>
+                            </li>
+                        </t>
+                    </ul>
+                </t>
+
+                <!-- PACK -->
+                <t t-if="state.mode === 'pack' and state.pack">
+                    <div class="card shadow-sm mb-3">
+                        <div class="card-body">
+                            <div class="d-flex align-items-baseline gap-2">
+                                <h2 class="mb-0" t-out="state.pack.job_name"/>
+                                <span class="text-muted" t-out="state.pack.customer"/>
+                                <span t-if="state.pack.express" class="badge text-bg-warning">Express</span>
+                                <span t-attf-class="ms-auto display-6 {{state.pack.complete ? 'text-success' : ''}}">
+                                    <t t-out="state.pack.scanned"/> / <t t-out="state.pack.expected"/>
+                                </span>
+                            </div>
+                            <div t-if="state.pack.untagged_count" class="text-warning small">
+                                <t t-out="state.pack.untagged_count"/> item(s) without tag are not counted.
+                            </div>
+                            <div t-if="state.pack.missing_items.length" class="mt-2">
+                                <div class="small text-muted">Not scanned yet:</div>
+                                <ul class="mb-0">
+                                    <t t-foreach="state.pack.missing_items" t-as="mi" t-key="mi.id">
+                                        <li><span class="font-monospace" t-out="mi.code"/> — <t t-out="mi.label"/></li>
+                                    </t>
+                                </ul>
+                            </div>
+                            <div t-if="state.switchTo" class="alert alert-info mt-2 d-flex align-items-center">
+                                <span>Bag label of <b t-out="state.switchTo.name"/> scanned.</span>
+                                <button class="btn btn-sm btn-primary ms-auto" t-on-click="switchJob">Switch to it</button>
+                            </div>
+                            <div class="d-flex flex-wrap gap-2 mt-3">
+                                <button class="btn btn-primary"
+                                        t-att-disabled="state.busy or (state.pack.require_scan and !state.pack.complete)"
+                                        t-on-click="() => this.finishPack(false)">Finish Packing</button>
+                                <button class="btn btn-secondary" t-on-click="closePack">Other Job</button>
+                            </div>
+                            <div t-if="ctx.rights.manager and !state.pack.complete" class="input-group mt-3">
+                                <input type="text" class="form-control" t-model="state.missingNote"
+                                       placeholder="Branch Manager: why are the rest missing?"/>
+                                <button class="btn btn-outline-danger" t-att-disabled="!state.missingNote"
+                                        t-on-click="() => this.finishPack(true)">Mark the Rest Missing</button>
+                            </div>
+                        </div>
+                    </div>
+                    <ul class="list-group">
+                        <t t-foreach="state.packLog" t-as="p" t-key="p_index">
+                            <li class="list-group-item d-flex gap-2">
+                                <span t-attf-class="badge {{resultClass(p.result)}}" t-out="p.result"/>
+                                <span class="font-monospace" t-out="p.code"/>
+                                <span class="ms-auto small" t-out="p.message"/>
+                            </li>
+                        </t>
+                    </ul>
+                </t>
+            </div>
+
+            <!-- blocking mismatch alert -->
+            <div t-if="state.alert" class="o_earlydryer_scan_alert position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center">
+                <div class="text-center text-white p-4">
+                    <i class="fa fa-exclamation-triangle" style="font-size: 6rem;"/>
+                    <h1 class="mt-3 text-white" t-out="state.alert.result === 'wrong_branch' ? 'WRONG PLANT' : 'WRONG BAG'"/>
+                    <p class="fs-3" t-out="state.alert.message"/>
+                    <p t-if="state.alert.other_job_name" class="display-5 font-monospace" t-out="state.alert.other_job_name"/>
+                    <p class="fs-5">Take the garment out of this bag. The branch manager has been told.</p>
+                    <button class="btn btn-light btn-lg mt-2" t-on-click="acknowledgeAlert">I took it out</button>
+                </div>
+            </div>
+        </div>
+    </t>
+
+</templates>

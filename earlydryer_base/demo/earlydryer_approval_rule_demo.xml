@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <!-- Example limits only: the real limits per role are still open (workshop gap 8) -->
+    <record id="approval_rule_discount_branch_manager" model="earlydryer.approval.rule">
+        <field name="name">Discount up to 5%: Branch Manager</field>
+        <field name="sequence">10</field>
+        <field name="approval_type">discount</field>
+        <field name="model_id" ref="point_of_sale.model_pos_order"/>
+        <field name="threshold_kind">percent</field>
+        <field name="min_value">0</field>
+        <field name="max_value">5</field>
+        <field name="approver_group_id" ref="group_branch_manager"/>
+        <field name="self_approve" eval="True"/>
+    </record>
+    <record id="approval_rule_discount_management" model="earlydryer.approval.rule">
+        <field name="name">Discount above 5%: Management</field>
+        <field name="sequence">20</field>
+        <field name="approval_type">discount</field>
+        <field name="model_id" ref="point_of_sale.model_pos_order"/>
+        <field name="threshold_kind">percent</field>
+        <field name="min_value">5</field>
+        <field name="max_value">0</field>
+        <field name="approver_group_id" ref="group_management"/>
+    </record>
+    <record id="approval_rule_credit_branch_manager" model="earlydryer.approval.rule">
+        <field name="name">Credit release: Branch Manager</field>
+        <field name="sequence">30</field>
+        <field name="approval_type">credit</field>
+        <field name="model_id" ref="point_of_sale.model_pos_order"/>
+        <field name="threshold_kind">amount</field>
+        <field name="min_value">0</field>
+        <field name="max_value">0</field>
+        <field name="approver_group_id" ref="group_branch_manager"/>
+    </record>
+</odoo>

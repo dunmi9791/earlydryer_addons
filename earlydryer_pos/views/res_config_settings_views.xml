@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="res_config_settings_view_form_earlydryer_pos" model="ir.ui.view">
+        <field name="name">res.config.settings.form.earlydryer.pos</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="point_of_sale.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@id='pos_pricing_section']" position="before">
+                <block title="Earlydryer" id="earlydryer_pos_section">
+                    <setting id="earlydryer_enabled" string="Laundry Counter"
+                             help="Laundry intake, garment tags and collection on this till">
+                        <field name="pos_earlydryer_enabled"/>
+                        <div class="content-group mt16">
+                            <div class="row">
+                                <label for="pos_earlydryer_branch_id" string="Plant" class="col-lg-4 o_light_label"/>
+                                <field name="pos_earlydryer_branch_id" options="{'no_create': True}"/>
+                            </div>
+                            <div class="row" invisible="not pos_earlydryer_enabled">
+                                <label for="pos_earlydryer_walkin_partner_id" string="Walk-in Customer" class="col-lg-4 o_light_label"/>
+                                <field name="pos_earlydryer_walkin_partner_id"/>
+                            </div>
+                        </div>
+                    </setting>
+                    <setting id="earlydryer_tags" string="Garment Tags"
+                             help="Tag numbers held by the till for offline printing, and label size"
+                             invisible="not pos_earlydryer_enabled">
+                        <div class="content-group">
+                            <div class="row">
+                                <label for="pos_earlydryer_tag_range_size" string="Range size" class="col-lg-4 o_light_label"/>
+                                <field name="pos_earlydryer_tag_range_size"/>
+                            </div>
+                            <div class="row">
+                                <label for="pos_earlydryer_tag_range_low_pct" string="Top up below (%)" class="col-lg-4 o_light_label"/>
+                                <field name="pos_earlydryer_tag_range_low_pct"/>
+                            </div>
+                            <div class="row">
+                                <label for="pos_earlydryer_label_width_mm" string="Label (mm)" class="col-lg-4 o_light_label"/>
+                                <div class="col">
+                                    <field name="pos_earlydryer_label_width_mm" class="oe_inline"/> ×
+                                    <field name="pos_earlydryer_label_height_mm" class="oe_inline"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <label for="pos_earlydryer_print_tags_auto" string="Print after payment" class="col-lg-4 o_light_label"/>
+                                <field name="pos_earlydryer_print_tags_auto"/>
+                            </div>
+                        </div>
+                    </setting>
+                    <setting id="earlydryer_receipt" string="Receipt Terms"
+                             help="Printed at the bottom of laundry receipts (placeholder wording to confirm)"
+                             invisible="not pos_earlydryer_enabled">
+                        <field name="pos_earlydryer_receipt_terms" class="w-100"/>
+                    </setting>
+                    <setting id="earlydryer_collection" string="Offline Collection"
+                             help="Days of ready and uncollected jobs kept on the till"
+                             invisible="not pos_earlydryer_enabled">
+                        <field name="pos_earlydryer_collection_cache_days"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>

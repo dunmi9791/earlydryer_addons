@@ -1,0 +1,27 @@
+.ed-intake {
+    .ed-garment-grid {
+        grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+        max-height: 55vh;
+        overflow-y: auto;
+    }
+    .ed-garment {
+        min-height: 8rem;
+    }
+    .ed-garment-img {
+        width: 4rem;
+        height: 4rem;
+        object-fit: contain;
+    }
+    .ed-service-grid {
+        grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+    }
+}
+.ed-line-details .ed-swatch {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+}
+.ed-receipt-barcode {
+    max-width: 100%;
+    height: 3rem;
+}

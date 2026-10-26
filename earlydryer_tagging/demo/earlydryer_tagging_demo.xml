@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <!--
+        Plant 1 uses printed tags (thermal labels), Plant 2 pre-printed
+        reusable tags (ED200001...), so both paths can be tried. Tags on the
+        demo jobs, a tag range for the Plant 1 counter, a few scans and one
+        packing mismatch.
+    -->
+    <record id="earlydryer_base.branch_plant_2" model="earlydryer.branch">
+        <field name="tag_preprinted_pattern">^ED2[0-9]{5}$</field>
+        <field name="tag_label_paperformat_id" ref="paperformat_tag_heatseal_60x15"/>
+    </record>
+    <function model="laundry.job" name="_earlydryer_load_demo_tags"/>
+</odoo>

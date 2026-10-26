@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="earlydryer_wallet.OrderReceipt" t-inherit="point_of_sale.OrderReceipt" t-inherit-mode="extension">
+        <xpath expr="//div[hasclass('before-footer')]" position="before">
+            <div t-if="edWalletBalance !== false" class="ed-wallet-balance d-flex pt-2">
+                <span>Wallet balance (as at time of sale)</span>
+                <span class="ms-auto font-monospace" t-esc="formatCurrency(edWalletBalance)"/>
+            </div>
+        </xpath>
+    </t>
+</templates>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<!--
+    Label sizes, editable afterwards (noupdate). Margins are zero and the
+    templates keep their own padding, so the printer driver must also print
+    with margins off. 96 DPI keeps the HTML millimetres equal to the paper
+    millimetres (no zoom), so the barcode is not scaled down.
+    The heat-seal size is a placeholder until Earlydryer names its printers.
+-->
+<odoo noupdate="1">
+    <record id="paperformat_tag_thermal_50x25" model="report.paperformat">
+        <field name="name">Earlydryer Tag: Thermal 50 × 25 mm</field>
+        <field name="format">custom</field>
+        <field name="page_width">50</field>
+        <field name="page_height">25</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">0</field>
+        <field name="margin_bottom">0</field>
+        <field name="margin_left">0</field>
+        <field name="margin_right">0</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="disable_shrinking" eval="True"/>
+        <field name="dpi">96</field>
+    </record>
+    <record id="paperformat_tag_heatseal_60x15" model="report.paperformat">
+        <field name="name">Earlydryer Tag: Heat-seal Strip 60 × 15 mm</field>
+        <field name="format">custom</field>
+        <field name="page_width">60</field>
+        <field name="page_height">15</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">0</field>
+        <field name="margin_bottom">0</field>
+        <field name="margin_left">0</field>
+        <field name="margin_right">0</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="disable_shrinking" eval="True"/>
+        <field name="dpi">96</field>
+    </record>
+    <record id="paperformat_bag_thermal_100x50" model="report.paperformat">
+        <field name="name">Earlydryer Bag Label: Thermal 100 × 50 mm</field>
+        <field name="format">custom</field>
+        <field name="page_width">100</field>
+        <field name="page_height">50</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">0</field>
+        <field name="margin_bottom">0</field>
+        <field name="margin_left">0</field>
+        <field name="margin_right">0</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="disable_shrinking" eval="True"/>
+        <field name="dpi">96</field>
+    </record>
+    <!-- testing on an office printer: 3 × 8 labels of 64 × 33 mm -->
+    <record id="paperformat_label_sheet_a4" model="report.paperformat">
+        <field name="name">Earlydryer Labels: A4 Sheet (test)</field>
+        <field name="format">A4</field>
+        <field name="orientation">Portrait</field>
+        <field name="margin_top">8</field>
+        <field name="margin_bottom">8</field>
+        <field name="margin_left">8</field>
+        <field name="margin_right">8</field>
+        <field name="header_line" eval="False"/>
+        <field name="header_spacing">0</field>
+        <field name="disable_shrinking" eval="True"/>
+        <field name="dpi">96</field>
+    </record>
+</odoo>

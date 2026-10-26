@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="laundry_job_view_form_tagging" model="ir.ui.view">
+        <field name="name">laundry.job.form.tagging</field>
+        <field name="model">laundry.job</field>
+        <field name="inherit_id" ref="earlydryer_laundry_order.laundry_job_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='action_open_move_wizard']" position="before">
+                <field name="tag_mode" invisible="1"/>
+                <field name="tag_missing_count" invisible="1"/>
+                <button name="action_assign_and_print_tags" type="object" string="Assign &amp; Print Tags"
+                        class="btn-primary"
+                        invisible="not id or tag_mode != 'printed' or state in ('delivered', 'collected', 'uncollected', 'cancelled') or (state != 'received' and not tag_missing_count)"
+                        groups="earlydryer_base.group_front_desk"/>
+                <button name="action_assign_tags" type="object" string="Scan Tags"
+                        class="btn-primary"
+                        invisible="not id or tag_mode != 'preprinted' or not tag_missing_count or state in ('delivered', 'collected', 'uncollected', 'cancelled')"
+                        groups="earlydryer_base.group_front_desk"/>
+            </xpath>
+            <xpath expr="//header/button[@name='action_customer_change_request']" position="before">
+                <button name="action_reprint_tags" type="object" string="Reprint Tags"
+                        invisible="not id or tag_mode != 'printed' or state == 'received'"
+                        groups="earlydryer_base.group_front_desk,earlydryer_base.group_production"/>
+                <button name="action_print_bag_label" type="object" string="Print Bag Label"
+                        invisible="not id or state in ('received', 'cancelled')"
+                        groups="earlydryer_base.group_front_desk,earlydryer_base.group_production"/>
+            </xpath>
+            <xpath expr="//group[@name='dates']" position="inside">
+                <field name="tag_missing_count" invisible="not tag_missing_count" decoration-warning="1"/>
+                <label for="pack_scanned_count" string="Packing Scan" invisible="state not in ('qc', 'packed')"/>
+                <div invisible="state not in ('qc', 'packed')">
+                    <field name="pack_scanned_count" class="oe_inline"/> /
+                    <field name="pack_expected_count" class="oe_inline"/>
+                </div>
+            </xpath>
+            <xpath expr="//field[@name='item_ids']/list/field[@name='missing']" position="after">
+                <field name="tag_required" column_invisible="True"/>
+                <field name="packed_scanned" optional="show" string="Packed"/>
+                <button name="action_open_replace_tag_wizard" type="object" icon="fa-exchange"
+                        title="Replace Tag" invisible="not id or not tag_code"
+                        groups="earlydryer_base.group_front_desk"/>
+            </xpath>
+            <xpath expr="//field[@name='item_ids']/list/field[@name='tag_code']" position="attributes">
+                <attribute name="readonly">tag_code and id</attribute>
+                <attribute name="decoration-warning">tag_required and not tag_code</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="laundry_job_view_list_tagging" model="ir.ui.view">
+        <field name="name">laundry.job.list.tagging</field>
+        <field name="model">laundry.job</field>
+        <field name="inherit_id" ref="earlydryer_laundry_order.laundry_job_view_list"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='item_count']" position="after">
+                <field name="tag_missing_count" optional="hide"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

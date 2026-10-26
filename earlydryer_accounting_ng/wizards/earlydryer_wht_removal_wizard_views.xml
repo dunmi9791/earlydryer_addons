@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_wht_removal_wizard_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.wht.removal.wizard.form</field>
+        <field name="model">earlydryer.wht.removal.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Remove WHT">
+                <field name="move_id" invisible="1"/>
+                <group>
+                    <field name="reason" placeholder="e.g. exempt supply of goods"/>
+                </group>
+                <field name="line_ids" options="{'no_create': True}">
+                    <list>
+                        <field name="name"/>
+                        <field name="tax_ids" widget="many2many_tags"/>
+                        <field name="price_subtotal"/>
+                    </list>
+                </field>
+                <footer>
+                    <button name="action_remove" string="Remove WHT" type="object" class="btn-primary"/>
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="earlydryer_wht_removal_wizard_action" model="ir.actions.act_window">
+        <field name="name">Remove WHT</field>
+        <field name="res_model">earlydryer.wht.removal.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

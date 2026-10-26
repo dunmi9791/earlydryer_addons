@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="view_users_form_earlydryer" model="ir.ui.view">
+        <field name="name">res.users.form.earlydryer</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='access_rights']" position="after">
+                <page string="Earlydryer" name="earlydryer" groups="earlydryer_base.group_admin" invisible="share">
+                    <group>
+                        <group>
+                            <field name="earlydryer_branch_ids" widget="many2many_tags" options="{'no_create': True}"/>
+                            <field name="earlydryer_branch_id" options="{'no_create': True}"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_users_form_simple_modif_earlydryer" model="ir.ui.view">
+        <field name="name">res.users.preferences.form.earlydryer</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form_simple_modif"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='other_preferences']" position="inside">
+                <field name="earlydryer_branch_ids" invisible="1"/>
+                <field name="earlydryer_branch_id" readonly="0" invisible="not earlydryer_branch_ids"
+                       options="{'no_create': True, 'no_open': True}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

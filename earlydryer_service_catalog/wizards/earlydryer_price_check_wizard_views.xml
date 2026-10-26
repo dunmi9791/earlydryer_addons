@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_price_check_wizard_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.price.check.wizard.form</field>
+        <field name="model">earlydryer.price.check.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group string="Sale">
+                        <field name="branch_id"/>
+                        <field name="channel"/>
+                        <field name="partner_id"/>
+                        <field name="date"/>
+                    </group>
+                    <group string="Item">
+                        <field name="category_id"/>
+                        <field name="service_type_id"/>
+                        <field name="surcharge_ids" widget="many2many_tags"/>
+                        <field name="express"/>
+                        <field name="quantity"/>
+                    </group>
+                </group>
+                <div class="alert alert-warning" role="alert" invisible="not error">
+                    <field name="error"/>
+                </div>
+                <group string="Result" invisible="not product_id">
+                    <group>
+                        <field name="product_id"/>
+                        <field name="pricelist_id"/>
+                        <field name="currency_id" invisible="1"/>
+                        <field name="unit_price"/>
+                        <field name="total"/>
+                        <field name="promised_datetime"/>
+                    </group>
+                    <group>
+                        <field name="breakdown" nolabel="1" colspan="2"/>
+                    </group>
+                </group>
+                <footer>
+                    <button special="cancel" string="Close" data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="earlydryer_price_check_wizard_action" model="ir.actions.act_window">
+        <field name="name">Price Check</field>
+        <field name="res_model">earlydryer.price.check.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

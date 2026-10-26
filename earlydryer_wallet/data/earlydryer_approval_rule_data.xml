@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo noupdate="1">
+    <!-- PLACEHOLDER limits: Earlydryer must confirm who approves refunds and
+         credits, and from what amount (README, open questions). -->
+    <record id="approval_rule_wallet_refund_management" model="earlydryer.approval.rule">
+        <field name="name">Wallet refund: Management</field>
+        <field name="sequence">50</field>
+        <field name="approval_type">wallet_refund</field>
+        <field name="model_id" ref="model_earlydryer_wallet_transaction"/>
+        <field name="threshold_kind">amount</field>
+        <field name="min_value">0</field>
+        <field name="max_value">0</field>
+        <field name="approver_group_id" ref="earlydryer_base.group_management"/>
+    </record>
+    <record id="approval_rule_wallet_credit_branch_manager" model="earlydryer.approval.rule">
+        <field name="name">Wallet credit up to 10,000: Branch Manager</field>
+        <field name="sequence">51</field>
+        <field name="approval_type">wallet_credit</field>
+        <field name="model_id" ref="model_earlydryer_wallet_transaction"/>
+        <field name="threshold_kind">amount</field>
+        <field name="min_value">0</field>
+        <field name="max_value">10000</field>
+        <field name="approver_group_id" ref="earlydryer_base.group_branch_manager"/>
+        <field name="self_approve" eval="True"/>
+    </record>
+    <record id="approval_rule_wallet_credit_management" model="earlydryer.approval.rule">
+        <field name="name">Wallet credit above 10,000: Management</field>
+        <field name="sequence">52</field>
+        <field name="approval_type">wallet_credit</field>
+        <field name="model_id" ref="model_earlydryer_wallet_transaction"/>
+        <field name="threshold_kind">amount</field>
+        <field name="min_value">10000</field>
+        <field name="max_value">0</field>
+        <field name="approver_group_id" ref="earlydryer_base.group_management"/>
+    </record>
+</odoo>

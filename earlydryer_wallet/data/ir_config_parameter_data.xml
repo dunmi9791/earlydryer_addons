@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo noupdate="1">
+    <!-- Codes proposed when the wallet accounts are created (next free code
+         if taken). The generic chart of Odoo 19 numbers current liabilities
+         2xxx (2010 Current Liabilities, 2120 Deferred Revenue) and expenses
+         6xxx. PLACEHOLDERS until the accountant chooses. -->
+    <record id="param_advances_account_code" model="ir.config_parameter">
+        <field name="key">earlydryer_wallet.advances_account_code</field>
+        <field name="value">2130</field>
+    </record>
+    <record id="param_credit_account_code" model="ir.config_parameter">
+        <field name="key">earlydryer_wallet.credit_account_code</field>
+        <field name="value">6500</field>
+    </record>
+    <record id="param_journal_code" model="ir.config_parameter">
+        <field name="key">earlydryer_wallet.journal_code</field>
+        <field name="value">WAL</field>
+    </record>
+</odoo>

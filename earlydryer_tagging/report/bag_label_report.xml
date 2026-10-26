@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="action_report_bag_label" model="ir.actions.report">
+        <field name="name">Bag Label</field>
+        <field name="model">laundry.job</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">earlydryer_tagging.report_bag_label</field>
+        <field name="report_file">earlydryer_tagging.report_bag_label</field>
+        <field name="paperformat_id" ref="paperformat_bag_thermal_100x50"/>
+        <field name="print_report_name">'Bag - %s' % (object.name or '').replace('/', '-')</field>
+        <field name="binding_model_id" ref="earlydryer_laundry_order.model_laundry_job"/>
+        <field name="binding_type">report</field>
+        <field name="group_ids" eval="[(6, 0, [ref('earlydryer_base.group_front_desk'), ref('earlydryer_base.group_production')])]"/>
+    </record>
+
+    <!-- One bag label, ``w`` x ``h`` mm -->
+    <template id="bag_label">
+        <div class="ed-label" t-attf-style="width: {{w}}mm; height: {{h}}mm; padding: 2mm 3mm;">
+            <table style="border-collapse: collapse; width: 100%; table-layout: fixed;">
+                <tr>
+                    <td style="padding: 0; vertical-align: top;">
+                        <div class="ed-row ed-code" t-attf-style="font-size: {{14 if w &gt;= 90 else 9}}pt;" t-out="label['job']"/>
+                        <div class="ed-row" t-attf-style="font-size: {{11 if w &gt;= 90 else 7}}pt; font-weight: bold;" t-out="label['customer']"/>
+                        <div class="ed-row" t-attf-style="font-size: {{9 if w &gt;= 90 else 6}}pt;">
+                            <t t-out="label['item_count']"/> item(s)
+                            <t t-if="label['shelf']"> · Shelf <b t-out="label['shelf']"/></t>
+                        </div>
+                        <div class="ed-row" t-attf-style="font-size: {{9 if w &gt;= 90 else 6}}pt;">
+                            <t t-if="label['promised']">Due <t t-out="label['promised']"/></t>
+                            · <t t-out="label['fulfilment']"/>
+                        </div>
+                        <div t-if="label['express']" style="margin-top: 1mm;">
+                            <span class="ed-badge" t-attf-style="font-size: {{11 if w &gt;= 90 else 7}}pt;">EXPRESS</span>
+                        </div>
+                    </td>
+                    <td t-attf-style="width: {{round(h * 0.5, 1)}}mm; padding: 0; vertical-align: top; text-align: right;">
+                        <t t-out="label['job']"
+                           t-options="{'widget': 'barcode', 'symbology': 'QR', 'width': 300, 'height': 300, 'quiet': 0, 'img_style': 'width: %smm; height: %smm;' % (round(h * 0.48, 1), round(h * 0.48, 1))}"/>
+                    </td>
+                </tr>
+            </table>
+            <div class="ed-barcode" style="margin-top: 1mm;">
+                <t t-out="label['job']"
+                   t-options="{'widget': 'barcode', 'symbology': 'Code128', 'width': 900, 'height': 150, 'quiet': 0, 'img_style': 'width: %smm; height: %smm;' % (w - 6, round(h * 0.26, 1))}"/>
+            </div>
+        </div>
+    </template>
+
+    <template id="report_bag_label">
+        <t t-call="web.html_container">
+            <t t-call="earlydryer_tagging.label_styles"/>
+            <t t-if="layout == 'sheet'">
+                <!-- A4 test sheet: 2 columns of 96 x 48 mm -->
+                <t t-set="w" t-value="96"/>
+                <t t-set="h" t-value="48"/>
+                <t t-foreach="[labels[i:i + 10] for i in range(0, len(labels), 10)]" t-as="page">
+                    <table t-attf-class="ed-sheet {{'ed-break' if not page_last else ''}}">
+                        <t t-foreach="[page[i:i + 2] for i in range(0, len(page), 2)]" t-as="row">
+                            <tr>
+                                <td t-foreach="row" t-as="label" t-attf-style="width: {{w}}mm; height: {{h}}mm;">
+                                    <t t-call="earlydryer_tagging.bag_label"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </table>
+                </t>
+            </t>
+            <t t-else="">
+                <t t-set="w" t-value="paperformat.page_width or 100"/>
+                <t t-set="h" t-value="(paperformat.page_height or 50) - 0.5"/>
+                <t t-foreach="labels" t-as="label">
+                    <div t-att-class="'ed-break' if not label_last else ''">
+                        <t t-call="earlydryer_tagging.bag_label"/>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

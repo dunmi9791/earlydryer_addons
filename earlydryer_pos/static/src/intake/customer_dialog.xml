@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+    <t t-name="earlydryer_pos.EdCustomerDialog">
+        <Dialog title.translate="Customer" size="'lg'">
+            <div t-if="!state.creating" class="ed-customer-search">
+                <div class="d-flex gap-2 mb-2">
+                    <input class="form-control form-control-lg ed-customer-query" t-model="state.query" placeholder="Phone or name" t-on-keydown="(ev) => ev.key === 'Enter' and this.searchServer()"/>
+                    <button class="btn btn-secondary btn-lg" t-if="pos.edOnline" t-on-click="searchServer">
+                        <i t-attf-class="fa {{state.searching ? 'fa-spin fa-circle-o-notch' : 'fa-search'}}"/>
+                    </button>
+                </div>
+                <div class="list-group ed-customer-results">
+                    <button t-foreach="results" t-as="partner" t-key="partner.id" class="list-group-item list-group-item-action d-flex justify-content-between py-3" t-on-click="() => this.select(partner)">
+                        <span class="fw-bold" t-esc="partner.name"/>
+                        <span class="text-muted" t-esc="partner.phone or ''"/>
+                    </button>
+                </div>
+                <div t-if="state.query.trim().length >= 2 and !results.length" class="text-muted p-2">
+                    No customer found<t t-if="!pos.edOnline"> on this till (offline)</t>.
+                </div>
+            </div>
+            <div t-else="" class="ed-customer-create d-flex flex-column gap-2">
+                <input class="form-control form-control-lg ed-new-name" t-model="state.name" placeholder="Name"/>
+                <input class="form-control form-control-lg ed-new-phone" t-model="state.phone" placeholder="Phone, e.g. 0803 123 4567" inputmode="tel"/>
+                <div t-if="!pos.edOnline" class="text-warning small">
+                    Offline: the customer is created when the order syncs.
+                </div>
+                <div t-if="state.error" class="text-danger" t-esc="state.error"/>
+            </div>
+            <t t-set-slot="footer">
+                <t t-if="!state.creating">
+                    <button class="btn btn-primary btn-lg ed-new-customer" t-on-click="startCreate">New Customer</button>
+                </t>
+                <t t-else="">
+                    <button class="btn btn-primary btn-lg ed-create-customer" t-on-click="create">Create</button>
+                    <button class="btn btn-secondary btn-lg" t-on-click="() => this.state.creating = false">Back</button>
+                </t>
+                <button class="btn btn-secondary btn-lg" t-on-click="props.close">Cancel</button>
+            </t>
+        </Dialog>
+    </t>
+</templates>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_rework_reason_view_list" model="ir.ui.view">
+        <field name="name">earlydryer.rework.reason.list</field>
+        <field name="model">earlydryer.rework.reason</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="sequence" widget="handle"/>
+                <field name="code"/>
+                <field name="name"/>
+                <field name="default_return_state"/>
+                <field name="is_damage"/>
+                <field name="active" widget="boolean_toggle" optional="show"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="earlydryer_rework_reason_view_search" model="ir.ui.view">
+        <field name="name">earlydryer.rework.reason.search</field>
+        <field name="model">earlydryer.rework.reason</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name" filter_domain="['|', ('name', 'ilike', self), ('code', 'ilike', self)]"/>
+                <filter string="Damage" name="damage" domain="[('is_damage', '=', True)]"/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="earlydryer_rework_reason_action" model="ir.actions.act_window">
+        <field name="name">QC Rework Reasons</field>
+        <field name="res_model">earlydryer.rework.reason</field>
+        <field name="view_mode">list</field>
+    </record>
+</odoo>

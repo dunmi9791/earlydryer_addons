@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="laundry_job_qc_wizard_view_form" model="ir.ui.view">
+        <field name="name">laundry.job.qc.wizard.form</field>
+        <field name="model">laundry.job.qc.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <field name="job_id" readonly="1"/>
+                    <field name="result" widget="radio" options="{'horizontal': true}"/>
+                    <field name="item_ids" widget="many2many_tags" options="{'no_create': True}"
+                           required="result == 'fail'"/>
+                    <field name="employee_id" options="{'no_create': True}"/>
+                    <field name="return_to_state" invisible="result != 'fail'"
+                           required="result == 'fail'"/>
+                    <field name="note" invisible="result != 'fail'" required="result == 'fail'"/>
+                </group>
+                <footer>
+                    <button name="action_confirm" type="object" string="Confirm" class="btn-primary"
+                            data-hotkey="q"/>
+                    <button string="Discard" special="cancel" data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

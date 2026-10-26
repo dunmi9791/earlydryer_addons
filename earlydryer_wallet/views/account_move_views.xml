@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="view_move_form_earlydryer_wallet" model="ir.ui.view">
+        <field name="name">account.move.form.earlydryer.wallet</field>
+        <field name="model">account.move</field>
+        <field name="inherit_id" ref="account.view_move_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header" position="inside">
+                <field name="earlydryer_wallet_can_pay" invisible="1"/>
+                <button name="action_earlydryer_wallet_pay" type="object" string="Pay from Wallet"
+                        invisible="not earlydryer_wallet_can_pay"
+                        groups="earlydryer_base.group_front_desk,earlydryer_base.group_finance"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_tag_assign_wizard_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.tag.assign.wizard.form</field>
+        <field name="model">earlydryer.tag.assign.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <p class="text-muted">
+                    Click the first Tag cell and scan the tag attached to each garment:
+                    the scanner's Enter moves to the next garment.
+                </p>
+                <field name="job_ids" invisible="1"/>
+                <field name="line_ids">
+                    <list editable="bottom" create="0" delete="0">
+                        <field name="job_id" readonly="1"/>
+                        <field name="item_id" readonly="1"/>
+                        <field name="piece_index" readonly="1" optional="hide"/>
+                        <field name="piece_count" readonly="1" optional="hide"/>
+                        <field name="colour" readonly="1" optional="show"/>
+                        <field name="tag_code" placeholder="Scan tag"/>
+                    </list>
+                </field>
+                <footer>
+                    <button name="action_confirm" type="object" string="Assign Tags" class="btn-primary"
+                            data-hotkey="q"/>
+                    <button special="cancel" string="Cancel" data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

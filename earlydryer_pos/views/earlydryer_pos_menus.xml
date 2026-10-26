@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <menuitem id="menu_earlydryer_pos_collections" name="Till Collections"
+              parent="earlydryer_laundry_order.menu_earlydryer_orders"
+              action="earlydryer_pos_collection_action" sequence="40"
+              groups="earlydryer_base.group_front_desk,earlydryer_base.group_finance"/>
+    <menuitem id="menu_earlydryer_pos_pin_approvals" name="Till PIN Approvals"
+              parent="earlydryer_laundry_order.menu_earlydryer_orders"
+              action="earlydryer_pos_pin_approval_action" sequence="45"
+              groups="earlydryer_base.group_branch_manager,earlydryer_base.group_finance"/>
+    <menuitem id="menu_earlydryer_pos_job_errors" name="POS Orders without Job"
+              parent="earlydryer_laundry_order.menu_earlydryer_orders"
+              action="pos_order_action_earlydryer_job_errors" sequence="50"
+              groups="earlydryer_base.group_branch_manager"/>
+</odoo>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <!--
+        Multi-branch pattern (one company, several plants).
+
+        `earlydryer_branch_ids` is available in every rule domain: the ids of
+        the current user's allowed branches (see models/ir_rule.py). Access
+        rights (ir.model.access.csv) decide WHAT a group may do; these rules
+        decide on WHICH rows, for every operation.
+
+        Later modules copy this pair for each model inheriting
+        earlydryer.branch.mixin:
+
+        <record id="my_model_rule_branch" model="ir.rule">
+            <field name="name">My model: allowed branches</field>
+            <field name="model_id" ref="model_my_model"/>
+            <field name="domain_force">[('earlydryer_branch_id', 'in', earlydryer_branch_ids)]</field>
+            <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+        <record id="my_model_rule_all_branches" model="ir.rule">
+            <field name="name">My model: all branches</field>
+            <field name="model_id" ref="model_my_model"/>
+            <field name="domain_force">[(1, '=', 1)]</field>
+            <field name="groups" eval="[(4, ref('earlydryer_base.group_all_branches'))]"/>
+        </record>
+    -->
+
+    <!-- earlydryer.branch -->
+    <record id="earlydryer_branch_rule_company" model="ir.rule">
+        <field name="name">Earlydryer branch: multi-company</field>
+        <field name="model_id" ref="model_earlydryer_branch"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="earlydryer_branch_rule_allowed" model="ir.rule">
+        <field name="name">Earlydryer branch: allowed branches</field>
+        <field name="model_id" ref="model_earlydryer_branch"/>
+        <field name="domain_force">[('id', 'in', earlydryer_branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="earlydryer_branch_rule_all" model="ir.rule">
+        <field name="name">Earlydryer branch: all branches</field>
+        <field name="model_id" ref="model_earlydryer_branch"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_all_branches'))]"/>
+    </record>
+
+    <!-- earlydryer.branch.shelf -->
+    <record id="earlydryer_branch_shelf_rule_company" model="ir.rule">
+        <field name="name">Earlydryer shelf: multi-company</field>
+        <field name="model_id" ref="model_earlydryer_branch_shelf"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="earlydryer_branch_shelf_rule_allowed" model="ir.rule">
+        <field name="name">Earlydryer shelf: allowed branches</field>
+        <field name="model_id" ref="model_earlydryer_branch_shelf"/>
+        <field name="domain_force">[('branch_id', 'in', earlydryer_branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="earlydryer_branch_shelf_rule_all" model="ir.rule">
+        <field name="name">Earlydryer shelf: all branches</field>
+        <field name="model_id" ref="model_earlydryer_branch_shelf"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_all_branches'))]"/>
+    </record>
+
+    <!-- earlydryer.approval.request -->
+    <record id="earlydryer_approval_request_rule_company" model="ir.rule">
+        <field name="name">Earlydryer approval request: multi-company</field>
+        <field name="model_id" ref="model_earlydryer_approval_request"/>
+        <field name="domain_force">[('company_id', 'in', company_ids)]</field>
+    </record>
+    <record id="earlydryer_approval_request_rule_own" model="ir.rule">
+        <field name="name">Earlydryer approval request: requester and notified approvers</field>
+        <field name="model_id" ref="model_earlydryer_approval_request"/>
+        <field name="domain_force">['|', ('requested_by_id', '=', user.id), ('approver_user_ids', 'in', user.id)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="earlydryer_approval_request_rule_branch_manager" model="ir.rule">
+        <field name="name">Earlydryer approval request: branch managers see their branches</field>
+        <field name="model_id" ref="model_earlydryer_approval_request"/>
+        <field name="domain_force">[('earlydryer_branch_id', 'in', earlydryer_branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('group_branch_manager'))]"/>
+    </record>
+    <record id="earlydryer_approval_request_rule_management" model="ir.rule">
+        <field name="name">Earlydryer approval request: management sees all</field>
+        <field name="model_id" ref="model_earlydryer_approval_request"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_management'))]"/>
+    </record>
+</odoo>

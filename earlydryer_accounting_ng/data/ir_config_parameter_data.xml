@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo noupdate="1">
+    <!-- PLACEHOLDERS to confirm with Earlydryer's accountant. Codes are the
+         ones the setup wizard proposes (the next free code is used when one
+         is taken; every code can be edited in the wizard). They follow the
+         numbering of the Odoo 19 generic chart, which l10n_ng copies:
+         1xxx assets, 2xxx liabilities, 4xxx income, 5xxx direct costs,
+         6xxx expenses. -->
+    <record id="param_vat_rate" model="ir.config_parameter">
+        <field name="key">earlydryer_accounting_ng.vat_rate</field>
+        <field name="value">7.5</field>
+    </record>
+    <record id="param_code_laundry_income" model="ir.config_parameter">
+        <field name="key">earlydryer_accounting_ng.code_laundry_income</field>
+        <field name="value">4010</field>
+    </record>
+    <record id="param_code_retail_income" model="ir.config_parameter">
+        <field name="key">earlydryer_accounting_ng.code_retail_income</field>
+        <field name="value">4020</field>
+    </record>
+    <record id="param_code_delivery_income" model="ir.config_parameter">
+        <field name="key">earlydryer_accounting_ng.code_delivery_income</field>
+        <field name="value">4030</field>
+    </record>
+    <record id="param_code_discount" model="ir.config_parameter">
+        <field name="key">earlydryer_accounting_ng.code_discount</field>
+        <field name="value">4090</field>
+    </record>
+    <record id="param_code_retail_cogs" model="ir.config_parameter">
+        <field name="key">earlydryer_accounting_ng.code_retail_cogs</field>
+        <field name="value">5010</field>
+    </record>
+    <record id="param_code_consumables" model="ir.config_parameter">
+        <field name="key">earlydryer_accounting_ng.code_consumables</field>
+        <field name="value">5020</field>
+    </record>
+    <record id="param_code_claims" model="ir.config_parameter">
+        <field name="key">earlydryer_accounting_ng.code_claims</field>
+        <field name="value">6500</field>
+    </record>
+    <record id="param_code_cash_diff" model="ir.config_parameter">
+        <field name="key">earlydryer_accounting_ng.code_cash_diff</field>
+        <field name="value">6440</field>
+    </record>
+    <record id="param_code_plant_cash" model="ir.config_parameter">
+        <field name="key">earlydryer_accounting_ng.code_plant_cash</field>
+        <field name="value">1030</field>
+    </record>
+    <record id="param_code_card_clearing" model="ir.config_parameter">
+        <field name="key">earlydryer_accounting_ng.code_card_clearing</field>
+        <field name="value">1040</field>
+    </record>
+    <record id="param_code_rider_cash" model="ir.config_parameter">
+        <field name="key">earlydryer_accounting_ng.code_rider_cash</field>
+        <field name="value">1050</field>
+    </record>
+    <record id="param_code_gateway_clearing" model="ir.config_parameter">
+        <field name="key">earlydryer_accounting_ng.code_gateway_clearing</field>
+        <field name="value">1060</field>
+    </record>
+    <record id="param_code_cash_transit" model="ir.config_parameter">
+        <field name="key">earlydryer_accounting_ng.code_cash_transit</field>
+        <field name="value">1070</field>
+    </record>
+    <record id="param_code_wht_receivable" model="ir.config_parameter">
+        <field name="key">earlydryer_accounting_ng.code_wht_receivable</field>
+        <field name="value">1330</field>
+    </record>
+    <record id="param_code_wht_payable" model="ir.config_parameter">
+        <field name="key">earlydryer_accounting_ng.code_wht_payable</field>
+        <field name="value">2530</field>
+    </record>
+    <record id="param_journal_code_card" model="ir.config_parameter">
+        <field name="key">earlydryer_accounting_ng.journal_code_card</field>
+        <field name="value">CRD</field>
+    </record>
+    <record id="param_journal_code_bank" model="ir.config_parameter">
+        <field name="key">earlydryer_accounting_ng.journal_code_bank</field>
+        <field name="value">BNK</field>
+    </record>
+    <record id="param_journal_code_gateway" model="ir.config_parameter">
+        <field name="key">earlydryer_accounting_ng.journal_code_gateway</field>
+        <field name="value">PGW</field>
+    </record>
+    <record id="param_journal_code_opening" model="ir.config_parameter">
+        <field name="key">earlydryer_accounting_ng.journal_code_opening</field>
+        <field name="value">OPEN</field>
+    </record>
+    <record id="partner_tax_authority" model="res.partner">
+        <field name="name">Tax Authority (WHT remittances, to confirm)</field>
+        <field name="is_company" eval="True"/>
+        <field name="country_id" ref="base.ng"/>
+    </record>
+</odoo>

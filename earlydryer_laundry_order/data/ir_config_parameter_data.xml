@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo noupdate="1">
+    <record id="config_parameter_uncollected_days" model="ir.config_parameter">
+        <field name="key">earlydryer.uncollected_days</field>
+        <field name="value">14</field>
+    </record>
+    <record id="config_parameter_uncollected_reminder_days" model="ir.config_parameter">
+        <field name="key">earlydryer.uncollected_reminder_days</field>
+        <field name="value">3,7,12</field>
+    </record>
+</odoo>

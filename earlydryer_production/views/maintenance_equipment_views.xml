@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="maintenance_equipment_view_form_earlydryer" model="ir.ui.view">
+        <field name="name">maintenance.equipment.form.earlydryer</field>
+        <field name="model">maintenance.equipment</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//sheet" position="before">
+                <header>
+                    <button name="action_earlydryer_report_breakdown" type="object" string="Report Breakdown"
+                            class="btn-danger" invisible="not earlydryer_branch_id or not id"
+                            groups="earlydryer_base.group_front_desk,earlydryer_base.group_production"/>
+                </header>
+            </xpath>
+            <xpath expr="//notebook" position="inside">
+                <page string="Earlydryer" name="earlydryer">
+                    <group>
+                        <group>
+                            <field name="earlydryer_branch_id" options="{'no_create': True}"/>
+                            <field name="earlydryer_machine_type" invisible="not earlydryer_branch_id"/>
+                            <field name="earlydryer_capacity_kg" invisible="not earlydryer_branch_id"/>
+                        </group>
+                        <group>
+                            <field name="earlydryer_status" widget="badge" invisible="not earlydryer_branch_id"
+                                   decoration-success="earlydryer_status == 'available'"
+                                   decoration-warning="earlydryer_status == 'in_use'"
+                                   decoration-danger="earlydryer_status == 'down'"/>
+                        </group>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="maintenance_equipment_view_list_earlydryer" model="ir.ui.view">
+        <field name="name">maintenance.equipment.list.earlydryer</field>
+        <field name="model">maintenance.equipment</field>
+        <field name="priority">100</field>
+        <field name="arch" type="xml">
+            <list create="false">
+                <field name="name"/>
+                <field name="earlydryer_branch_id"/>
+                <field name="earlydryer_machine_type"/>
+                <field name="earlydryer_capacity_kg"/>
+                <field name="maintenance_team_id" optional="show"/>
+                <field name="earlydryer_status" widget="badge"
+                       decoration-success="earlydryer_status == 'available'"
+                       decoration-warning="earlydryer_status == 'in_use'"
+                       decoration-danger="earlydryer_status == 'down'"/>
+                <button name="action_earlydryer_report_breakdown" type="object" string="Report Breakdown"
+                        icon="fa-wrench" groups="earlydryer_base.group_front_desk,earlydryer_base.group_production"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="maintenance_equipment_view_search_earlydryer" model="ir.ui.view">
+        <field name="name">maintenance.equipment.search.earlydryer</field>
+        <field name="model">maintenance.equipment</field>
+        <field name="inherit_id" ref="maintenance.hr_equipment_view_search"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <field name="earlydryer_branch_id"/>
+                <filter string="Plant Machines" name="earlydryer_machines" domain="[('earlydryer_branch_id', '!=', False)]"/>
+                <filter string="Machine Type" name="group_machine_type" context="{'group_by': 'earlydryer_machine_type'}"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- plant staff: read their plant's machines and report breakdowns -->
+    <record id="maintenance_equipment_action_earlydryer" model="ir.actions.act_window">
+        <field name="name">Plant Machines</field>
+        <field name="res_model">maintenance.equipment</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('earlydryer_branch_id', '!=', False)]</field>
+        <field name="view_ids" eval="[Command.clear(),
+            Command.create({'view_mode': 'list', 'view_id': ref('maintenance_equipment_view_list_earlydryer')}),
+            Command.create({'view_mode': 'form', 'view_id': ref('maintenance.hr_equipment_view_form')})]"/>
+    </record>
+
+    <!-- branch managers: configure the plant machines (create, capacity, type) -->
+    <record id="maintenance_equipment_action_earlydryer_config" model="ir.actions.act_window">
+        <field name="name">Plant Machines</field>
+        <field name="res_model">maintenance.equipment</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('earlydryer_branch_id', '!=', False)]</field>
+        <field name="context">{'default_earlydryer_machine_type': 'washer'}</field>
+        <field name="group_ids" eval="[(4, ref('earlydryer_base.group_branch_manager'))]"/>
+    </record>
+</odoo>

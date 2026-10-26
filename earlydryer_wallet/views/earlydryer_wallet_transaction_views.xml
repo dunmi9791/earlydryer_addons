@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_wallet_transaction_view_list" model="ir.ui.view">
+        <field name="name">earlydryer.wallet.transaction.list</field>
+        <field name="model">earlydryer.wallet.transaction</field>
+        <field name="arch" type="xml">
+            <list create="false" edit="false" delete="false"
+                  decoration-muted="state == 'cancelled'" decoration-info="state == 'draft'"
+                  decoration-danger="overdrawn">
+                <field name="date"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="type"/>
+                <field name="source" optional="show"/>
+                <field name="earlydryer_branch_id" optional="show"/>
+                <field name="user_id" optional="hide"/>
+                <field name="employee_id" optional="hide"/>
+                <field name="reference" optional="hide"/>
+                <field name="pos_order_id" optional="hide"/>
+                <field name="invoice_id" optional="hide"/>
+                <field name="move_id" optional="hide"/>
+                <field name="overdrawn" optional="hide"/>
+                <field name="currency_id" column_invisible="1"/>
+                <field name="signed_amount" sum="Total"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'posted'" decoration-info="state == 'draft'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="earlydryer_wallet_transaction_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.wallet.transaction.form</field>
+        <field name="model">earlydryer.wallet.transaction</field>
+        <field name="arch" type="xml">
+            <form create="false" edit="false" delete="false">
+                <header>
+                    <button name="action_submit" type="object" string="Post or Request Approval"
+                            class="btn-primary"
+                            invisible="state != 'draft' or type not in ('refund', 'credit') or approval_state == 'pending'"/>
+                    <button name="action_open_reverse_wizard" type="object" string="Reverse"
+                            invisible="state != 'posted' or reversal_id or type == 'reversal' or not move_id"
+                            groups="earlydryer_base.group_finance"/>
+                    <button name="action_cancel" type="object" string="Cancel"
+                            invisible="state != 'draft'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,posted"/>
+                </header>
+                <div class="alert alert-warning mb-0" role="alert" invisible="not overdrawn">
+                    <strong>Overdrawn at an offline till.</strong>
+                    Shortfall: <field name="shortfall" class="oe_inline"/>
+                </div>
+                <div class="alert alert-info mb-0" role="alert" invisible="approval_state != 'pending'">
+                    Waiting for approval: posted automatically once approved.
+                </div>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_earlydryer_approvals" type="object"
+                                class="oe_stat_button" icon="fa-check-square-o"
+                                invisible="earlydryer_approval_count == 0">
+                            <field name="earlydryer_approval_count" widget="statinfo" string="Approvals"/>
+                        </button>
+                        <button name="action_open_move" type="object" class="oe_stat_button"
+                                icon="fa-book" invisible="not move_id" string="Journal Entry"
+                                groups="account.group_account_invoice"/>
+                    </div>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="partner_phone"/>
+                            <field name="wallet_id"/>
+                            <field name="type"/>
+                            <field name="currency_id" invisible="1"/>
+                            <field name="amount"/>
+                            <field name="signed_amount"/>
+                            <field name="approval_state" invisible="type not in ('refund', 'credit')"/>
+                        </group>
+                        <group>
+                            <field name="date"/>
+                            <field name="source"/>
+                            <field name="earlydryer_branch_id"/>
+                            <field name="user_id"/>
+                            <field name="employee_id" invisible="not employee_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Links">
+                            <field name="payment_journal_id" invisible="not payment_journal_id"/>
+                            <field name="move_id" groups="account.group_account_invoice"/>
+                            <field name="payment_id" invisible="not payment_id" groups="account.group_account_invoice"/>
+                            <field name="invoice_id" invisible="not invoice_id"/>
+                            <field name="pos_order_id" invisible="not pos_order_id"/>
+                            <field name="pos_session_id" invisible="not pos_order_id"/>
+                            <field name="laundry_job_id" invisible="not laundry_job_id"/>
+                            <field name="reversed_id" invisible="not reversed_id"/>
+                            <field name="reversal_id" invisible="not reversal_id"/>
+                            <field name="import_ref" invisible="not import_ref"/>
+                        </group>
+                        <group string="Details">
+                            <field name="reference"/>
+                            <field name="reason"/>
+                            <field name="overdrawn" invisible="not overdrawn"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="earlydryer_wallet_transaction_view_search" model="ir.ui.view">
+        <field name="name">earlydryer.wallet.transaction.search</field>
+        <field name="model">earlydryer.wallet.transaction</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="partner_phone"/>
+                <field name="reference"/>
+                <field name="pos_order_id"/>
+                <field name="invoice_id"/>
+                <field name="import_ref"/>
+                <filter name="posted" string="Posted" domain="[('state', '=', 'posted')]"/>
+                <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <separator/>
+                <filter name="topup" string="Top-ups" domain="[('type', '=', 'topup')]"/>
+                <filter name="spend" string="Spends" domain="[('type', '=', 'spend')]"/>
+                <filter name="refund" string="Refunds" domain="[('type', '=', 'refund')]"/>
+                <filter name="credit" string="Credits" domain="[('type', '=', 'credit')]"/>
+                <filter name="migration" string="Migration" domain="[('type', '=', 'migration')]"/>
+                <filter name="reversal" string="Reversals" domain="[('type', '=', 'reversal')]"/>
+                <separator/>
+                <filter name="source_pos" string="Till" domain="[('source', '=', 'pos')]"/>
+                <filter name="source_backend" string="Backend" domain="[('source', '=', 'backend')]"/>
+                <filter name="source_gateway" string="Payment Gateway" domain="[('source', '=', 'gateway')]"/>
+                <filter name="source_claim" string="Claims" domain="[('source', '=', 'claim')]"/>
+                <filter name="source_import" string="Import" domain="[('source', '=', 'import')]"/>
+                <separator/>
+                <filter name="overdrawn" string="Overdrawn" domain="[('overdrawn', '=', True)]"/>
+                <separator/>
+                <filter name="filter_date" string="Date" date="date"/>
+                <group>
+                    <filter name="group_type" string="Type" context="{'group_by': 'type'}"/>
+                    <filter name="group_source" string="Source" context="{'group_by': 'source'}"/>
+                    <filter name="group_branch" string="Branch" context="{'group_by': 'earlydryer_branch_id'}"/>
+                    <filter name="group_user" string="User" context="{'group_by': 'user_id'}"/>
+                    <filter name="group_employee" string="POS Employee" context="{'group_by': 'employee_id'}"/>
+                    <filter name="group_partner" string="Customer" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_date" string="Date" context="{'group_by': 'date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="earlydryer_wallet_transaction_view_pivot" model="ir.ui.view">
+        <field name="name">earlydryer.wallet.transaction.pivot</field>
+        <field name="model">earlydryer.wallet.transaction</field>
+        <field name="arch" type="xml">
+            <pivot>
+                <field name="earlydryer_branch_id" type="row"/>
+                <field name="type" type="col"/>
+                <field name="signed_amount" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="earlydryer_wallet_transaction_action" model="ir.actions.act_window">
+        <field name="name">Wallet Transactions</field>
+        <field name="res_model">earlydryer.wallet.transaction</field>
+        <field name="view_mode">list,form,pivot</field>
+        <field name="context">{'search_default_posted': 1}</field>
+    </record>
+</odoo>

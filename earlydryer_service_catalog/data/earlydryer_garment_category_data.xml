@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo noupdate="1">
+    <!-- Named by the client in the questionnaire; the "suggested" ones are
+         likely and wait for Earlydryer's confirmation (see README).
+         Piece counts are placeholders too. -->
+    <record id="garment_category_shirt" model="earlydryer.garment.category">
+        <field name="name">Shirt</field>
+        <field name="code">SHIRT</field>
+        <field name="sequence">10</field>
+        <field name="garment_group">tops</field>
+        <field name="piece_count">1</field>
+    </record>
+    <record id="garment_category_trouser" model="earlydryer.garment.category">
+        <field name="name">Trouser</field>
+        <field name="code">TROUS</field>
+        <field name="sequence">20</field>
+        <field name="garment_group">bottoms</field>
+        <field name="piece_count">1</field>
+    </record>
+    <record id="garment_category_agbada" model="earlydryer.garment.category">
+        <field name="name">Agbada</field>
+        <field name="code">AGBAD</field>
+        <field name="sequence">30</field>
+        <field name="garment_group">traditional</field>
+        <field name="piece_count">3</field>
+    </record>
+    <record id="garment_category_senator" model="earlydryer.garment.category">
+        <field name="name">Senator</field>
+        <field name="code">SENAT</field>
+        <field name="sequence">40</field>
+        <field name="garment_group">traditional</field>
+        <field name="piece_count">2</field>
+    </record>
+    <record id="garment_category_gown" model="earlydryer.garment.category">
+        <field name="name">Gown</field>
+        <field name="code">GOWN</field>
+        <field name="sequence">50</field>
+        <field name="garment_group">dresses</field>
+        <field name="piece_count">1</field>
+    </record>
+    <record id="garment_category_suit" model="earlydryer.garment.category">
+        <field name="name">Suit</field>
+        <field name="code">SUIT</field>
+        <field name="sequence">60</field>
+        <field name="garment_group">suits_outerwear</field>
+        <field name="piece_count">2</field>
+    </record>
+    <record id="garment_category_jeans" model="earlydryer.garment.category">
+        <field name="name">Jeans</field>
+        <field name="code">JEANS</field>
+        <field name="sequence">70</field>
+        <field name="garment_group">bottoms</field>
+        <field name="piece_count">1</field>
+    </record>
+    <record id="garment_category_towel" model="earlydryer.garment.category">
+        <field name="name">Towel</field>
+        <field name="code">TOWEL</field>
+        <field name="sequence">80</field>
+        <field name="garment_group">household</field>
+        <field name="piece_count">1</field>
+    </record>
+    <record id="garment_category_bed_sheet" model="earlydryer.garment.category">
+        <field name="name">Bed Sheet</field>
+        <field name="code">BEDSH</field>
+        <field name="sequence">90</field>
+        <field name="garment_group">household</field>
+        <field name="piece_count">1</field>
+    </record>
+    <record id="garment_category_duvet" model="earlydryer.garment.category">
+        <field name="name">Duvet</field>
+        <field name="code">DUVET</field>
+        <field name="sequence">100</field>
+        <field name="garment_group">household</field>
+        <field name="piece_count">1</field>
+    </record>
+    <record id="garment_category_shoes" model="earlydryer.garment.category">
+        <field name="name">Shoes (pair)</field>
+        <field name="code">SHOE</field>
+        <field name="sequence">110</field>
+        <field name="garment_group">footwear</field>
+        <field name="piece_count">1</field>
+    </record>
+    <record id="garment_category_travelling_box" model="earlydryer.garment.category">
+        <field name="name">Travelling Box</field>
+        <field name="code">TBOX</field>
+        <field name="sequence">120</field>
+        <field name="garment_group">bags_luggage</field>
+        <field name="piece_count">1</field>
+    </record>
+    <record id="garment_category_kaftan" model="earlydryer.garment.category">
+        <field name="name">Kaftan</field>
+        <field name="code">KAFTN</field>
+        <field name="sequence">130</field>
+        <field name="garment_group">traditional</field>
+        <field name="piece_count">1</field>
+        <field name="note">Suggested category, not yet confirmed by Earlydryer.</field>
+    </record>
+    <record id="garment_category_suit_3piece" model="earlydryer.garment.category">
+        <field name="name">3-Piece Suit</field>
+        <field name="code">SUIT3</field>
+        <field name="sequence">140</field>
+        <field name="garment_group">suits_outerwear</field>
+        <field name="piece_count">3</field>
+        <field name="note">Suggested category, not yet confirmed by Earlydryer.</field>
+    </record>
+    <record id="garment_category_jacket" model="earlydryer.garment.category">
+        <field name="name">Jacket</field>
+        <field name="code">JACKT</field>
+        <field name="sequence">150</field>
+        <field name="garment_group">suits_outerwear</field>
+        <field name="piece_count">1</field>
+        <field name="note">Suggested category, not yet confirmed by Earlydryer.</field>
+    </record>
+    <record id="garment_category_skirt" model="earlydryer.garment.category">
+        <field name="name">Skirt</field>
+        <field name="code">SKIRT</field>
+        <field name="sequence">160</field>
+        <field name="garment_group">bottoms</field>
+        <field name="piece_count">1</field>
+        <field name="note">Suggested category, not yet confirmed by Earlydryer.</field>
+    </record>
+    <record id="garment_category_blouse" model="earlydryer.garment.category">
+        <field name="name">Blouse</field>
+        <field name="code">BLOUS</field>
+        <field name="sequence">170</field>
+        <field name="garment_group">tops</field>
+        <field name="piece_count">1</field>
+        <field name="note">Suggested category, not yet confirmed by Earlydryer.</field>
+    </record>
+    <record id="garment_category_tie" model="earlydryer.garment.category">
+        <field name="name">Tie</field>
+        <field name="code">TIE</field>
+        <field name="sequence">180</field>
+        <field name="garment_group">accessories</field>
+        <field name="piece_count">1</field>
+        <field name="note">Suggested category, not yet confirmed by Earlydryer.</field>
+    </record>
+    <record id="garment_category_curtain" model="earlydryer.garment.category">
+        <field name="name">Curtain (panel)</field>
+        <field name="code">CURTN</field>
+        <field name="sequence">190</field>
+        <field name="garment_group">household</field>
+        <field name="piece_count">1</field>
+        <field name="note">Suggested category, not yet confirmed by Earlydryer.</field>
+    </record>
+    <record id="garment_category_rug" model="earlydryer.garment.category">
+        <field name="name">Rug</field>
+        <field name="code">RUG</field>
+        <field name="sequence">200</field>
+        <field name="garment_group">household</field>
+        <field name="piece_count">1</field>
+        <field name="note">Suggested category, not yet confirmed by Earlydryer.</field>
+    </record>
+    <record id="garment_category_bag" model="earlydryer.garment.category">
+        <field name="name">Bag</field>
+        <field name="code">BAG</field>
+        <field name="sequence">210</field>
+        <field name="garment_group">bags_luggage</field>
+        <field name="piece_count">1</field>
+        <field name="note">Suggested category, not yet confirmed by Earlydryer.</field>
+    </record>
+</odoo>

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <!-- DEMO ONLY: five customers with top-ups (cash and transfer), a spend
+         on an invoice, a till wallet payment, an approved credit and a
+         migration of three old balances. -->
+    <record id="partner_wallet_chioma" model="res.partner">
+        <field name="name">Chioma Eze</field>
+        <field name="phone">+2348031110001</field>
+    </record>
+    <record id="partner_wallet_tunde" model="res.partner">
+        <field name="name">Tunde Bakare</field>
+        <field name="phone">+2348031110002</field>
+    </record>
+    <record id="partner_wallet_halima" model="res.partner">
+        <field name="name">Halima Musa</field>
+        <field name="phone">+2348031110003</field>
+    </record>
+    <record id="partner_wallet_emeka" model="res.partner">
+        <field name="name">Emeka Obi</field>
+        <field name="phone">+2348031110004</field>
+    </record>
+    <record id="partner_wallet_grace" model="res.partner">
+        <field name="name">Grace Adeyemi</field>
+        <field name="phone">+2348031110005</field>
+    </record>
+
+    <function model="earlydryer.wallet" name="_earlydryer_load_demo"/>
+</odoo>

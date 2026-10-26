@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <menuitem id="menu_earlydryer_stage_board" name="Stage Board"
+              parent="earlydryer_tagging.menu_earlydryer_operations"
+              action="action_earlydryer_stage_board" sequence="1"
+              groups="earlydryer_base.group_front_desk,earlydryer_base.group_production,earlydryer_base.group_rider"/>
+    <menuitem id="menu_earlydryer_qc" name="QC" parent="earlydryer_tagging.menu_earlydryer_operations"
+              action="laundry_job_action_qc" sequence="3" groups="earlydryer_base.group_qc"/>
+    <menuitem id="menu_earlydryer_wash_batches" parent="earlydryer_tagging.menu_earlydryer_operations"
+              action="earlydryer_wash_batch_action" sequence="5"
+              groups="earlydryer_base.group_front_desk,earlydryer_base.group_production"/>
+    <menuitem id="menu_earlydryer_machines" parent="earlydryer_tagging.menu_earlydryer_operations"
+              action="maintenance_equipment_action_earlydryer" sequence="50"
+              groups="earlydryer_base.group_front_desk,earlydryer_base.group_production"/>
+    <menuitem id="menu_earlydryer_report_breakdown" parent="earlydryer_tagging.menu_earlydryer_operations"
+              action="earlydryer_breakdown_wizard_action" sequence="55"
+              groups="earlydryer_base.group_front_desk,earlydryer_base.group_production"/>
+
+    <menuitem id="menu_earlydryer_production_reports" name="Production Reports"
+              parent="earlydryer_base.menu_earlydryer_root" sequence="60"
+              groups="earlydryer_base.group_branch_manager"/>
+    <menuitem id="menu_earlydryer_stage_productivity" parent="menu_earlydryer_production_reports"
+              action="laundry_job_stage_log_action_productivity" sequence="10"/>
+    <menuitem id="menu_earlydryer_moves_no_employee" parent="menu_earlydryer_production_reports"
+              action="laundry_job_stage_log_action_no_employee" sequence="20"/>
+    <menuitem id="menu_earlydryer_reworks" parent="menu_earlydryer_production_reports"
+              action="laundry_job_item_rework_action" sequence="30"/>
+    <menuitem id="menu_earlydryer_tablet_identifications" parent="menu_earlydryer_production_reports"
+              action="earlydryer_tablet_identification_action" sequence="40"/>
+
+    <menuitem id="menu_earlydryer_config_rework_reason" parent="earlydryer_base.menu_earlydryer_configuration"
+              action="earlydryer_rework_reason_action" sequence="80"/>
+    <menuitem id="menu_earlydryer_config_machines" parent="earlydryer_base.menu_earlydryer_configuration"
+              action="maintenance_equipment_action_earlydryer_config" sequence="85"/>
+    <!-- Branch Managers do not see Configuration (Management): their own entry -->
+    <menuitem id="menu_earlydryer_production_config_bm" name="Production Setup"
+              parent="earlydryer_base.menu_earlydryer_root" sequence="80"
+              groups="earlydryer_base.group_branch_manager"/>
+    <menuitem id="menu_earlydryer_bm_machines" parent="menu_earlydryer_production_config_bm"
+              action="maintenance_equipment_action_earlydryer_config" sequence="10"
+              groups="earlydryer_base.group_branch_manager"/>
+    <menuitem id="menu_earlydryer_bm_rework_reason" parent="menu_earlydryer_production_config_bm"
+              action="earlydryer_rework_reason_action" sequence="20"
+              groups="earlydryer_base.group_branch_manager"/>
+</odoo>

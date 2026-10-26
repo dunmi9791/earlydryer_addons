@@ -1,0 +1,11 @@
+.o_earlydryer_scan {
+    .o_earlydryer_scan_input {
+        font-family: $font-family-monospace;
+        letter-spacing: 0.1em;
+    }
+
+    .o_earlydryer_scan_alert {
+        background: rgba($danger, 0.95);
+        z-index: $zindex-modal;
+    }
+}

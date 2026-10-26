@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="pos_config_view_form_earlydryer_wallet" model="ir.ui.view">
+        <field name="name">pos.config.form.earlydryer.wallet</field>
+        <field name="model">pos.config</field>
+        <field name="inherit_id" ref="earlydryer_pos.pos_config_view_form_earlydryer_pos"/>
+        <field name="arch" type="xml">
+            <field name="earlydryer_enabled" position="after">
+                <field name="earlydryer_wallet_enabled" invisible="not earlydryer_enabled"/>
+                <button name="action_earlydryer_add_wallet_payment" type="object"
+                        string="Add Wallet Payment" class="btn-link" colspan="2"
+                        invisible="not earlydryer_enabled or earlydryer_wallet_enabled"
+                        groups="point_of_sale.group_pos_manager"/>
+            </field>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_sort_wizard_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.sort.wizard.form</field>
+        <field name="model">earlydryer.sort.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <group>
+                    <group>
+                        <field name="job_id" options="{'no_open': True}"/>
+                        <field name="employee_id" options="{'no_create': True}" required="move"/>
+                    </group>
+                    <group>
+                        <field name="move"/>
+                    </group>
+                </group>
+                <!-- one tap per garment: the colour groups as buttons -->
+                <field name="line_ids" nolabel="1">
+                    <list editable="bottom" create="false" delete="false">
+                        <field name="item_id" readonly="1" force_save="1"/>
+                        <field name="colour" readonly="1" optional="show"/>
+                        <field name="service_type_id" readonly="1" optional="hide"/>
+                        <field name="colour_group" widget="selection_badge" options="{'horizontal': true}"/>
+                    </list>
+                </field>
+                <footer>
+                    <button name="action_confirm" type="object" string="Confirm" class="btn-primary"
+                            data-hotkey="q"/>
+                    <button string="Discard" special="cancel" data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <!-- earlydryer_base branch pattern. pos.config: earlydryer_base adds the
+         plant field but no rule; tills without a plant stay visible. -->
+    <record id="pos_config_rule_branch" model="ir.rule">
+        <field name="name">Point of sale: allowed branches</field>
+        <field name="model_id" ref="point_of_sale.model_pos_config"/>
+        <field name="domain_force">['|', ('earlydryer_branch_id', '=', False), ('earlydryer_branch_id', 'in', earlydryer_branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="pos_config_rule_all_branches" model="ir.rule">
+        <field name="name">Point of sale: all branches</field>
+        <field name="model_id" ref="point_of_sale.model_pos_config"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('earlydryer_base.group_all_branches'))]"/>
+    </record>
+
+    <record id="earlydryer_pos_photo_rule_branch" model="ir.rule">
+        <field name="name">Till photo: allowed branches</field>
+        <field name="model_id" ref="model_earlydryer_pos_photo"/>
+        <field name="domain_force">[('earlydryer_branch_id', 'in', earlydryer_branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="earlydryer_pos_photo_rule_all_branches" model="ir.rule">
+        <field name="name">Till photo: all branches</field>
+        <field name="model_id" ref="model_earlydryer_pos_photo"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('earlydryer_base.group_all_branches'))]"/>
+    </record>
+
+    <record id="earlydryer_pos_collection_rule_branch" model="ir.rule">
+        <field name="name">Till collection: allowed branches</field>
+        <field name="model_id" ref="model_earlydryer_pos_collection"/>
+        <field name="domain_force">[('earlydryer_branch_id', 'in', earlydryer_branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="earlydryer_pos_collection_rule_all_branches" model="ir.rule">
+        <field name="name">Till collection: all branches</field>
+        <field name="model_id" ref="model_earlydryer_pos_collection"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('earlydryer_base.group_all_branches'))]"/>
+    </record>
+
+    <record id="earlydryer_pos_pin_approval_rule_branch" model="ir.rule">
+        <field name="name">Till PIN approval: allowed branches</field>
+        <field name="model_id" ref="model_earlydryer_pos_pin_approval"/>
+        <field name="domain_force">[('earlydryer_branch_id', 'in', earlydryer_branch_ids)]</field>
+        <field name="groups" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+    <record id="earlydryer_pos_pin_approval_rule_all_branches" model="ir.rule">
+        <field name="name">Till PIN approval: all branches</field>
+        <field name="model_id" ref="model_earlydryer_pos_pin_approval"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('earlydryer_base.group_all_branches'))]"/>
+    </record>
+</odoo>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo noupdate="1">
+    <record id="checklist_item_pos_closed" model="earlydryer.close.checklist.item">
+        <field name="name">All POS sessions closed</field>
+        <field name="sequence">10</field>
+        <field name="check_code">pos_closed</field>
+    </record>
+    <record id="checklist_item_bank_reconciled" model="earlydryer.close.checklist.item">
+        <field name="name">Bank statements imported and reconciled</field>
+        <field name="sequence">20</field>
+        <field name="check_code">bank_reconciled</field>
+    </record>
+    <record id="checklist_item_clearing_reconciled" model="earlydryer.close.checklist.item">
+        <field name="name">Card and gateway clearing accounts reconciled</field>
+        <field name="sequence">30</field>
+        <field name="check_code">clearing_reconciled</field>
+    </record>
+    <record id="checklist_item_wallet_control" model="earlydryer.close.checklist.item">
+        <field name="name">Wallet control report difference zero</field>
+        <field name="sequence">40</field>
+        <field name="check_code">wallet_control</field>
+    </record>
+    <record id="checklist_item_analytic_gaps" model="earlydryer.close.checklist.item">
+        <field name="name">Analytic gaps empty</field>
+        <field name="sequence">50</field>
+        <field name="check_code">analytic_gaps</field>
+    </record>
+    <record id="checklist_item_wht_prepared" model="earlydryer.close.checklist.item">
+        <field name="name">WHT remittance prepared</field>
+        <field name="sequence">60</field>
+        <field name="check_code">wht_prepared</field>
+    </record>
+    <record id="checklist_item_depreciation" model="earlydryer.close.checklist.item">
+        <field name="name">Depreciation posted</field>
+        <field name="sequence">70</field>
+        <field name="check_code">depreciation</field>
+    </record>
+    <record id="checklist_item_vat_return" model="earlydryer.close.checklist.item">
+        <field name="name">VAT return prepared (if registered)</field>
+        <field name="sequence">80</field>
+        <field name="check_code">vat_return</field>
+    </record>
+    <record id="checklist_item_lock_date" model="earlydryer.close.checklist.item">
+        <field name="name">Lock date set</field>
+        <field name="sequence">90</field>
+        <field name="check_code">lock_date</field>
+    </record>
+</odoo>

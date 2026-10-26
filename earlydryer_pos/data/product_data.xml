@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo noupdate="1">
+    <!-- Paying a customer's balance at the till. Its POS lines post to the
+         customer's receivable (not revenue) at session closing, and are
+         reconciled with the job's open receivable (see pos.session). -->
+    <record id="product_settlement" model="product.product">
+        <field name="name">Balance Settlement</field>
+        <field name="default_code">SETTLE</field>
+        <field name="earlydryer_kind">settlement</field>
+        <field name="type">service</field>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="False"/>
+        <field name="available_in_pos" eval="True"/>
+        <field name="list_price">0.0</field>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="pos_categ_ids" eval="[Command.set([ref('earlydryer_service_catalog.pos_category_extras')])]"/>
+    </record>
+</odoo>
