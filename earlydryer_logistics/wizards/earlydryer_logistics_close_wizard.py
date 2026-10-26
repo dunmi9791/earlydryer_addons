@@ -16,7 +16,9 @@ class EarlydryerLogisticsCloseWizard(models.TransientModel):
     cash_expected = fields.Monetary(related="trip_id.cash_expected")
     cash_counted = fields.Monetary(required=True)
     difference = fields.Monetary(compute="_compute_difference")
-    short_mode = fields.Selection(related="trip_id.company_id.earlydryer_rider_short_mode")
+    short_mode = fields.Selection(
+        related="trip_id.company_id.earlydryer_rider_short_mode"
+    )
     has_vehicle = fields.Boolean(compute="_compute_difference")
     odometer_start = fields.Float(related="trip_id.odometer_start")
     odometer_end = fields.Float()

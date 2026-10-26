@@ -49,7 +49,9 @@ class EarlydryerLogisticsScheduleWizard(models.TransientModel):
         "earlydryer.branch",
         string="Plant",
         required=True,
-        default=lambda self: self.env["earlydryer.logistics.stop"]._default_earlydryer_branch_id(),
+        default=lambda self: self.env[
+            "earlydryer.logistics.stop"
+        ]._default_earlydryer_branch_id(),
     )
     currency_id = fields.Many2one(related="branch_id.company_id.currency_id")
     date = fields.Date(required=True, default=fields.Date.context_today)
@@ -128,8 +130,14 @@ class EarlydryerLogisticsScheduleWizard(models.TransientModel):
         return values
 
     @api.onchange(
-        "partner_id", "address_partner_id", "branch_id", "date", "express",
-        "order_amount", "stop_type", "address_area_id",
+        "partner_id",
+        "address_partner_id",
+        "branch_id",
+        "date",
+        "express",
+        "order_amount",
+        "stop_type",
+        "address_area_id",
     )
     def _onchange_quote(self):
         if self.partner_id and (
@@ -263,14 +271,20 @@ class EarlydryerLogisticsScheduleWizard(models.TransientModel):
         stop = self.stop_id
         if stop:
             if stop.state != "draft":
-                raise UserError(self.env._("Stop %(stop)s is already scheduled.", stop=stop.name))
+                raise UserError(
+                    self.env._("Stop %(stop)s is already scheduled.", stop=stop.name)
+                )
             stop.write(vals)
         else:
             stop = Stop.create(vals)
         stop.with_context(**{STOP_CTX: True}).write(fee_vals)
         stop._earlydryer_set_slot(slot.key)
         stop.action_schedule()
-        if self.job_id and self.stop_type == "delivery" and self.job_id.fulfilment != "deliver":
+        if (
+            self.job_id
+            and self.stop_type == "delivery"
+            and self.job_id.fulfilment != "deliver"
+        ):
             self.job_id.sudo().fulfilment = "deliver"
         return {
             "type": "ir.actions.act_window",

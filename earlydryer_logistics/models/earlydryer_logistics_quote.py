@@ -45,7 +45,11 @@ class EarlydryerLogisticsQuote(models.AbstractModel):
             return (record.latitude, record.longitude) if record.has_centre else None
         if record.partner_latitude or record.partner_longitude:
             return (record.partner_latitude, record.partner_longitude)
-        area = record.earlydryer_area_id if "earlydryer_area_id" in record._fields else False
+        area = (
+            record.earlydryer_area_id
+            if "earlydryer_area_id" in record._fields
+            else False
+        )
         return self._earlydryer_point(area) if area else None
 
     @api.model
@@ -188,7 +192,9 @@ class EarlydryerLogisticsQuote(models.AbstractModel):
         """
         address = address_partner or partner
         area = address.earlydryer_area_id if address else self.env["earlydryer.area"]
-        zone = self.env["earlydryer.delivery.zone"].sudo()._earlydryer_find(branch, area)
+        zone = (
+            self.env["earlydryer.delivery.zone"].sudo()._earlydryer_find(branch, area)
+        )
         origin = self._earlydryer_point(branch.partner_id)
         destination = self._earlydryer_point(address)
         distance_km = self._earlydryer_distance_km(origin, destination)

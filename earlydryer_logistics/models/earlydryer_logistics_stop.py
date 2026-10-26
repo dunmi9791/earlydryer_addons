@@ -374,14 +374,21 @@ class EarlydryerLogisticsStop(models.Model):
             tz = Slot._earlydryer_tz(stop.earlydryer_branch_id)
             utc = ZoneInfo("UTC")
             start = stop.slot_start.replace(tzinfo=utc).astimezone(tz)
-            end = stop.slot_end.replace(tzinfo=utc).astimezone(tz) if stop.slot_end else start
+            end = (
+                stop.slot_end.replace(tzinfo=utc).astimezone(tz)
+                if stop.slot_end
+                else start
+            )
             stop.slot_label = (
                 f"{start:%a %d %b} {stop.slot_template_id.name or ''} "
                 f"{start:%H:%M}-{end:%H:%M}"
             ).replace("  ", " ")
 
     @api.depends(
-        "fee_charged_move_id", "fee_line_ref", "fee_amount", "fee_waived",
+        "fee_charged_move_id",
+        "fee_line_ref",
+        "fee_amount",
+        "fee_waived",
         "failed_fee_amount",
     )
     def _compute_fee_charged(self):
@@ -491,7 +498,10 @@ class EarlydryerLogisticsStop(models.Model):
                     "You are not allowed to %(what)s%(where)s.",
                     what=labels.get(right, right),
                     where=(
-                        " " + self.env._("for %s", ", ".join(branches.mapped("display_name")))
+                        " "
+                        + self.env._(
+                            "for %s", ", ".join(branches.mapped("display_name"))
+                        )
                         if branches
                         else ""
                     ),
@@ -516,9 +526,11 @@ class EarlydryerLogisticsStop(models.Model):
         stops = super().create(vals_list)
         for stop in stops:
             if not stop.name or stop.name == self.env._("New"):
-                sequence = stop.earlydryer_branch_id._earlydryer_logistics_ensure_sequences()[
-                    "stop"
-                ]
+                sequence = (
+                    stop.earlydryer_branch_id._earlydryer_logistics_ensure_sequences()[
+                        "stop"
+                    ]
+                )
                 stop.name = sequence.sudo().next_by_id()
             if stop.job_id and stop.job_id not in stop.job_ids:
                 stop.job_ids = [Command.link(stop.job_id.id)]
@@ -537,9 +549,7 @@ class EarlydryerLogisticsStop(models.Model):
                 if any(stop.state != "draft" for stop in self) or vals.get(
                     "fee_waived"
                 ):
-                    self._earlydryer_check_right(
-                        "waive", self.earlydryer_branch_id
-                    )
+                    self._earlydryer_check_right("waive", self.earlydryer_branch_id)
                 if vals.get("fee_waived") and not (
                     vals.get("fee_waive_reason")
                     or all(stop.fee_waive_reason for stop in self)
@@ -565,7 +575,9 @@ class EarlydryerLogisticsStop(models.Model):
                 )
         if "trip_id" in vals:
             self._earlydryer_check_trip_change(vals["trip_id"])
-        old_trips = {stop.id: stop.trip_id for stop in self} if "trip_id" in vals else {}
+        old_trips = (
+            {stop.id: stop.trip_id for stop in self} if "trip_id" in vals else {}
+        )
         res = super().write(vals)
         if "trip_id" in vals:
             self._earlydryer_after_trip_change(old_trips)
@@ -689,7 +701,10 @@ class EarlydryerLogisticsStop(models.Model):
         Slot = self.env["earlydryer.logistics.slot.template"]
         for stop in self:
             template, day = Slot._earlydryer_parse_key(key)
-            if not template or template.earlydryer_branch_id != stop.earlydryer_branch_id:
+            if (
+                not template
+                or template.earlydryer_branch_id != stop.earlydryer_branch_id
+            ):
                 raise UserError(self.env._("Choose an available slot of the plant."))
             available = Slot.available_slots(
                 stop.earlydryer_branch_id,
@@ -891,17 +906,21 @@ class EarlydryerLogisticsStop(models.Model):
             and not order.locked
             and order.invoice_status != "invoiced"
         ):
-            order_lines = self.env["sale.order.line"].sudo().create(
-                [
-                    {
-                        "order_id": order.id,
-                        "product_id": product.id,
-                        "name": label,
-                        "product_uom_qty": 1,
-                        "price_unit": amount,
-                    }
-                    for product, amount, label in lines
-                ]
+            order_lines = (
+                self.env["sale.order.line"]
+                .sudo()
+                .create(
+                    [
+                        {
+                            "order_id": order.id,
+                            "product_id": product.id,
+                            "name": label,
+                            "product_uom_qty": 1,
+                            "price_unit": amount,
+                        }
+                        for product, amount, label in lines
+                    ]
+                )
             )
             engine.fee_line_ref = "sale.order.line," + ",".join(
                 str(line_id) for line_id in order_lines.ids
@@ -976,9 +995,11 @@ class EarlydryerLogisticsStop(models.Model):
     def _earlydryer_refresh_cod(self):
         """COD = what the job still owes (fee included), when COD is allowed."""
         for stop in self.filtered(
-            lambda s: s.stop_type == "delivery"
-            and s.state in ("scheduled",) + ACTIVE_STATES
-            and s.job_id
+            lambda s: (
+                s.stop_type == "delivery"
+                and s.state in ("scheduled",) + ACTIVE_STATES
+                and s.job_id
+            )
         ):
             job = stop.job_id.sudo()
             job.invalidate_recordset(["amount_due", "amount_total", "amount_paid"])
@@ -993,7 +1014,11 @@ class EarlydryerLogisticsStop(models.Model):
     def _earlydryer_record_gps(self, gps):
         """``gps``: ``{"lat", "lng", "accuracy", "at"}`` (any may be missing)."""
         self.ensure_one()
-        if not gps or gps.get("lat") in (None, False) or gps.get("lng") in (None, False):
+        if (
+            not gps
+            or gps.get("lat") in (None, False)
+            or gps.get("lng") in (None, False)
+        ):
             return False
         vals = {
             "gps_lat": float(gps["lat"]),
@@ -1048,7 +1073,11 @@ class EarlydryerLogisticsStop(models.Model):
         if self.state == "arrived":
             return True
         self._earlydryer_check_open(("assigned", "en_route"))
-        if self.stop_type == "delivery" and not self.loaded and self.state == "assigned":
+        if (
+            self.stop_type == "delivery"
+            and not self.loaded
+            and self.state == "assigned"
+        ):
             raise UserError(
                 self.env._(
                     "Scan the bag of %(job)s onto the trip before the delivery.",
@@ -1152,7 +1181,9 @@ class EarlydryerLogisticsStop(models.Model):
             return True
         self._earlydryer_check_open(("assigned", "en_route", "arrived"))
         engine = self.with_context(**{STOP_CTX: True})
-        done_on = fields.Datetime.to_datetime(vals.get("done_on")) or fields.Datetime.now()
+        done_on = (
+            fields.Datetime.to_datetime(vals.get("done_on")) or fields.Datetime.now()
+        )
         self._earlydryer_record_gps(vals.get("gps"))
         common = {
             "recipient_name": vals.get("recipient_name") or self.recipient_name,
@@ -1216,9 +1247,12 @@ class EarlydryerLogisticsStop(models.Model):
         approver = self.env["hr.employee"]
         flag_review = False
         if currency.compare_amounts(short, 0.0) > 0:
-            employee = self.env["hr.employee"].sudo().browse(
-                vals.get("approver_employee_id") or []
-            ).exists()
+            employee = (
+                self.env["hr.employee"]
+                .sudo()
+                .browse(vals.get("approver_employee_id") or [])
+                .exists()
+            )
             if employee and self._earlydryer_verify_pin(employee, vals.get("pin")):
                 approver = employee
             elif job._earlydryer_credit_approved(short) or vals.get("office_approved"):
@@ -1232,7 +1266,7 @@ class EarlydryerLogisticsStop(models.Model):
                     self.env._(
                         "%(short)s is still due on %(job)s. Get a manager's PIN or "
                         "an approval by phone recorded by the office, or fail the "
-                        "stop with reason \"Unable to pay\" and bring the "
+                        'stop with reason "Unable to pay" and bring the '
                         "garments back.",
                         short=self._earlydryer_format(short),
                         job=job.name,
@@ -1289,7 +1323,9 @@ class EarlydryerLogisticsStop(models.Model):
             for user in self._earlydryer_manager_users():
                 self.sudo().activity_schedule(
                     TODO_ACTIVITY,
-                    summary=self.env._("Check short collection on %(stop)s", stop=self.name),
+                    summary=self.env._(
+                        "Check short collection on %(stop)s", stop=self.name
+                    ),
                     note=self.review_note,
                     user_id=user.id,
                 )
@@ -1297,7 +1333,9 @@ class EarlydryerLogisticsStop(models.Model):
 
     def _earlydryer_after_location(self, vals):
         if vals.get("save_location") or vals.get("fix_location"):
-            self._earlydryer_save_customer_location(force=bool(vals.get("fix_location")))
+            self._earlydryer_save_customer_location(
+                force=bool(vals.get("fix_location"))
+            )
 
     def _earlydryer_manager_users(self):
         """Branch managers of the stop's plant (fallback: its manager)."""
@@ -1316,16 +1354,19 @@ class EarlydryerLogisticsStop(models.Model):
         invoices (sales flow), its POS receivable and its fee invoices."""
         self.ensure_one()
         job = self.job_id.sudo()
-        moves = job.sale_order_id.invoice_ids.filtered(
-            lambda m: m.state == "posted" and m.move_type == "out_invoice"
-        ) | job._earlydryer_fee_invoices()
+        moves = (
+            job.sale_order_id.invoice_ids.filtered(
+                lambda m: m.state == "posted" and m.move_type == "out_invoice"
+            )
+            | job._earlydryer_fee_invoices()
+        )
         lines = moves.line_ids
         if job.pos_order_id:
             lines |= job.pos_order_id._earlydryer_receivable_lines()
         return lines.filtered(
-            lambda line: line.account_id == account
-            and not line.reconciled
-            and line.balance > 0
+            lambda line: (
+                line.account_id == account and not line.reconciled and line.balance > 0
+            )
         ).sorted(lambda line: (line.date, line.id))
 
     def _earlydryer_invoice_sale_order(self):
@@ -1376,7 +1417,9 @@ class EarlydryerLogisticsStop(models.Model):
                     "partner_type": "customer",
                     "partner_id": partner.id,
                     "amount": self.cash_collected,
-                    "currency_id": (self.currency_id or branch.company_id.currency_id).id,
+                    "currency_id": (
+                        self.currency_id or branch.company_id.currency_id
+                    ).id,
                     "journal_id": journal.id,
                     "payment_method_line_id": method_line.id,
                     # cash: straight to the rider cash account (cleared by the
@@ -1400,8 +1443,9 @@ class EarlydryerLogisticsStop(models.Model):
     def _earlydryer_cod_credit_lines(self):
         self.ensure_one()
         return self.cod_payment_id.sudo().move_id.line_ids.filtered(
-            lambda line: line.account_id.account_type == "asset_receivable"
-            and line.credit > 0
+            lambda line: (
+                line.account_id.account_type == "asset_receivable" and line.credit > 0
+            )
         )
 
     def _earlydryer_reconcile_cod_payment(self):
@@ -1503,9 +1547,7 @@ class EarlydryerLogisticsStop(models.Model):
         new_stops = self.browse()
         for stop in self:
             if stop.state != "failed":
-                raise UserError(
-                    self.env._("Only failed stops are rescheduled.")
-                )
+                raise UserError(self.env._("Only failed stops are rescheduled."))
             if stop.next_stop_id:
                 new_stops |= stop.next_stop_id
                 continue
@@ -1557,7 +1599,9 @@ class EarlydryerLogisticsStop(models.Model):
 
     def _earlydryer_mark_at_plant(self):
         for stop in self.filtered(lambda s: not s.plant_arrival_on):
-            stop.with_context(**{STOP_CTX: True}).plant_arrival_on = fields.Datetime.now()
+            stop.with_context(
+                **{STOP_CTX: True}
+            ).plant_arrival_on = fields.Datetime.now()
 
     def action_price_backend(self):
         """Create the quotation of the pickup (channel pickup): confirming it
@@ -1578,7 +1622,9 @@ class EarlydryerLogisticsStop(models.Model):
                     "partner_shipping_id": self._earlydryer_address().id,
                     "earlydryer_branch_id": self.earlydryer_branch_id.id,
                     "earlydryer_channel": "pickup",
-                    "earlydryer_fulfilment": "deliver" if self.return_delivery else "collect",
+                    "earlydryer_fulfilment": "deliver"
+                    if self.return_delivery
+                    else "collect",
                     "earlydryer_express": self.express,
                     "earlydryer_pickup_stop_id": self.id,
                     "note": self.customer_note or False,
@@ -1597,8 +1643,7 @@ class EarlydryerLogisticsStop(models.Model):
             )
             if fee_lines:
                 self.with_context(**{STOP_CTX: True}).fee_line_ref = (
-                    "sale.order.line,"
-                    + ",".join(str(i) for i in order.order_line.ids)
+                    "sale.order.line," + ",".join(str(i) for i in order.order_line.ids)
                 )
         return {
             "type": "ir.actions.act_window",
@@ -1663,7 +1708,9 @@ class EarlydryerLogisticsStop(models.Model):
         if config.earlydryer_branch_id != stop.earlydryer_branch_id:
             return {
                 "ok": False,
-                "message": self.env._("Pickup %(stop)s is for another plant.", stop=stop.name),
+                "message": self.env._(
+                    "Pickup %(stop)s is for another plant.", stop=stop.name
+                ),
             }
         fee_product, failed_product = stop._earlydryer_fee_products()
         return {
@@ -1676,9 +1723,13 @@ class EarlydryerLogisticsStop(models.Model):
             "bag_count": stop.bag_count,
             "customer_note": stop.customer_note or "",
             "fee_lines": [
-                {"product_id": product.product_variant_id.id
-                 if product._name == "product.template" else product.id,
-                 "amount": amount, "label": label}
+                {
+                    "product_id": product.product_variant_id.id
+                    if product._name == "product.template"
+                    else product.id,
+                    "amount": amount,
+                    "label": label,
+                }
                 for product, amount, label in stop._earlydryer_fee_lines()
             ],
             "fee_product_ids": [fee_product.id, failed_product.id],
@@ -1692,7 +1743,9 @@ class EarlydryerLogisticsStop(models.Model):
             fee_products = self.env["product.product"].browse(
                 [p.id for p in self._earlydryer_fee_products()]
             )
-            fee_lines = source.lines.filtered(lambda line: line.product_id in fee_products)
+            fee_lines = source.lines.filtered(
+                lambda line: line.product_id in fee_products
+            )
             if fee_lines:
                 vals["fee_line_ref"] = "pos.order.line," + ",".join(
                     str(i) for i in fee_lines.ids

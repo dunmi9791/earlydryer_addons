@@ -123,7 +123,9 @@ class EarlydryerLogisticsTrip(models.Model):
         for trip in self:
             trip.not_loaded_count = len(trip.stop_ids.filtered("not_loaded"))
 
-    @api.depends("stop_ids.cash_collected", "stop_ids.collection_method", "cash_counted", "state")
+    @api.depends(
+        "stop_ids.cash_collected", "stop_ids.collection_method", "cash_counted", "state"
+    )
     def _compute_cash(self):
         for trip in self:
             expected = sum(
@@ -150,7 +152,10 @@ class EarlydryerLogisticsTrip(models.Model):
     @api.depends("name", "rider_employee_id", "carrier_partner_id", "slot")
     def _compute_display_name(self):
         for trip in self:
-            who = trip.rider_employee_id.sudo().name or trip.carrier_partner_id.sudo().name
+            who = (
+                trip.rider_employee_id.sudo().name
+                or trip.carrier_partner_id.sudo().name
+            )
             parts = [trip.name, trip.slot, who]
             trip.display_name = " - ".join(part for part in parts if part)
 
@@ -165,18 +170,26 @@ class EarlydryerLogisticsTrip(models.Model):
     def create(self, vals_list):
         if not self.env.su and not self.env.context.get(TRIP_CTX):
             branches = self.env["earlydryer.branch"].browse(
-                [vals.get("earlydryer_branch_id") for vals in vals_list if vals.get("earlydryer_branch_id")]
+                [
+                    vals.get("earlydryer_branch_id")
+                    for vals in vals_list
+                    if vals.get("earlydryer_branch_id")
+                ]
             )
             self._stop_model()._earlydryer_check_right("plan", branches or None)
             for vals in vals_list:
                 if TRIP_PROTECTED & set(vals):
-                    raise UserError(self.env._("These trip fields are set by the system."))
+                    raise UserError(
+                        self.env._("These trip fields are set by the system.")
+                    )
         trips = super().create(vals_list)
         for trip in trips:
             if not trip.name or trip.name == self.env._("New"):
-                sequence = trip.earlydryer_branch_id._earlydryer_logistics_ensure_sequences()[
-                    "trip"
-                ]
+                sequence = (
+                    trip.earlydryer_branch_id._earlydryer_logistics_ensure_sequences()[
+                        "trip"
+                    ]
+                )
                 trip.name = sequence.sudo().next_by_id()
         return trips
 
@@ -184,12 +197,20 @@ class EarlydryerLogisticsTrip(models.Model):
         if not self.env.su and not self.env.context.get(TRIP_CTX):
             if TRIP_PROTECTED & set(vals):
                 raise UserError(
-                    self.env._("Use the trip buttons: states and cash are set by the system.")
+                    self.env._(
+                        "Use the trip buttons: states and cash are set by the system."
+                    )
                 )
-            self._stop_model()._earlydryer_check_right("plan", self.earlydryer_branch_id)
-            if {"rider_employee_id", "carrier_partner_id", "earlydryer_branch_id"} & set(
-                vals
-            ) and any(trip.state in ("in_progress", "done") for trip in self):
+            self._stop_model()._earlydryer_check_right(
+                "plan", self.earlydryer_branch_id
+            )
+            if {
+                "rider_employee_id",
+                "carrier_partner_id",
+                "earlydryer_branch_id",
+            } & set(vals) and any(
+                trip.state in ("in_progress", "done") for trip in self
+            ):
                 raise UserError(
                     self.env._("The rider or carrier of a started trip cannot change.")
                 )
@@ -212,13 +233,19 @@ class EarlydryerLogisticsTrip(models.Model):
         self._stop_model()._earlydryer_check_right("plan", self.earlydryer_branch_id)
         for trip in self:
             if trip.state != "draft":
-                raise UserError(self.env._("Trip %(trip)s is not a draft.", trip=trip.name))
+                raise UserError(
+                    self.env._("Trip %(trip)s is not a draft.", trip=trip.name)
+                )
             if not trip.rider_employee_id and not trip.carrier_partner_id:
                 raise UserError(
-                    self.env._("Choose the rider or the carrier of %(trip)s.", trip=trip.name)
+                    self.env._(
+                        "Choose the rider or the carrier of %(trip)s.", trip=trip.name
+                    )
                 )
             if not trip.stop_ids.filtered(lambda s: s.state != "cancelled"):
-                raise UserError(self.env._("Trip %(trip)s has no stop.", trip=trip.name))
+                raise UserError(
+                    self.env._("Trip %(trip)s has no stop.", trip=trip.name)
+                )
             trip._engine().state = "planned"
             trip.stop_ids._earlydryer_refresh_cod()
         return True
@@ -298,7 +325,9 @@ class EarlydryerLogisticsTrip(models.Model):
             code, branch_id=self.earlydryer_branch_id.id
         )
         result = {
-            "result": lookup["type"] if lookup["type"] in ("unknown", "invalid") else "ok",
+            "result": lookup["type"]
+            if lookup["type"] in ("unknown", "invalid")
+            else "ok",
             "stop_id": False,
             "job_name": lookup.get("job_name") or False,
             "message": lookup.get("message") or "",
@@ -307,9 +336,11 @@ class EarlydryerLogisticsTrip(models.Model):
             return result
         job = self.env["laundry.job"].browse(lookup["job_id"])
         stop = self.stop_ids.filtered(
-            lambda s: s.stop_type == "delivery"
-            and s.state not in CLOSED_STATES
-            and (s.job_id == job or job in s.job_ids)
+            lambda s: (
+                s.stop_type == "delivery"
+                and s.state not in CLOSED_STATES
+                and (s.job_id == job or job in s.job_ids)
+            )
         )[:1]
         if not stop:
             result.update(
@@ -350,7 +381,9 @@ class EarlydryerLogisticsTrip(models.Model):
     def _earlydryer_check_closable(self):
         self.ensure_one()
         if self.state != "in_progress":
-            raise UserError(self.env._("Trip %(trip)s is not in progress.", trip=self.name))
+            raise UserError(
+                self.env._("Trip %(trip)s is not in progress.", trip=self.name)
+            )
         open_stops = self.stop_ids.filtered(lambda s: s.state not in CLOSED_STATES)
         if open_stops:
             raise UserError(
@@ -368,7 +401,9 @@ class EarlydryerLogisticsTrip(models.Model):
             account = company.earlydryer_cash_diff_account_id
             if not account:
                 raise UserError(
-                    self.env._("Set the Cash over and short account (accounting setup).")
+                    self.env._(
+                        "Set the Cash over and short account (accounting setup)."
+                    )
                 )
             return account, self.env["res.partner"]
         employee = self.rider_employee_id.sudo()
@@ -395,19 +430,27 @@ class EarlydryerLogisticsTrip(models.Model):
         label = self.env._(
             "Rider cash difference %(trip)s: %(rider)s",
             trip=self.name,
-            rider=self.rider_employee_id.sudo().name or self.carrier_partner_id.name or "-",
+            rider=self.rider_employee_id.sudo().name
+            or self.carrier_partner_id.name
+            or "-",
         )
         if difference < 0:
             account, partner = self._earlydryer_short_account()
             lines = [
-                {"account_id": account.id, "debit": -difference, "partner_id": partner.id},
+                {
+                    "account_id": account.id,
+                    "debit": -difference,
+                    "partner_id": partner.id,
+                },
                 {"account_id": rider_account.id, "credit": -difference},
             ]
         else:
             account = company.earlydryer_cash_diff_account_id
             if not account:
                 raise UserError(
-                    self.env._("Set the Cash over and short account (accounting setup).")
+                    self.env._(
+                        "Set the Cash over and short account (accounting setup)."
+                    )
                 )
             lines = [
                 {"account_id": rider_account.id, "debit": difference},
@@ -475,12 +518,16 @@ class EarlydryerLogisticsTrip(models.Model):
                 raise UserError(
                     self.env._("The odometer at the end is below the start reading.")
                 )
-            odometer = self.env["fleet.vehicle.odometer"].sudo().create(
-                {
-                    "vehicle_id": self.vehicle_id.id,
-                    "value": self.odometer_end,
-                    "date": fields.Date.context_today(self),
-                }
+            odometer = (
+                self.env["fleet.vehicle.odometer"]
+                .sudo()
+                .create(
+                    {
+                        "vehicle_id": self.vehicle_id.id,
+                        "value": self.odometer_end,
+                        "date": fields.Date.context_today(self),
+                    }
+                )
             )
             self._engine().odometer_id = odometer
         # plant arrival time of the bags picked up on this trip
@@ -530,9 +577,9 @@ class EarlydryerLogisticsTrip(models.Model):
                 raise UserError(
                     self.env._("Only draft or planned trips can be cancelled.")
                 )
-            trip.stop_ids.filtered(lambda s: s.state in ("scheduled", "assigned")).write(
-                {"trip_id": False}
-            )
+            trip.stop_ids.filtered(
+                lambda s: s.state in ("scheduled", "assigned")
+            ).write({"trip_id": False})
             trip._engine().state = "cancelled"
         return True
 
@@ -551,7 +598,9 @@ class EarlydryerLogisticsTrip(models.Model):
         if self.currency_id.compare_amounts(self.carrier_fee, 0.0) <= 0:
             raise UserError(self.env._("Set the carrier fee first."))
         company = self.company_id.sudo()
-        account = company.earlydryer_carrier_expense_account_id or company.expense_account_id
+        account = (
+            company.earlydryer_carrier_expense_account_id or company.expense_account_id
+        )
         if not account:
             raise UserError(
                 self.env._("Set the 3PL expense account in the logistics settings.")

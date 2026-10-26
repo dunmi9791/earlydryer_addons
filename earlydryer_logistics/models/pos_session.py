@@ -21,11 +21,15 @@ class PosSession(models.Model):
         if self.state == "closed" and self.move_id.state == "posted":
             # door payments of this session's jobs waited for the closing
             # entry (their pay-later receivable): match them now
-            stops = self.env["earlydryer.logistics.stop"].sudo().search(
-                [
-                    ("job_id.pos_order_id", "in", self.order_ids.ids),
-                    ("cod_payment_id", "!=", False),
-                ]
+            stops = (
+                self.env["earlydryer.logistics.stop"]
+                .sudo()
+                .search(
+                    [
+                        ("job_id.pos_order_id", "in", self.order_ids.ids),
+                        ("cod_payment_id", "!=", False),
+                    ]
+                )
             )
             stops._earlydryer_reconcile_cod_payment()
         return res

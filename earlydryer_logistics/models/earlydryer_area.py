@@ -63,5 +63,7 @@ class EarlydryerArea(models.Model):
         for area in self:
             if not -90 <= area.latitude <= 90 or not -180 <= area.longitude <= 180:
                 raise ValidationError(
-                    self.env._("Invalid centre point for area %(area)s.", area=area.name)
+                    self.env._(
+                        "Invalid centre point for area %(area)s.", area=area.name
+                    )
                 )

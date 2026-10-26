@@ -24,9 +24,7 @@ class EarlydryerLogisticsOutcomeWizard(models.TransientModel):
     )
     recipient_name = fields.Char()
     signature = fields.Binary()
-    attachment_ids = fields.Many2many(
-        "ir.attachment", string="Photos / Carrier Proof"
-    )
+    attachment_ids = fields.Many2many("ir.attachment", string="Photos / Carrier Proof")
     cash_collected = fields.Monetary()
     collection_method = fields.Selection(COLLECTION_METHODS, default="cash")
     transfer_amount = fields.Monetary()
@@ -53,7 +51,9 @@ class EarlydryerLogisticsOutcomeWizard(models.TransientModel):
         stop._earlydryer_check_right("outcome", stop.earlydryer_branch_id)
         stop = stop.sudo()
         if self.attachment_ids:
-            self.attachment_ids.sudo().write({"res_model": stop._name, "res_id": stop.id})
+            self.attachment_ids.sudo().write(
+                {"res_model": stop._name, "res_id": stop.id}
+            )
             stop.photo_ids = [Command.link(a.id) for a in self.attachment_ids]
         if self.outcome == "failed":
             if not self.fail_reason_id:
@@ -81,8 +81,12 @@ class EarlydryerLogisticsOutcomeWizard(models.TransientModel):
                 if job._earlydryer_approval_rule("credit", short):
                     # as the office user: raises unless they may approve it
                     job._earlydryer_approval_ensure("credit", short)
-                elif not self.env.user.has_group("earlydryer_base.group_branch_manager"):
-                    raise UserError(self.env._("Only a Branch Manager approves credit."))
+                elif not self.env.user.has_group(
+                    "earlydryer_base.group_branch_manager"
+                ):
+                    raise UserError(
+                        self.env._("Only a Branch Manager approves credit.")
+                    )
                 job.sudo().message_post(
                     body=self.env._(
                         "%(amount)s left on credit on %(stop)s, approved by %(user)s.",

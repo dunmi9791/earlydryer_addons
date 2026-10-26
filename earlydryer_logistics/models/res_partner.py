@@ -18,7 +18,9 @@ class ResPartner(models.Model):
     earlydryer_gate_instructions = fields.Char(string="Gate Instructions")
     earlydryer_gps_accuracy_m = fields.Float(string="GPS Accuracy (m)")
     earlydryer_gps_captured_on = fields.Datetime(string="GPS Captured On")
-    earlydryer_map_url = fields.Char(string="Map", compute="_compute_earlydryer_map_url")
+    earlydryer_map_url = fields.Char(
+        string="Map", compute="_compute_earlydryer_map_url"
+    )
     earlydryer_cod_blocked = fields.Boolean(
         string="No Cash on Delivery",
         help="Deliveries of this customer must be paid (or on approved credit) "
@@ -53,4 +55,8 @@ class ResPartner(models.Model):
         self.ensure_one()
         if not self.earlydryer_map_url:
             return False
-        return {"type": "ir.actions.act_url", "url": self.earlydryer_map_url, "target": "new"}
+        return {
+            "type": "ir.actions.act_url",
+            "url": self.earlydryer_map_url,
+            "target": "new",
+        }

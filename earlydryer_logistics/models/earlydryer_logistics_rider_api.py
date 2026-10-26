@@ -52,7 +52,9 @@ class EarlydryerLogisticsRiderApi(models.AbstractModel):
             raise AccessError(self.env._("This is not one of your trips."))
         if trip.is_carrier:
             raise UserError(
-                self.env._("3PL trips are recorded from the office, not the rider view.")
+                self.env._(
+                    "3PL trips are recorded from the office, not the rider view."
+                )
             )
         return trip.sudo()
 
@@ -63,7 +65,9 @@ class EarlydryerLogisticsRiderApi(models.AbstractModel):
             raise UserError(self.env._("Stop not found."))
         stop.check_access("read")
         if not stop.trip_id:
-            raise UserError(self.env._("Stop %(stop)s is not on a trip.", stop=stop.name))
+            raise UserError(
+                self.env._("Stop %(stop)s is not on a trip.", stop=stop.name)
+            )
         self._check_trip(stop.trip_id.id)
         return stop.sudo()
 
@@ -148,8 +152,10 @@ class EarlydryerLogisticsRiderApi(models.AbstractModel):
     def _approvers(self, branches):
         """Employees who may approve credit at the door (PIN asked)."""
         group = self.env.ref(GROUPS["branch_manager"])
-        employees = self.env["hr.employee"].sudo().search(
-            [("user_id", "!=", False), ("pin", "!=", False)]
+        employees = (
+            self.env["hr.employee"]
+            .sudo()
+            .search([("user_id", "!=", False), ("pin", "!=", False)])
         )
         return [
             {"id": employee.id, "name": employee.name}
@@ -168,17 +174,21 @@ class EarlydryerLogisticsRiderApi(models.AbstractModel):
             raise AccessError(self.env._("The rider view is for riders."))
         employees = self._employees()
         today = fields.Date.context_today(self)
-        trips = self.env["earlydryer.logistics.trip"].sudo().search(
-            [
-                ("rider_employee_id", "in", employees.ids),
-                ("carrier_partner_id", "=", False),
-                "|",
-                ("state", "=", "in_progress"),
-                "&",
-                ("state", "=", "planned"),
-                ("date", "<=", today),
-            ],
-            order="date, id",
+        trips = (
+            self.env["earlydryer.logistics.trip"]
+            .sudo()
+            .search(
+                [
+                    ("rider_employee_id", "in", employees.ids),
+                    ("carrier_partner_id", "=", False),
+                    "|",
+                    ("state", "=", "in_progress"),
+                    "&",
+                    ("state", "=", "planned"),
+                    ("date", "<=", today),
+                ],
+                order="date, id",
+            )
         )
         reasons = self.env["earlydryer.logistics.fail.reason"].search([])
         return {
@@ -195,7 +205,9 @@ class EarlydryerLogisticsRiderApi(models.AbstractModel):
                 for reason in reasons
             ],
             "approvers": self._approvers(trips.earlydryer_branch_id),
-            "gps_threshold": self.env["earlydryer.logistics.stop"]._earlydryer_gps_threshold(),
+            "gps_threshold": self.env[
+                "earlydryer.logistics.stop"
+            ]._earlydryer_gps_threshold(),
         }
 
     # ------------------------------------------------------------------
@@ -245,10 +257,21 @@ class EarlydryerLogisticsRiderApi(models.AbstractModel):
         """``vals``: see ``earlydryer.logistics.stop._earlydryer_complete``."""
         stop = self._check_stop(stop_id)
         allowed = {
-            "recipient_name", "signature", "cash_collected", "collection_method",
-            "transfer_amount", "approver_employee_id", "pin", "offline",
-            "bag_count", "piece_count_estimate", "pickup_note", "gps", "done_on",
-            "save_location", "fix_location",
+            "recipient_name",
+            "signature",
+            "cash_collected",
+            "collection_method",
+            "transfer_amount",
+            "approver_employee_id",
+            "pin",
+            "offline",
+            "bag_count",
+            "piece_count_estimate",
+            "pickup_note",
+            "gps",
+            "done_on",
+            "save_location",
+            "fix_location",
         }
         vals = {key: value for key, value in (vals or {}).items() if key in allowed}
         signature = vals.get("signature")
@@ -258,7 +281,9 @@ class EarlydryerLogisticsRiderApi(models.AbstractModel):
             try:
                 raw = base64.b64decode(signature, validate=True)
             except (binascii.Error, ValueError) as error:
-                raise UserError(self.env._("The signature could not be read.")) from error
+                raise UserError(
+                    self.env._("The signature could not be read.")
+                ) from error
             if len(raw) > MAX_SIGNATURE_BYTES:
                 raise UserError(self.env._("The signature image is too large."))
             vals["signature"] = signature
@@ -272,7 +297,9 @@ class EarlydryerLogisticsRiderApi(models.AbstractModel):
     @api.model
     def rider_fail(self, uuid, stop_id, reason_id, note=None, gps=None, at=None):
         stop = self._check_stop(stop_id)
-        reason = self.env["earlydryer.logistics.fail.reason"].browse(int(reason_id)).exists()
+        reason = (
+            self.env["earlydryer.logistics.fail.reason"].browse(int(reason_id)).exists()
+        )
 
         def run():
             stop._earlydryer_fail(reason, note=note, gps=gps, at=at)
@@ -304,14 +331,19 @@ class EarlydryerLogisticsRiderApi(models.AbstractModel):
         def run():
             if len(stop.photo_ids) >= MAX_PHOTOS_PER_STOP:
                 raise UserError(self.env._("Too many photos on this stop."))
-            attachment = self.env["ir.attachment"].sudo().create(
-                {
-                    "name": name or f"{stop.name.replace('/', '-')}-{len(stop.photo_ids) + 1}.jpg",
-                    "datas": data,
-                    "mimetype": mimetype,
-                    "res_model": stop._name,
-                    "res_id": stop.id,
-                }
+            attachment = (
+                self.env["ir.attachment"]
+                .sudo()
+                .create(
+                    {
+                        "name": name
+                        or f"{stop.name.replace('/', '-')}-{len(stop.photo_ids) + 1}.jpg",
+                        "datas": data,
+                        "mimetype": mimetype,
+                        "res_model": stop._name,
+                        "res_id": stop.id,
+                    }
+                )
             )
             stop.photo_ids = [(4, attachment.id)]
             return {"ok": True, "attachment_id": attachment.id}

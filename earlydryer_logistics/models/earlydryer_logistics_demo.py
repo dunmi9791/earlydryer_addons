@@ -23,7 +23,9 @@ class EarlydryerLogisticsDemo(models.AbstractModel):
         """Demo only: zones, slots, riders, a vehicle, a 3PL and one day of
         pickups and deliveries (closed trip with a small shortage, a failed
         delivery rescheduled, a 3PL trip with its carrier bill)."""
-        self = self.sudo()
+        return self.sudo()._earlydryer_load_demo_sudo()
+
+    def _earlydryer_load_demo_sudo(self):
         ref = self.env.ref
         branches = {
             "p1": ref("earlydryer_base.branch_plant_1"),
@@ -48,11 +50,29 @@ class EarlydryerLogisticsDemo(models.AbstractModel):
 
     def _demo_zones(self, branches):
         Zone = self.env["earlydryer.delivery.zone"]
-        central = ["central_area", "wuse", "wuse_ii", "maitama", "garki", "asokoro",
-                   "utako", "jabi", "wuye", "mabushi"]
+        central = [
+            "central_area",
+            "wuse",
+            "wuse_ii",
+            "maitama",
+            "garki",
+            "asokoro",
+            "utako",
+            "jabi",
+            "wuye",
+            "mabushi",
+        ]
         outer = ["gwarinpa", "kubwa", "life_camp", "katampe", "jahi", "dutse", "kado"]
-        south = ["apo", "lugbe", "lokogoma", "galadimawa", "gudu", "durumi",
-                 "nyanya", "karu"]
+        south = [
+            "apo",
+            "lugbe",
+            "lokogoma",
+            "galadimawa",
+            "gudu",
+            "durumi",
+            "nyanya",
+            "karu",
+        ]
         for code, branch in branches.items():
             uplift = 0 if code == "p1" else 250
             Zone.create(
@@ -176,9 +196,19 @@ class EarlydryerLogisticsDemo(models.AbstractModel):
         ref = self.env.ref
         data = {
             "adaeze": ("wuse_ii", "Behind Banex Plaza, white gate", 9.0812, 7.4685),
-            "kabir": ("maitama", "Opposite the Transcorp Hilton side gate", 9.0868, 7.4931),
+            "kabir": (
+                "maitama",
+                "Opposite the Transcorp Hilton side gate",
+                9.0868,
+                7.4931,
+            ),
             "funmi": ("gwarinpa", "3rd Avenue, near the fire station", False, False),
-            "samuel": ("lugbe", "Off airport road, after the filling station", 8.9815, 7.3790),
+            "samuel": (
+                "lugbe",
+                "Off airport road, after the filling station",
+                8.9815,
+                7.3790,
+            ),
         }
         for name, (area, landmark, lat, lng) in data.items():
             partner = ref(f"earlydryer_laundry_order.partner_customer_{name}")
@@ -220,7 +250,11 @@ class EarlydryerLogisticsDemo(models.AbstractModel):
     def _stop(self, stop_type, partner, branch, day, job=None, slot=0, **vals):
         Quote = self.env["earlydryer.logistics.quote"]
         quote = Quote.quote(
-            partner, partner, branch, stop_type, day,
+            partner,
+            partner,
+            branch,
+            stop_type,
+            day,
             order_amount=job.amount_total if job else 0.0,
         )
         stop = self.env["earlydryer.logistics.stop"].create(
@@ -254,7 +288,9 @@ class EarlydryerLogisticsDemo(models.AbstractModel):
                     Command.create(
                         {
                             "product_id": catalog.get_laundry_product(
-                                ref(f"earlydryer_service_catalog.garment_category_{cat}"),
+                                ref(
+                                    f"earlydryer_service_catalog.garment_category_{cat}"
+                                ),
                                 ref(f"earlydryer_service_catalog.service_type_{svc}"),
                             ).id,
                             "product_uom_qty": qty,
@@ -269,13 +305,29 @@ class EarlydryerLogisticsDemo(models.AbstractModel):
         if paid:
             invoice = order._create_invoices()
             invoice.action_post()
-            bank = self.env["account.journal"].search(
-                [("type", "=", "bank"), ("company_id", "=", invoice.company_id.id)],
-                limit=1,
+            # paid in cash at the plant: straight to the cash account (like
+            # the wallet top-ups), matched with the invoice
+            journal = branch.cash_journal_id
+            payment = self.env["account.payment"].create(
+                {
+                    "payment_type": "inbound",
+                    "partner_type": "customer",
+                    "partner_id": invoice.commercial_partner_id.id,
+                    "amount": invoice.amount_residual,
+                    "journal_id": journal.id,
+                    "payment_method_line_id": journal.inbound_payment_method_line_ids[
+                        :1
+                    ].id,
+                    "force_outstanding_account_id": journal.default_account_id.id,
+                }
             )
-            self.env["account.payment.register"].with_context(
-                active_model="account.move", active_ids=invoice.ids
-            ).create({"journal_id": bank.id})._create_payments()
+            payment.action_post()
+            (payment.move_id.line_ids | invoice.line_ids).filtered(
+                lambda line: (
+                    line.account_id.account_type == "asset_receivable"
+                    and not line.reconciled
+                )
+            ).reconcile()
         # demo shortcut through production: straight to the shelf
         job.with_context(**{MOVE_CTX: True}).write(
             {
@@ -295,20 +347,35 @@ class EarlydryerLogisticsDemo(models.AbstractModel):
         absent = ref("earlydryer_logistics.fail_reason_absent")
 
         # booked pickups for tomorrow
-        self._stop("pickup", customer("funmi"), branch, tomorrow, slot=0, source="whatsapp")
+        self._stop(
+            "pickup", customer("funmi"), branch, tomorrow, slot=0, source="whatsapp"
+        )
         self._stop("pickup", customer("samuel"), branch, tomorrow, slot=1)
 
         # today's trip of Musa: one pickup, two COD deliveries
         pickup = self._stop(
-            "pickup", customer("kabir"), branch, today, slot=0,
-            return_delivery=True, customer_note="Two suits, handle with care",
+            "pickup",
+            customer("kabir"),
+            branch,
+            today,
+            slot=0,
+            return_delivery=True,
+            customer_note="Two suits, handle with care",
         )
         job_cod = self._ready_job(
-            customer("adaeze"), branch, [("shirt", "wash_iron", 5), ("trouser", "wash_iron", 2)]
+            customer("adaeze"),
+            branch,
+            [("shirt", "wash_iron", 5), ("trouser", "wash_iron", 2)],
         )
-        delivery_cod = self._stop("delivery", customer("adaeze"), branch, today, job_cod, slot=1)
-        job_fail = self._ready_job(customer("samuel"), branch, [("shirt", "wash_iron", 3)])
-        delivery_fail = self._stop("delivery", customer("samuel"), branch, today, job_fail, slot=1)
+        delivery_cod = self._stop(
+            "delivery", customer("adaeze"), branch, today, job_cod, slot=1
+        )
+        job_fail = self._ready_job(
+            customer("samuel"), branch, [("shirt", "wash_iron", 3)]
+        )
+        delivery_fail = self._stop(
+            "delivery", customer("samuel"), branch, today, job_fail, slot=1
+        )
         trip = Trip.create(
             {
                 "earlydryer_branch_id": branch.id,
@@ -327,15 +394,27 @@ class EarlydryerLogisticsDemo(models.AbstractModel):
         gps = {"lat": 9.0868, "lng": 7.4931, "accuracy": 18}
         pickup._earlydryer_arrive(gps=gps)
         pickup._earlydryer_complete(
-            {"recipient_name": "Kabir", "bag_count": 2, "piece_count_estimate": 6,
-             "pickup_note": "Seal 0042", "gps": gps}
+            {
+                "recipient_name": "Kabir",
+                "bag_count": 2,
+                "piece_count_estimate": 6,
+                "pickup_note": "Seal 0042",
+                "gps": gps,
+            }
         )
-        delivery_cod._earlydryer_arrive(gps={"lat": 9.0812, "lng": 7.4685, "accuracy": 12})
+        delivery_cod._earlydryer_arrive(
+            gps={"lat": 9.0812, "lng": 7.4685, "accuracy": 12}
+        )
         delivery_cod._earlydryer_complete(
-            {"recipient_name": "Adaeze", "collection_method": "cash",
-             "cash_collected": delivery_cod.cod_amount}
+            {
+                "recipient_name": "Adaeze",
+                "collection_method": "cash",
+                "cash_collected": delivery_cod.cod_amount,
+            }
         )
-        delivery_fail._earlydryer_arrive(gps={"lat": 8.9815, "lng": 7.3790, "accuracy": 140})
+        delivery_fail._earlydryer_arrive(
+            gps={"lat": 8.9815, "lng": 7.3790, "accuracy": 140}
+        )
         delivery_fail._earlydryer_fail(absent, note="No answer at the gate, phone off")
         retry = self.env["earlydryer.logistics.stop"].browse(
             delivery_fail.action_reschedule()["res_id"]
@@ -356,7 +435,9 @@ class EarlydryerLogisticsDemo(models.AbstractModel):
                         {
                             "product_id": catalog.get_laundry_product(
                                 ref("earlydryer_service_catalog.garment_category_suit"),
-                                ref("earlydryer_service_catalog.service_type_dry_cleaning"),
+                                ref(
+                                    "earlydryer_service_catalog.service_type_dry_cleaning"
+                                ),
                             ).id,
                             "product_uom_qty": 2,
                         }
@@ -370,7 +451,9 @@ class EarlydryerLogisticsDemo(models.AbstractModel):
         job_3pl = self._ready_job(
             customer("funmi"), branch, [("shirt", "wash_iron", 4)], paid=True
         )
-        delivery_3pl = self._stop("delivery", customer("funmi"), branch, today, job_3pl, slot=2)
+        delivery_3pl = self._stop(
+            "delivery", customer("funmi"), branch, today, job_3pl, slot=2
+        )
         trip_3pl = Trip.create(
             {
                 "earlydryer_branch_id": branch.id,

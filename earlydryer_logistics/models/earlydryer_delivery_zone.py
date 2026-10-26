@@ -60,8 +60,7 @@ class EarlydryerDeliveryZone(models.Model):
     min_order_amount = fields.Monetary(
         string="Minimum Order",
         tracking=True,
-        help="No delivery below this order value unless a Branch Manager "
-        "approves.",
+        help="No delivery below this order value unless a Branch Manager approves.",
     )
     note = fields.Text()
 

@@ -69,8 +69,9 @@ class EarlydryerLogisticsSlotTemplate(models.Model):
         for slot in self:
             if not 0 <= slot.start_time < slot.end_time <= 24:
                 raise ValidationError(
-                    self.env._("Slot %(slot)s: the end must follow the start.",
-                               slot=slot.name)
+                    self.env._(
+                        "Slot %(slot)s: the end must follow the start.", slot=slot.name
+                    )
                 )
             if slot.capacity < 0 or slot.cutoff_hours < 0:
                 raise ValidationError(
@@ -123,27 +124,34 @@ class EarlydryerLogisticsSlotTemplate(models.Model):
     def _earlydryer_holidays(self, branch, start, end):
         """Public holidays (resource leaves without resource) of the plant's
         calendar or of no calendar, overlapping ``[start, end]``."""
-        domain = Domain("resource_id", "=", False) & Domain(
-            "date_from", "<", end
-        ) & Domain("date_to", ">", start) & Domain(
-            "company_id", "in", [branch.company_id.id, False]
+        domain = (
+            Domain("resource_id", "=", False)
+            & Domain("date_from", "<", end)
+            & Domain("date_to", ">", start)
+            & Domain("company_id", "in", [branch.company_id.id, False])
         )
         calendar = branch.resource_calendar_id
-        domain &= Domain("calendar_id", "in", [calendar.id, False] if calendar else [False])
+        domain &= Domain(
+            "calendar_id", "in", [calendar.id, False] if calendar else [False]
+        )
         return self.env["resource.calendar.leaves"].sudo().search(domain)
 
     @api.model
     def _earlydryer_usage(self, templates, date_from, date_to):
         """``{(template_id, date): booked stops}``."""
-        groups = self.env["earlydryer.logistics.stop"].sudo()._read_group(
-            [
-                ("slot_template_id", "in", templates.ids),
-                ("slot_date", ">=", date_from),
-                ("slot_date", "<=", date_to),
-                ("state", "not in", FREE_STATES),
-            ],
-            ["slot_template_id", "slot_date:day"],
-            ["__count"],
+        groups = (
+            self.env["earlydryer.logistics.stop"]
+            .sudo()
+            ._read_group(
+                [
+                    ("slot_template_id", "in", templates.ids),
+                    ("slot_date", ">=", date_from),
+                    ("slot_date", "<=", date_to),
+                    ("state", "not in", FREE_STATES),
+                ],
+                ["slot_template_id", "slot_date:day"],
+                ["__count"],
+            )
         )
         return {
             (template.id, fields.Date.to_date(day)): count
@@ -165,7 +173,13 @@ class EarlydryerLogisticsSlotTemplate(models.Model):
 
     @api.model
     def available_slots(
-        self, branch, stop_type, date_from, date_to, zone=None, now=None,
+        self,
+        branch,
+        stop_type,
+        date_from,
+        date_to,
+        zone=None,
+        now=None,
         include_full=False,
     ):
         """Concrete slots of ``branch`` between two dates (included).
@@ -201,7 +215,9 @@ class EarlydryerLogisticsSlotTemplate(models.Model):
         slots = []
         day = date_from
         while day <= date_to:
-            for template in templates.filtered(lambda t, d=day: int(t.weekday) == d.weekday()):
+            for template in templates.filtered(
+                lambda t, d=day: int(t.weekday) == d.weekday()
+            ):
                 start, end = template._earlydryer_bounds(day)
                 if start - timedelta(hours=template.cutoff_hours) < now:
                     continue

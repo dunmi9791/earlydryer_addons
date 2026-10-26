@@ -63,8 +63,10 @@ class LaundryJob(models.Model):
         not invoiced): their open receivable credit counts as paid until a
         reconciliation lowers the receivable itself."""
         paid = super()._earlydryer_extra_paid()
-        stops = self.env["earlydryer.logistics.stop"].sudo().search(
-            [("job_id", "=", self.id), ("cod_payment_id", "!=", False)]
+        stops = (
+            self.env["earlydryer.logistics.stop"]
+            .sudo()
+            .search([("job_id", "=", self.id), ("cod_payment_id", "!=", False)])
         )
         for stop in stops:
             paid -= sum(stop._earlydryer_cod_credit_lines().mapped("amount_residual"))
@@ -76,13 +78,17 @@ class LaundryJob(models.Model):
 
     def _earlydryer_active_delivery(self):
         self.ensure_one()
-        return self.env["earlydryer.logistics.stop"].sudo().search(
-            [
-                ("stop_type", "=", "delivery"),
-                ("job_id", "=", self.id),
-                ("state", "in", ACTIVE_STATES),
-            ],
-            limit=1,
+        return (
+            self.env["earlydryer.logistics.stop"]
+            .sudo()
+            .search(
+                [
+                    ("stop_type", "=", "delivery"),
+                    ("job_id", "=", self.id),
+                    ("state", "in", ACTIVE_STATES),
+                ],
+                limit=1,
+            )
         )
 
     def _earlydryer_cod_covers(self):
@@ -162,10 +168,14 @@ class LaundryJob(models.Model):
     def _earlydryer_delivery_address(self):
         """Return address: the pickup's, else the order's delivery address."""
         self.ensure_one()
-        pickup = self.env["earlydryer.logistics.stop"].sudo().search(
-            [("stop_type", "=", "pickup"), ("job_ids", "in", self.ids)],
-            order="id desc",
-            limit=1,
+        pickup = (
+            self.env["earlydryer.logistics.stop"]
+            .sudo()
+            .search(
+                [("stop_type", "=", "pickup"), ("job_ids", "in", self.ids)],
+                order="id desc",
+                limit=1,
+            )
         )
         if pickup:
             return pickup._earlydryer_return_address()

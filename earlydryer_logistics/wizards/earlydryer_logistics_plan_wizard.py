@@ -28,9 +28,14 @@ class EarlydryerLogisticsPlanWizard(models.TransientModel):
     branch_id = fields.Many2one(
         "earlydryer.branch",
         required=True,
-        default=lambda self: self.env["earlydryer.logistics.stop"]._default_earlydryer_branch_id(),
+        default=lambda self: self.env[
+            "earlydryer.logistics.stop"
+        ]._default_earlydryer_branch_id(),
     )
-    rider_employee_ids = fields.Many2many("hr.employee", string="Available Riders")
+    # hr.employee.public: Branch Managers have no HR rights (same ids)
+    rider_employee_ids = fields.Many2many(
+        "hr.employee.public", string="Available Riders"
+    )
     max_stops = fields.Integer(
         string="Max Stops per Trip",
         default=lambda self: self._default_max_stops(),
@@ -73,8 +78,12 @@ class EarlydryerLogisticsPlanWizard(models.TransientModel):
         chunks = []
         by_slot = {}
         for stop in stops:
-            by_slot.setdefault((stop.slot_start, stop.slot_template_id.id), []).append(stop)
-        for _slot, slot_stops in sorted(by_slot.items(), key=lambda item: (str(item[0][0]), item[0][1])):
+            by_slot.setdefault((stop.slot_start, stop.slot_template_id.id), []).append(
+                stop
+            )
+        for _slot, slot_stops in sorted(
+            by_slot.items(), key=lambda item: (str(item[0][0]), item[0][1])
+        ):
             by_zone = {}
             for stop in slot_stops:
                 by_zone.setdefault(stop.zone_id, []).append(stop)
@@ -114,7 +123,9 @@ class EarlydryerLogisticsPlanWizard(models.TransientModel):
                 nearest = min(
                     remaining,
                     key=lambda s: (
-                        Quote._earlydryer_haversine_km(position, (s.latitude, s.longitude)),
+                        Quote._earlydryer_haversine_km(
+                            position, (s.latitude, s.longitude)
+                        ),
                         s.id,
                     ),
                 )
@@ -134,11 +145,11 @@ class EarlydryerLogisticsPlanWizard(models.TransientModel):
             raise UserError(self.env._("No scheduled stop without trip on that day."))
         Quote = self.env["earlydryer.logistics.quote"]
         origin = Quote._earlydryer_point(self.branch_id.partner_id)
-        riders = self.rider_employee_ids
+        riders = self.env["hr.employee"].sudo().browse(self.rider_employee_ids.ids)
         Trip = self.env["earlydryer.logistics.trip"]
         trips = Trip
         for index, chunk in enumerate(self._earlydryer_chunks(stops, self.max_stops)):
-            rider = riders[index % len(riders)] if riders else self.env["hr.employee"]
+            rider = riders[index % len(riders)] if riders else riders.browse()
             first = chunk[0]
             trip = Trip.create(
                 {
