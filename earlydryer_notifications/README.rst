@@ -380,4 +380,3 @@ earlydryer_eod_report
 {{1}}: Daily report: {{2}}. Call {{3}}.
 
 Parameters: plant, summary, plant_phone.
-
