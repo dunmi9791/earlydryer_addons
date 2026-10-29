@@ -57,19 +57,28 @@ class EarlydryerWhtDeductionWizard(models.TransientModel):
         company = invoice.company_id
         account = company.earlydryer_wht_receivable_account_id
         if not account:
-            raise UserError(self.env._("Run the accounting setup first (WHT receivable)."))
+            raise UserError(
+                self.env._("Run the accounting setup first (WHT receivable).")
+            )
         if company.currency_id.compare_amounts(self.amount, 0) <= 0:
             raise UserError(self.env._("The WHT amount must be positive."))
-        if company.currency_id.compare_amounts(self.amount, invoice.amount_residual) > 0:
+        if (
+            company.currency_id.compare_amounts(self.amount, invoice.amount_residual)
+            > 0
+        ):
             raise UserError(
                 self.env._("The WHT cannot be more than the amount due on the invoice.")
             )
         receivable = invoice.line_ids.filtered(
-            lambda line: line.account_id.account_type == "asset_receivable"
-            and not line.reconciled
+            lambda line: (
+                line.account_id.account_type == "asset_receivable"
+                and not line.reconciled
+            )
         )
         partner = invoice.commercial_partner_id
-        label = self.env._("WHT deducted by customer on %(invoice)s", invoice=invoice.name)
+        label = self.env._(
+            "WHT deducted by customer on %(invoice)s", invoice=invoice.name
+        )
         journal = company._earlydryer_misc_journal()
         move = (
             self.env["account.move"]

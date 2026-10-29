@@ -20,7 +20,11 @@ class ReportDailyCash(models.AbstractModel):
             self.env["account.move.line"]
             .sudo()
             ._read_group(
-                [("account_id", "=", account.id), ("parent_state", "=", "posted"), *domain],
+                [
+                    ("account_id", "=", account.id),
+                    ("parent_state", "=", "posted"),
+                    *domain,
+                ],
                 [],
                 ["balance:sum"],
             )
@@ -30,6 +34,7 @@ class ReportDailyCash(models.AbstractModel):
     @api.model
     def _earlydryer_daily_cash_data(self, branch, day):
         branch.ensure_one()
+        branch = branch.with_env(self.env)
         branch._earlydryer_check_cash_right("report")
         branch = branch.sudo()
         day = fields.Date.to_date(day)
@@ -53,8 +58,8 @@ class ReportDailyCash(models.AbstractModel):
             "closing": 0.0,
             "float": branch.earlydryer_cash_float,
             "non_cash": [],
-            "sessions": self.env["pos.session"],
-            "lines": self.env["account.move.line"],
+            "sessions": self.env["pos.session"].sudo(),
+            "lines": self.env["account.move.line"].sudo(),
         }
         if not account:
             return data
@@ -73,7 +78,7 @@ class ReportDailyCash(models.AbstractModel):
         )
         data["lines"] = lines
         diff_accounts = journal.profit_account_id | journal.loss_account_id
-        sessions = self.env["pos.session"]
+        sessions = self.env["pos.session"].sudo()
         for line in lines:
             move = line.move_id
             statement_line = move.statement_line_id
@@ -114,22 +119,29 @@ class ReportDailyCash(models.AbstractModel):
                 for order_line in order.lines:
                     kind = order_line.product_id.earlydryer_kind
                     if kind == "wallet_topup":
-                        data["wallet_topups_cash"] += order_line.price_subtotal_incl * share
+                        data["wallet_topups_cash"] += (
+                            order_line.price_subtotal_incl * share
+                        )
                     elif kind == "settlement":
-                        data["settlements_cash"] += order_line.price_subtotal_incl * share
+                        data["settlements_cash"] += (
+                            order_line.price_subtotal_incl * share
+                        )
                 continue
             by_method[method]["amount"] += payment.amount
             by_method[method]["orders"].add(payment.pos_order_id.id)
         data["non_cash"] = [
             {
                 "method": method,
-                "kind": method.earlydryer_is_wallet and self.env._("Wallet")
+                "kind": method.earlydryer_is_wallet
+                and self.env._("Wallet")
                 or (method.type == "pay_later" and self.env._("Customer Account"))
                 or method.journal_id.name,
                 "amount": values["amount"],
                 "orders": len(values["orders"]),
             }
-            for method, values in sorted(by_method.items(), key=lambda item: item[0].name)
+            for method, values in sorted(
+                by_method.items(), key=lambda item: item[0].name
+            )
         ]
         for key in (
             "opening",

@@ -157,8 +157,10 @@ class AccountMove(models.Model):
     def _post(self, soft=True):
         posted = super()._post(soft=soft)
         to_submit = posted.filtered(
-            lambda move: move.move_type in ("out_invoice", "out_refund")
-            and move.company_id.earlydryer_einvoice_enabled
+            lambda move: (
+                move.move_type in ("out_invoice", "out_refund")
+                and move.company_id.earlydryer_einvoice_enabled
+            )
         )
         if to_submit:
             to_submit._earlydryer_einvoice_submit()
@@ -226,6 +228,7 @@ class AccountMove(models.Model):
         :returns: the posted entry
         """
         branch.ensure_one()
+        branch = branch.with_env(self.env)
         branch._earlydryer_check_cash_right("handover")
         branch = branch.sudo()
         if amount <= 0:

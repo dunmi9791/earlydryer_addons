@@ -35,7 +35,9 @@ class EarlydryerWhtRemitWizard(models.TransientModel):
         required=True,
         default=lambda self: self.env.company.earlydryer_tax_authority_id,
     )
-    reference = fields.Char(help="Receipt or remittance reference of the tax authority.")
+    reference = fields.Char(
+        help="Receipt or remittance reference of the tax authority."
+    )
     amount = fields.Monetary(compute="_compute_amount")
 
     @api.depends("line_ids")
@@ -53,9 +55,12 @@ class EarlydryerWhtRemitWizard(models.TransientModel):
         method_lines = self.journal_id.outbound_payment_method_line_ids
         account = method_lines.payment_account_id[:1]
         if not account:
-            account = self.env["account.payment"].with_company(self.company_id).new(
-                {"journal_id": self.journal_id.id}
-            )._get_outstanding_account("outbound")
+            account = (
+                self.env["account.payment"]
+                .with_company(self.company_id)
+                .new({"journal_id": self.journal_id.id})
+                ._get_outstanding_account("outbound")
+            )
         return account
 
     def action_remit(self):

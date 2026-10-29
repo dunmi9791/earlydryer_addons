@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <template id="pickup_page" name="Book a Pickup">
+        <t t-call="website.layout">
+            <div id="wrap" class="o_earlydryer_pickup">
+                <div class="container py-5" style="max-width: 760px;">
+                    <h1>Book a pickup</h1>
+                    <p class="text-muted">We collect your laundry at home or at the office. You get the price once your items are counted at the plant.</p>
+                    <div t-if="error" class="alert alert-danger" role="alert" t-out="error"/>
+
+                    <!-- step 1: where and when -->
+                    <form action="/pickup" method="get" class="row g-3 align-items-end mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label" for="area_id">Area</label>
+                            <select id="area_id" name="area_id" class="form-select" required="required">
+                                <option value="">Choose your area…</option>
+                                <t t-foreach="areas" t-as="area">
+                                    <option t-att-value="area['id']" t-att-selected="str(area['id']) == str(form.get('area_id'))" t-out="area['name']"/>
+                                </t>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="date">From</label>
+                            <input id="date" type="date" name="date" class="form-control" t-att-min="today" t-att-value="form.get('date') or today"/>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-secondary w-100">Show times</button>
+                        </div>
+                        <p class="small text-muted mb-0">Area not listed? <a href="#callback" data-bs-toggle="collapse">Ask us to call you back.</a></p>
+                    </form>
+
+                    <t t-set="can_book" t-value="quote and quote['served'] and quote['slots']"/>
+                    <div t-if="quote and not can_book" class="alert alert-warning" role="status">
+                        <t t-if="quote['message']" t-out="quote['message']"/>
+                        <t t-elif="quote['served']">No pickup time is free in these days: try a later date, or ask us to call you back.</t>
+                    </div>
+
+                    <!-- step 2: time and details -->
+                    <form t-if="can_book" action="/pickup/book" method="post" class="row g-3">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <input type="hidden" name="area_id" t-att-value="form.get('area_id')"/>
+                        <input type="hidden" name="date" t-att-value="form.get('date')"/>
+                        <input type="hidden" name="client_ref" t-att-value="form.get('client_ref')"/>
+                        <div class="d-none" aria-hidden="true">
+                            <input type="text" t-att-name="honeypot" tabindex="-1" autocomplete="off"/>
+                        </div>
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between">
+                                <h2 class="h5">Choose a time</h2>
+                                <span class="text-muted">
+                                    Pickup fee:
+                                    <strong t-if="quote['fee']" t-out="'%s %s' % (quote['currency'], '{:,.2f}'.format(quote['fee']))"/>
+                                    <strong t-else="">free</strong>
+                                </span>
+                            </div>
+                            <div class="list-group">
+                                <t t-foreach="quote['slots']" t-as="slot">
+                                    <label class="list-group-item d-flex gap-2">
+                                        <input class="form-check-input flex-shrink-0" type="radio" name="slot_key" required="required" t-att-value="slot['key']" t-att-checked="slot['key'] == form.get('slot_key')"/>
+                                        <span class="flex-grow-1" t-out="slot['label']"/>
+                                        <small class="text-muted"><t t-out="slot['remaining']"/> left</small>
+                                    </label>
+                                </t>
+                            </div>
+                        </div>
+                        <t t-call="earlydryer_website_pickup.pickup_contact_fields"/>
+                        <div class="col-12">
+                            <label class="form-label" for="gate_instructions">Gate or access instructions</label>
+                            <input id="gate_instructions" name="gate_instructions" class="form-control" maxlength="256" t-att-value="form.get('gate_instructions')"/>
+                        </div>
+                        <div class="col-12 form-check ms-2">
+                            <input id="return_delivery" class="form-check-input" type="checkbox" name="return_delivery" value="1"/>
+                            <label class="form-check-label" for="return_delivery">Deliver my order back to this address</label>
+                        </div>
+                        <div class="col-12 form-check ms-2">
+                            <input id="notify_opt_in" class="form-check-input" type="checkbox" name="notify_opt_in" value="1" checked="checked"/>
+                            <label class="form-check-label" for="notify_opt_in">Send me order updates by WhatsApp or SMS</label>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary btn-lg">Book pickup</button>
+                        </div>
+                    </form>
+
+                    <!-- not served / no time suits -->
+                    <div id="callback" t-att-class="'mt-5' if (quote and not can_book) else 'collapse mt-5'">
+                        <h2 class="h5">Ask us to call you back</h2>
+                        <form action="/pickup/book" method="post" class="row g-3">
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                            <input type="hidden" name="callback" value="1"/>
+                            <div class="d-none" aria-hidden="true">
+                                <input type="text" t-att-name="honeypot" tabindex="-1" autocomplete="off"/>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label" for="cb_area_id">Area</label>
+                                <select id="cb_area_id" name="area_id" class="form-select" required="required">
+                                    <option value="">Choose your area…</option>
+                                    <t t-foreach="all_areas or areas" t-as="area">
+                                        <option t-att-value="area['id']" t-att-selected="str(area['id']) == str(form.get('area_id'))" t-out="area['name']"/>
+                                    </t>
+                                </select>
+                            </div>
+                            <t t-call="earlydryer_website_pickup.pickup_contact_fields">
+                                <t t-set="prefix" t-value="'cb_'"/>
+                            </t>
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-secondary">Call me back</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="pickup_contact_fields" name="Pickup contact fields">
+        <t t-set="prefix" t-value="prefix or ''"/>
+        <div class="col-md-6">
+            <label class="form-label" t-att-for="prefix + 'name'">Name</label>
+            <input t-att-id="prefix + 'name'" name="name" class="form-control" required="required" maxlength="128" t-att-value="form.get('name')"/>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" t-att-for="prefix + 'phone'">Phone</label>
+            <input t-att-id="prefix + 'phone'" name="phone" type="tel" class="form-control" required="required" maxlength="32" placeholder="0803 123 4567" t-att-value="form.get('phone')"/>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" t-att-for="prefix + 'email'">Email (optional)</label>
+            <input t-att-id="prefix + 'email'" name="email" type="email" class="form-control" maxlength="128" t-att-value="form.get('email')"/>
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" t-att-for="prefix + 'street'">Street address</label>
+            <input t-att-id="prefix + 'street'" name="street" class="form-control" required="required" maxlength="256" t-att-value="form.get('street')"/>
+        </div>
+        <div class="col-12">
+            <label class="form-label" t-att-for="prefix + 'landmark'">Landmark</label>
+            <input t-att-id="prefix + 'landmark'" name="landmark" class="form-control" maxlength="256" placeholder="e.g. opposite Jabi Lake Mall, blue gate" t-att-value="form.get('landmark')"/>
+        </div>
+        <div class="col-12">
+            <label class="form-label" t-att-for="prefix + 'note'">Note for us (optional)</label>
+            <textarea t-att-id="prefix + 'note'" name="note" class="form-control" rows="2" maxlength="1000" t-out="form.get('note')"/>
+        </div>
+    </template>
+
+    <template id="pickup_track_page" name="Your Pickup">
+        <t t-call="website.layout">
+            <div id="wrap">
+                <div class="container py-5" style="max-width: 640px;">
+                    <h1>Pickup <t t-out="pickup['reference']"/></h1>
+                    <div t-if="message" class="alert alert-warning" role="alert" t-out="message"/>
+                    <div t-if="pickup['state'] == 'draft'" class="alert alert-info" role="status">
+                        We received your request. We will call you to arrange the pickup.
+                    </div>
+                    <div t-elif="pickup['state'] == 'scheduled'" class="alert alert-success" role="status">
+                        Your pickup is booked. Keep this page: it lets you follow or cancel it.
+                    </div>
+                    <dl class="row">
+                        <dt class="col-sm-4">Status</dt>
+                        <dd class="col-sm-8" t-out="pickup['state_label']"/>
+                        <t t-if="pickup['slot_label']">
+                            <dt class="col-sm-4">When</dt>
+                            <dd class="col-sm-8" t-out="pickup['slot_label']"/>
+                        </t>
+                        <t t-if="pickup['address']">
+                            <dt class="col-sm-4">Where</dt>
+                            <dd class="col-sm-8"><t t-out="pickup['address']"/>, <t t-out="pickup['area']"/></dd>
+                        </t>
+                        <dt class="col-sm-4">Pickup fee</dt>
+                        <dd class="col-sm-8">
+                            <t t-if="pickup['fee']" t-out="'%s %s' % (pickup['currency'], '{:,.2f}'.format(pickup['fee']))"/>
+                            <t t-else="">Free</t>
+                        </dd>
+                        <dt class="col-sm-4">Plant</dt>
+                        <dd class="col-sm-8"><t t-out="pickup['plant']"/> <t t-if="pickup['plant_phone']">(<a t-attf-href="tel:{{ pickup['plant_phone'] }}" t-out="pickup['plant_phone']"/>)</t></dd>
+                    </dl>
+                    <form t-if="pickup['cancellable']" action="/pickup/cancel" method="post">
+                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        <input type="hidden" name="ref" t-att-value="pickup['reference']"/>
+                        <input type="hidden" name="token" t-att-value="pickup['access_token']"/>
+                        <button type="submit" class="btn btn-outline-danger">Cancel this pickup</button>
+                    </form>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <record id="menu_pickup" model="website.menu">
+        <field name="name">Book a Pickup</field>
+        <field name="url">/pickup</field>
+        <field name="parent_id" ref="website.main_menu"/>
+        <field name="sequence">40</field>
+    </record>
+</odoo>

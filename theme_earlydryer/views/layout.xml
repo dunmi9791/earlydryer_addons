@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <!-- Header button: "Book a Pickup", as on earlydryer.com -->
+    <template id="header_call_to_action" inherit_id="website.header_call_to_action" name="Earlydryer Book a Pickup">
+        <xpath expr="//a[hasclass('btn_cta')]" position="replace">
+            <a href="/pickup" class="oe_unremovable btn btn-primary btn_cta">Book a Pickup</a>
+        </xpath>
+    </template>
+
+    <!-- Footer: logo and promise, contact, hours, links -->
+    <template id="template_footer_earlydryer" inherit_id="website.layout" name="Earlydryer Footer" active="False">
+        <xpath expr="//div[@id='footer']" position="replace">
+            <div id="footer" class="oe_structure oe_structure_solo text-break" t-ignore="true" t-if="not no_footer">
+                <section class="s_text_block o_ed_footer pt64 pb32" data-snippet="s_text_block" data-name="Text">
+                    <div class="container s_allow_columns">
+                        <div class="row g-5">
+                            <div class="col-lg-4">
+                                <img src="/web/image/theme_earlydryer.logo" class="img-fluid o_ed_footer_logo mb-4" alt="EarlyDryer"/>
+                                <p>Premium laundry and dry cleaning in Abuja, picked up and delivered to your doorstep.</p>
+                                <p class="o_ed_quote fs-5 mb-0">Clean Clothes, Clear Mind.</p>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <h6 class="o_ed_footer_title mb-3">Contact us</h6>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><i class="fa fa-phone fa-fw me-2 o_ed_teal"/><a href="tel:+2347043270116">0704 327 0116</a></li>
+                                    <li class="mb-2"><i class="fa fa-phone fa-fw me-2 o_ed_teal"/><a href="tel:+2348037297170">0803 729 7170</a></li>
+                                    <li class="mb-2"><i class="fa fa-envelope fa-fw me-2 o_ed_teal"/><a href="mailto:earlydryer@gmail.com">earlydryer@gmail.com</a></li>
+                                    <li class="mb-2"><i class="fa fa-map-marker fa-fw me-2 o_ed_teal"/>Bahamas Plaza, F01 Kubwa, Abuja</li>
+                                    <li class="mb-2"><i class="fa fa-building-o fa-fw me-2 o_ed_teal"/>No 8, 14 Road, Gwarinpa</li>
+                                </ul>
+                            </div>
+                            <div class="col-lg-3 col-md-6">
+                                <h6 class="o_ed_footer_title mb-3">Opening hours</h6>
+                                <p class="mb-1">Monday – Saturday</p>
+                                <p class="fs-5 fw-bold">6:00 AM – 10:00 PM</p>
+                                <h6 class="o_ed_footer_title mt-4 mb-3">Service area</h6>
+                                <p>All of Abuja: we come to you.</p>
+                            </div>
+                            <div class="col-lg-2">
+                                <h6 class="o_ed_footer_title mb-3">Explore</h6>
+                                <ul class="list-unstyled">
+                                    <li class="mb-2"><a href="/#services">Services</a></li>
+                                    <li class="mb-2"><a href="/#about">About us</a></li>
+                                    <li class="mb-2"><a href="/pickup">Book a Pickup</a></li>
+                                    <li class="mb-2"><a href="/contactus">Contact</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </xpath>
+    </template>
+</odoo>

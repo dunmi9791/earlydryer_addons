@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_logistics_plan_wizard_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.logistics.plan.wizard.form</field>
+        <field name="model">earlydryer.logistics.plan.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <p class="text-muted">
+                    Groups the day's scheduled stops by slot then zone into draft trips, orders each trip
+                    by nearest neighbour from the plant (straight-line, no road routing) and shares the
+                    trips among the riders round-robin. Adjust the result on the planning board.
+                </p>
+                <group>
+                    <group>
+                        <field name="date"/>
+                        <field name="branch_id"/>
+                        <field name="stop_count"/>
+                    </group>
+                    <group>
+                        <field name="max_stops"/>
+                        <field name="rider_employee_ids" widget="many2many_tags"
+                               domain="['|', ('earlydryer_is_rider', '=', True), ('user_id.all_group_ids', 'in', [%(earlydryer_base.group_rider)d])]"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_plan" type="object" string="Plan" class="btn-primary"/>
+                    <button special="cancel" string="Cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="earlydryer_logistics_plan_wizard_action" model="ir.actions.act_window">
+        <field name="name">Plan Automatically</field>
+        <field name="res_model">earlydryer.logistics.plan.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>

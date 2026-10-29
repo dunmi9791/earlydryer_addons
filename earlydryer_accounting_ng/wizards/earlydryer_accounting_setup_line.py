@@ -16,6 +16,7 @@ STATUSES = [
     ("reuse", "Exists: reused"),
     ("skip", "Skipped"),
     ("done", "Created"),
+    ("apply", "Applied on confirm"),
 ]
 
 
@@ -36,7 +37,7 @@ class EarlydryerAccountingSetupLine(models.TransientModel):
     name = fields.Char(required=True)
     code = fields.Char()
     account_type = fields.Char(string="Type", readonly=True)
-    reconcile = fields.Boolean(string="Reconcile", readonly=True)
+    reconcile = fields.Boolean(readonly=True)
     branch_id = fields.Many2one("earlydryer.branch", string="Plant", readonly=True)
     status = fields.Selection(STATUSES, required=True, default="create")
     res_model = fields.Char(readonly=True)

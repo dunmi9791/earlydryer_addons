@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/account-financial-reporting" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/account-financial-tools" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/account-reconcile" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/bank-statement-import" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/helpdesk" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/mis-builder" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/partner-contact" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/payroll" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/purchase-workflow" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/queue" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/reporting-engine" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/rest-framework" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/server-tools" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/server-ux" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/web" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/web-api" vcs="Git" />
+  </component>
+</project>

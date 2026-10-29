@@ -60,6 +60,20 @@ class ProductTemplate(models.Model):
         if field and company[field] and not self.property_account_income_id:
             accounts["income"] = company[field]
         cogs = company.earlydryer_retail_cogs_account_id
-        if self.earlydryer_kind == "retail" and cogs and not self.property_account_expense_id:
+        if (
+            self.earlydryer_kind == "retail"
+            and cogs
+            and not self.property_account_expense_id
+        ):
             accounts["expense"] = cogs
         return accounts
+
+    @api.model
+    def _earlydryer_recompute_service_lines(self):
+        """Called by the data once the service lines exist (the stored field
+        is first computed at install, before they are loaded)."""
+        templates = self.with_context(active_test=False).search(
+            [("earlydryer_kind", "!=", False)]
+        )
+        templates._compute_earlydryer_service_line_id()
+        return True

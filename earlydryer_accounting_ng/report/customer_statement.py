@@ -57,7 +57,9 @@ class ReportCustomerStatement(models.AbstractModel):
             amount = 0.0
             for line in open_lines:
                 overdue = (date_to - (line.date_maturity or line.date)).days
-                if (low is None or overdue >= low) and (high is None or overdue <= high):
+                if (low is None or overdue >= low) and (
+                    high is None or overdue <= high
+                ):
                     amount += line.amount_residual
             ageing.append({"label": label, "amount": amount})
         wallet = self.env["earlydryer.wallet"].sudo()._earlydryer_get(partner, company)

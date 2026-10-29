@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<!-- Events and DRAFT templates added to earlydryer_notifications, following
+     its README: submit the WhatsApp templates to Meta before activating. -->
+<odoo noupdate="1">
+  <record id="event_delivery_scheduled" model="earlydryer.notify.event">
+    <field name="name">Delivery scheduled</field>
+    <field name="code">delivery_scheduled</field>
+    <field name="audience">customer</field>
+    <field name="active" eval="True" />
+    <field name="urgent" eval="False" />
+    <field name="allow_repeat" eval="False" />
+  </record>
+  <record id="template_delivery_scheduled_whatsapp" model="earlydryer.notify.template">
+    <field name="name">Delivery scheduled (whatsapp)</field>
+    <field name="event_id" ref="event_delivery_scheduled" />
+    <field name="channel">whatsapp</field>
+    <field name="body">{{ ctx['plant'] }}: Order {{ ctx['number'] }} will be delivered {{ ctx['slot'] }}. Delivery fee {{ ctx['fee'] }}. To pay on delivery {{ ctx['cod'] }}. Call {{ ctx['plant_phone'] }}.</field>
+    <field name="approved" eval="False" />
+    <field name="meta_template_name">earlydryer_delivery_scheduled</field>
+    <field name="meta_language">en</field>
+    <field name="param_expressions">["ctx['plant']", "ctx['number']", "ctx['slot']", "ctx['fee']", "ctx['cod']", "ctx['plant_phone']"]</field>
+  </record>
+  <record id="template_delivery_scheduled_sms" model="earlydryer.notify.template">
+    <field name="name">Delivery scheduled (sms)</field>
+    <field name="event_id" ref="event_delivery_scheduled" />
+    <field name="channel">sms</field>
+    <field name="body">{{ ctx['plant'] }}: Order {{ ctx['number'] }} will be delivered {{ ctx['slot'] }}. Delivery fee {{ ctx['fee'] }}. To pay on delivery {{ ctx['cod'] }}. Call {{ ctx['plant_phone'] }}.</field>
+    <field name="approved" eval="False" />
+    <field name="meta_template_name" />
+    <field name="meta_language">en</field>
+    <field name="param_expressions">["ctx['plant']", "ctx['number']", "ctx['slot']", "ctx['fee']", "ctx['cod']", "ctx['plant_phone']"]</field>
+  </record>
+  <record id="event_delivery_failed" model="earlydryer.notify.event">
+    <field name="name">Delivery failed (customer)</field>
+    <field name="code">delivery_failed</field>
+    <field name="audience">customer</field>
+    <field name="active" eval="True" />
+    <field name="urgent" eval="True" />
+    <field name="allow_repeat" eval="True" />
+  </record>
+  <record id="template_delivery_failed_whatsapp" model="earlydryer.notify.template">
+    <field name="name">Delivery failed (customer) (whatsapp)</field>
+    <field name="event_id" ref="event_delivery_failed" />
+    <field name="channel">whatsapp</field>
+    <field name="body">{{ ctx['plant'] }}: We could not deliver order {{ ctx['number'] }} ({{ ctx['summary'] }}). We will call you to arrange another time. Call {{ ctx['plant_phone'] }}.</field>
+    <field name="approved" eval="False" />
+    <field name="meta_template_name">earlydryer_delivery_failed</field>
+    <field name="meta_language">en</field>
+    <field name="param_expressions">["ctx['plant']", "ctx['number']", "ctx['summary']", "ctx['plant_phone']"]</field>
+  </record>
+  <record id="template_delivery_failed_sms" model="earlydryer.notify.template">
+    <field name="name">Delivery failed (customer) (sms)</field>
+    <field name="event_id" ref="event_delivery_failed" />
+    <field name="channel">sms</field>
+    <field name="body">{{ ctx['plant'] }}: We could not deliver order {{ ctx['number'] }} ({{ ctx['summary'] }}). We will call you to arrange another time. Call {{ ctx['plant_phone'] }}.</field>
+    <field name="approved" eval="False" />
+    <field name="meta_template_name" />
+    <field name="meta_language">en</field>
+    <field name="param_expressions">["ctx['plant']", "ctx['number']", "ctx['summary']", "ctx['plant_phone']"]</field>
+  </record>
+  <record id="event_alert_rider_cash_short" model="earlydryer.notify.event">
+    <field name="name">Rider cash short</field>
+    <field name="code">alert_rider_cash_short</field>
+    <field name="audience">staff</field>
+    <field name="active" eval="True" />
+    <field name="urgent" eval="False" />
+    <field name="allow_repeat" eval="True" />
+  </record>
+  <record id="template_alert_rider_cash_short_whatsapp" model="earlydryer.notify.template">
+    <field name="name">Rider cash short (whatsapp)</field>
+    <field name="event_id" ref="event_alert_rider_cash_short" />
+    <field name="channel">whatsapp</field>
+    <field name="body">{{ ctx['plant'] }}: Rider cash short {{ ctx['number'] }}: {{ ctx['summary'] }}. Call {{ ctx['plant_phone'] }}.</field>
+    <field name="approved" eval="False" />
+    <field name="meta_template_name">earlydryer_alert_rider_cash_short</field>
+    <field name="meta_language">en</field>
+    <field name="param_expressions">["ctx['plant']", "ctx['number']", "ctx['summary']", "ctx['plant_phone']"]</field>
+  </record>
+  <record id="template_alert_rider_cash_short_sms" model="earlydryer.notify.template">
+    <field name="name">Rider cash short (sms)</field>
+    <field name="event_id" ref="event_alert_rider_cash_short" />
+    <field name="channel">sms</field>
+    <field name="body">{{ ctx['plant'] }}: Rider cash short {{ ctx['number'] }}: {{ ctx['summary'] }}. Call {{ ctx['plant_phone'] }}.</field>
+    <field name="approved" eval="False" />
+    <field name="meta_template_name" />
+    <field name="meta_language">en</field>
+    <field name="param_expressions">["ctx['plant']", "ctx['number']", "ctx['summary']", "ctx['plant_phone']"]</field>
+  </record>
+  <record id="event_alert_pickup_online" model="earlydryer.notify.event">
+    <field name="name">Pickup booked online</field>
+    <field name="code">alert_pickup_online</field>
+    <field name="audience">staff</field>
+    <field name="active" eval="True" />
+    <field name="urgent" eval="False" />
+    <field name="allow_repeat" eval="True" />
+  </record>
+  <record id="template_alert_pickup_online_whatsapp" model="earlydryer.notify.template">
+    <field name="name">Pickup booked online (whatsapp)</field>
+    <field name="event_id" ref="event_alert_pickup_online" />
+    <field name="channel">whatsapp</field>
+    <field name="body">{{ ctx['plant'] }}: Pickup {{ ctx['number'] }} booked online: {{ ctx['summary'] }}.</field>
+    <field name="approved" eval="False" />
+    <field name="meta_template_name">earlydryer_alert_pickup_online</field>
+    <field name="meta_language">en</field>
+    <field name="param_expressions">["ctx['plant']", "ctx['number']", "ctx['summary']"]</field>
+  </record>
+  <record id="template_alert_pickup_online_sms" model="earlydryer.notify.template">
+    <field name="name">Pickup booked online (sms)</field>
+    <field name="event_id" ref="event_alert_pickup_online" />
+    <field name="channel">sms</field>
+    <field name="body">{{ ctx['plant'] }}: Pickup {{ ctx['number'] }} booked online: {{ ctx['summary'] }}.</field>
+    <field name="approved" eval="False" />
+    <field name="meta_template_name" />
+    <field name="meta_language">en</field>
+    <field name="param_expressions">["ctx['plant']", "ctx['number']", "ctx['summary']"]</field>
+  </record>
+</odoo>

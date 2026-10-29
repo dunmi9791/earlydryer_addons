@@ -28,7 +28,6 @@ class AccountJournal(models.Model):
     )
     earlydryer_role = fields.Selection(
         JOURNAL_ROLES,
-        string="Earlydryer Role",
         index="btree_not_null",
         help="Set by the accounting setup wizard.",
     )

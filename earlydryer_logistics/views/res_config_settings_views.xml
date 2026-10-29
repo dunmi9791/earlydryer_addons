@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="res_config_settings_view_form_earlydryer_logistics" model="ir.ui.view">
+        <field name="name">res.config.settings.form.earlydryer.logistics</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="earlydryer_laundry_order.res_config_settings_view_form_earlydryer_laundry"/>
+        <field name="arch" type="xml">
+            <xpath expr="//block[@name='earlydryer_laundry_section']" position="after">
+                <block title="Logistics" name="earlydryer_logistics_section">
+                    <setting id="earlydryer_logistics_distance" string="Distance estimate"
+                             help="No routing service: straight-line distance × road factor.">
+                        <field name="earlydryer_logistics_road_factor"/>
+                    </setting>
+                    <setting id="earlydryer_logistics_gps" string="GPS accuracy threshold (m)"
+                             help="Rider positions less accurate than this are flagged, not refused.">
+                        <field name="earlydryer_logistics_gps_accuracy_m"/>
+                    </setting>
+                    <setting id="earlydryer_logistics_max_stops" string="Stops per trip"
+                             help="Maximum stops per trip when planning automatically.">
+                        <field name="earlydryer_logistics_max_stops"/>
+                    </setting>
+                    <setting id="earlydryer_logistics_short" string="Rider cash shortages"
+                             help="Where a shortage found when closing a trip is posted (the manager is alerted either way).">
+                        <field name="earlydryer_rider_short_mode"/>
+                        <div invisible="earlydryer_rider_short_mode != 'rider_receivable'">
+                            <field name="earlydryer_rider_receivable_account_id" placeholder="Rider's contact receivable"/>
+                        </div>
+                    </setting>
+                    <setting id="earlydryer_logistics_carrier" string="3PL expense account"
+                             help="Expense account of carrier bills.">
+                        <field name="earlydryer_carrier_expense_account_id"/>
+                    </setting>
+                </block>
+            </xpath>
+        </field>
+    </record>
+</odoo>

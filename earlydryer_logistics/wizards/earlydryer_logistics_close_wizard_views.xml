@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_logistics_close_wizard_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.logistics.close.wizard.form</field>
+        <field name="model">earlydryer.logistics.close.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <field name="trip_id" invisible="1"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="has_vehicle" invisible="1"/>
+                <group>
+                    <group string="Cash">
+                        <field name="rider_employee_id"/>
+                        <field name="cash_expected"/>
+                        <field name="cash_counted"/>
+                        <field name="difference" decoration-danger="difference &lt; 0"/>
+                        <field name="short_mode" invisible="difference &gt;= 0"/>
+                    </group>
+                    <group string="Vehicle" invisible="not has_vehicle">
+                        <field name="odometer_start"/>
+                        <field name="odometer_end"/>
+                    </group>
+                </group>
+                <div class="alert alert-warning" role="alert" invisible="difference &gt;= 0">
+                    The shortage is posted and the managers are alerted; it is never written off silently.
+                </div>
+                <field name="note" placeholder="Notes about the cash count..."/>
+                <footer>
+                    <button name="action_confirm" type="object" string="Close Trip" class="btn-primary"/>
+                    <button special="cancel" string="Cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

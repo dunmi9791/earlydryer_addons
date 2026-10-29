@@ -1,0 +1,37 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_area_user,earlydryer.area user,model_earlydryer_area,base.group_user,1,0,0,0
+access_area_ops,earlydryer.area operations manager,model_earlydryer_area,earlydryer_base.group_operations_manager,1,1,1,0
+access_area_admin,earlydryer.area admin,model_earlydryer_area,earlydryer_base.group_admin,1,1,1,1
+access_zone_user,earlydryer.delivery.zone user,model_earlydryer_delivery_zone,base.group_user,1,0,0,0
+access_zone_ops,earlydryer.delivery.zone operations manager,model_earlydryer_delivery_zone,earlydryer_base.group_operations_manager,1,1,1,0
+access_zone_admin,earlydryer.delivery.zone admin,model_earlydryer_delivery_zone,earlydryer_base.group_admin,1,1,1,1
+access_slot_user,earlydryer.logistics.slot.template user,model_earlydryer_logistics_slot_template,base.group_user,1,0,0,0
+access_slot_ops,earlydryer.logistics.slot.template operations manager,model_earlydryer_logistics_slot_template,earlydryer_base.group_operations_manager,1,1,1,0
+access_slot_admin,earlydryer.logistics.slot.template admin,model_earlydryer_logistics_slot_template,earlydryer_base.group_admin,1,1,1,1
+access_reason_user,earlydryer.logistics.fail.reason user,model_earlydryer_logistics_fail_reason,base.group_user,1,0,0,0
+access_reason_ops,earlydryer.logistics.fail.reason operations manager,model_earlydryer_logistics_fail_reason,earlydryer_base.group_operations_manager,1,1,1,0
+access_reason_admin,earlydryer.logistics.fail.reason admin,model_earlydryer_logistics_fail_reason,earlydryer_base.group_admin,1,1,1,1
+access_stop_front_desk,earlydryer.logistics.stop front desk,model_earlydryer_logistics_stop,earlydryer_base.group_front_desk,1,1,1,0
+access_stop_customer_service,earlydryer.logistics.stop customer service,model_earlydryer_logistics_stop,earlydryer_base.group_customer_service,1,1,1,0
+access_stop_rider,earlydryer.logistics.stop rider,model_earlydryer_logistics_stop,earlydryer_base.group_rider,1,0,0,0
+access_stop_manager,earlydryer.logistics.stop branch manager,model_earlydryer_logistics_stop,earlydryer_base.group_branch_manager,1,1,1,0
+access_stop_finance,earlydryer.logistics.stop finance,model_earlydryer_logistics_stop,earlydryer_base.group_finance,1,1,0,0
+access_stop_admin,earlydryer.logistics.stop admin,model_earlydryer_logistics_stop,earlydryer_base.group_admin,1,1,1,1
+access_trip_front_desk,earlydryer.logistics.trip front desk,model_earlydryer_logistics_trip,earlydryer_base.group_front_desk,1,0,0,0
+access_trip_customer_service,earlydryer.logistics.trip customer service,model_earlydryer_logistics_trip,earlydryer_base.group_customer_service,1,0,0,0
+access_trip_rider,earlydryer.logistics.trip rider,model_earlydryer_logistics_trip,earlydryer_base.group_rider,1,0,0,0
+access_trip_manager,earlydryer.logistics.trip branch manager,model_earlydryer_logistics_trip,earlydryer_base.group_branch_manager,1,1,1,0
+access_trip_finance,earlydryer.logistics.trip finance,model_earlydryer_logistics_trip,earlydryer_base.group_finance,1,1,0,0
+access_trip_admin,earlydryer.logistics.trip admin,model_earlydryer_logistics_trip,earlydryer_base.group_admin,1,1,1,1
+access_client_action_admin,earlydryer.logistics.client.action admin,model_earlydryer_logistics_client_action,earlydryer_base.group_admin,1,0,0,1
+access_schedule_wizard_front_desk,schedule wizard front desk,model_earlydryer_logistics_schedule_wizard,earlydryer_base.group_front_desk,1,1,1,1
+access_schedule_wizard_customer_service,schedule wizard customer service,model_earlydryer_logistics_schedule_wizard,earlydryer_base.group_customer_service,1,1,1,1
+access_schedule_wizard_manager,schedule wizard manager,model_earlydryer_logistics_schedule_wizard,earlydryer_base.group_branch_manager,1,1,1,1
+access_schedule_slot_front_desk,schedule slot front desk,model_earlydryer_logistics_schedule_slot,earlydryer_base.group_front_desk,1,1,1,1
+access_schedule_slot_customer_service,schedule slot customer service,model_earlydryer_logistics_schedule_slot,earlydryer_base.group_customer_service,1,1,1,1
+access_schedule_slot_manager,schedule slot manager,model_earlydryer_logistics_schedule_slot,earlydryer_base.group_branch_manager,1,1,1,1
+access_outcome_wizard_manager,outcome wizard manager,model_earlydryer_logistics_outcome_wizard,earlydryer_base.group_branch_manager,1,1,1,1
+access_plan_wizard_manager,plan wizard manager,model_earlydryer_logistics_plan_wizard,earlydryer_base.group_branch_manager,1,1,1,1
+access_close_wizard_manager,close wizard manager,model_earlydryer_logistics_close_wizard,earlydryer_base.group_branch_manager,1,1,1,1
+access_close_wizard_finance,close wizard finance,model_earlydryer_logistics_close_wizard,earlydryer_base.group_finance,1,1,1,1
+access_fleet_vehicle_earlydryer_user,fleet.vehicle earlydryer read,fleet.model_fleet_vehicle,base.group_user,1,0,0,0

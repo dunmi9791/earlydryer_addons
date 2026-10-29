@@ -5,72 +5,72 @@
     <!-- PLACEHOLDERS to confirm with Earlydryer's accountant. Codes are the
          ones the setup wizard proposes (the next free code is used when one
          is taken; every code can be edited in the wizard). They follow the
-         numbering of the Odoo 19 generic chart, which l10n_ng copies:
-         1xxx assets, 2xxx liabilities, 4xxx income, 5xxx direct costs,
-         6xxx expenses. -->
+         6-digit numbering of the Odoo 19 generic chart, which l10n_ng
+         copies: 1xxxxx assets, 2xxxxx liabilities, 4xxxxx income, 5xxxxx
+         direct costs, 6xxxxx expenses. -->
     <record id="param_vat_rate" model="ir.config_parameter">
         <field name="key">earlydryer_accounting_ng.vat_rate</field>
         <field name="value">7.5</field>
     </record>
     <record id="param_code_laundry_income" model="ir.config_parameter">
         <field name="key">earlydryer_accounting_ng.code_laundry_income</field>
-        <field name="value">4010</field>
+        <field name="value">401000</field>
     </record>
     <record id="param_code_retail_income" model="ir.config_parameter">
         <field name="key">earlydryer_accounting_ng.code_retail_income</field>
-        <field name="value">4020</field>
+        <field name="value">402000</field>
     </record>
     <record id="param_code_delivery_income" model="ir.config_parameter">
         <field name="key">earlydryer_accounting_ng.code_delivery_income</field>
-        <field name="value">4030</field>
+        <field name="value">403000</field>
     </record>
     <record id="param_code_discount" model="ir.config_parameter">
         <field name="key">earlydryer_accounting_ng.code_discount</field>
-        <field name="value">4090</field>
+        <field name="value">409000</field>
     </record>
     <record id="param_code_retail_cogs" model="ir.config_parameter">
         <field name="key">earlydryer_accounting_ng.code_retail_cogs</field>
-        <field name="value">5010</field>
+        <field name="value">501000</field>
     </record>
     <record id="param_code_consumables" model="ir.config_parameter">
         <field name="key">earlydryer_accounting_ng.code_consumables</field>
-        <field name="value">5020</field>
+        <field name="value">502000</field>
     </record>
     <record id="param_code_claims" model="ir.config_parameter">
         <field name="key">earlydryer_accounting_ng.code_claims</field>
-        <field name="value">6500</field>
+        <field name="value">650000</field>
     </record>
     <record id="param_code_cash_diff" model="ir.config_parameter">
         <field name="key">earlydryer_accounting_ng.code_cash_diff</field>
-        <field name="value">6440</field>
+        <field name="value">644000</field>
     </record>
     <record id="param_code_plant_cash" model="ir.config_parameter">
         <field name="key">earlydryer_accounting_ng.code_plant_cash</field>
-        <field name="value">1030</field>
+        <field name="value">101510</field>
     </record>
     <record id="param_code_card_clearing" model="ir.config_parameter">
         <field name="key">earlydryer_accounting_ng.code_card_clearing</field>
-        <field name="value">1040</field>
+        <field name="value">105100</field>
     </record>
     <record id="param_code_rider_cash" model="ir.config_parameter">
         <field name="key">earlydryer_accounting_ng.code_rider_cash</field>
-        <field name="value">1050</field>
+        <field name="value">105200</field>
     </record>
     <record id="param_code_gateway_clearing" model="ir.config_parameter">
         <field name="key">earlydryer_accounting_ng.code_gateway_clearing</field>
-        <field name="value">1060</field>
+        <field name="value">105300</field>
     </record>
     <record id="param_code_cash_transit" model="ir.config_parameter">
         <field name="key">earlydryer_accounting_ng.code_cash_transit</field>
-        <field name="value">1070</field>
+        <field name="value">105400</field>
     </record>
     <record id="param_code_wht_receivable" model="ir.config_parameter">
         <field name="key">earlydryer_accounting_ng.code_wht_receivable</field>
-        <field name="value">1330</field>
+        <field name="value">133000</field>
     </record>
     <record id="param_code_wht_payable" model="ir.config_parameter">
         <field name="key">earlydryer_accounting_ng.code_wht_payable</field>
-        <field name="value">2530</field>
+        <field name="value">253000</field>
     </record>
     <record id="param_journal_code_card" model="ir.config_parameter">
         <field name="key">earlydryer_accounting_ng.journal_code_card</field>

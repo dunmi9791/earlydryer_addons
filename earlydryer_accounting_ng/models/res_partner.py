@@ -33,9 +33,9 @@ class ResPartner(models.Model):
                     "company" if partner.is_company else "individual"
                 )
 
-    @property
+    @api.model
     def _commercial_fields(self):
-        return super()._commercial_fields + [
+        return super()._commercial_fields() + [
             "earlydryer_wht_category_id",
             "earlydryer_wht_vendor_type",
         ]

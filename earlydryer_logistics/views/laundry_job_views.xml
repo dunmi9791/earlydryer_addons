@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="laundry_job_view_form_logistics" model="ir.ui.view">
+        <field name="name">laundry.job.form.logistics</field>
+        <field name="model">laundry.job</field>
+        <field name="inherit_id" ref="earlydryer_laundry_order.laundry_job_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='action_out_for_delivery']" position="before">
+                <button name="action_earlydryer_arrange_delivery" type="object" string="Arrange Delivery"
+                        class="btn-primary" invisible="state not in ('packed', 'ready', 'uncollected')"
+                        groups="earlydryer_base.group_front_desk,earlydryer_base.group_customer_service"/>
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_view_earlydryer_stops" type="object" class="oe_stat_button"
+                        icon="fa-truck" invisible="earlydryer_stop_count == 0">
+                    <field name="earlydryer_stop_count" widget="statinfo" string="Stops"/>
+                </button>
+            </xpath>
+        </field>
+    </record>
+</odoo>

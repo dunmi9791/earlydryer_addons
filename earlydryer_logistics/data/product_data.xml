@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo noupdate="1">
+    <!-- Delivery Fees category of earlydryer_accounting_ng: income account
+         Delivery fee revenue, service line Delivery. No tax here: the VAT
+         setting of accounting_ng puts the sales VAT on delivery products. -->
+    <record id="product_delivery_fee" model="product.product">
+        <field name="name">Delivery Fee</field>
+        <field name="default_code">DELFEE</field>
+        <field name="earlydryer_kind">delivery_fee</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="earlydryer_accounting_ng.product_category_delivery"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="False"/>
+        <field name="available_in_pos" eval="True"/>
+        <field name="invoice_policy">order</field>
+        <field name="list_price">0.0</field>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="pos_categ_ids" eval="[Command.set([ref('earlydryer_service_catalog.pos_category_extras')])]"/>
+    </record>
+    <record id="product_failed_delivery_fee" model="product.product">
+        <field name="name">Failed Delivery Fee</field>
+        <field name="default_code">DELFAIL</field>
+        <field name="earlydryer_kind">delivery_fee</field>
+        <field name="type">service</field>
+        <field name="categ_id" ref="earlydryer_accounting_ng.product_category_delivery"/>
+        <field name="sale_ok" eval="True"/>
+        <field name="purchase_ok" eval="False"/>
+        <field name="available_in_pos" eval="True"/>
+        <field name="invoice_policy">order</field>
+        <field name="list_price">0.0</field>
+        <field name="taxes_id" eval="[Command.clear()]"/>
+        <field name="pos_categ_ids" eval="[Command.set([ref('earlydryer_service_catalog.pos_category_extras')])]"/>
+    </record>
+</odoo>

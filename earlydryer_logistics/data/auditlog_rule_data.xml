@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo noupdate="1">
+    <!-- OCA auditlog 19 logs whole models (one rule per model, fields can only
+         be excluded): zones (fees), stops (fee, waiver, COD, cash collected)
+         and trips (cash counted, handover). Confirmed by the post_init_hook. -->
+    <record id="auditlog_rule_zone" model="auditlog.rule">
+        <field name="name">Delivery zones (fees)</field>
+        <field name="model_id" ref="model_earlydryer_delivery_zone"/>
+        <field name="log_type">full</field>
+        <field name="log_create" eval="True"/>
+        <field name="log_write" eval="True"/>
+        <field name="log_unlink" eval="True"/>
+        <field name="log_read" eval="False"/>
+        <field name="log_export_data" eval="False"/>
+        <field name="capture_record" eval="True"/>
+    </record>
+    <record id="auditlog_rule_stop" model="auditlog.rule">
+        <field name="name">Logistics stops (fees, COD, cash)</field>
+        <field name="model_id" ref="model_earlydryer_logistics_stop"/>
+        <field name="log_type">full</field>
+        <field name="log_create" eval="False"/>
+        <field name="log_write" eval="True"/>
+        <field name="log_unlink" eval="True"/>
+        <field name="log_read" eval="False"/>
+        <field name="log_export_data" eval="False"/>
+        <field name="capture_record" eval="True"/>
+        <field name="fields_to_exclude_ids" eval="[(6, 0, [ref('field_earlydryer_logistics_stop__signature')])]"/>
+    </record>
+    <record id="auditlog_rule_trip" model="auditlog.rule">
+        <field name="name">Logistics trips (cash)</field>
+        <field name="model_id" ref="model_earlydryer_logistics_trip"/>
+        <field name="log_type">full</field>
+        <field name="log_create" eval="False"/>
+        <field name="log_write" eval="True"/>
+        <field name="log_unlink" eval="True"/>
+        <field name="log_read" eval="False"/>
+        <field name="log_export_data" eval="False"/>
+        <field name="capture_record" eval="True"/>
+    </record>
+</odoo>

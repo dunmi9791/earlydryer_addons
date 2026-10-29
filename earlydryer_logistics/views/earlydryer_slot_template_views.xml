@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_slot_template_view_list" model="ir.ui.view">
+        <field name="name">earlydryer.logistics.slot.template.list</field>
+        <field name="model">earlydryer.logistics.slot.template</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="earlydryer_branch_id"/>
+                <field name="weekday"/>
+                <field name="name"/>
+                <field name="start_time" widget="float_time"/>
+                <field name="end_time" widget="float_time"/>
+                <field name="stop_type"/>
+                <field name="capacity"/>
+                <field name="cutoff_hours" widget="float_time"/>
+                <field name="zone_ids" widget="many2many_tags" optional="hide"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+    <record id="earlydryer_slot_template_view_search" model="ir.ui.view">
+        <field name="name">earlydryer.logistics.slot.template.search</field>
+        <field name="model">earlydryer.logistics.slot.template</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="earlydryer_branch_id"/>
+                <field name="name"/>
+                <group>
+                    <filter name="group_branch" string="Plant" context="{'group_by': 'earlydryer_branch_id'}"/>
+                    <filter name="group_weekday" string="Weekday" context="{'group_by': 'weekday'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="earlydryer_slot_template_action" model="ir.actions.act_window">
+        <field name="name">Pickup and Delivery Slots</field>
+        <field name="res_model">earlydryer.logistics.slot.template</field>
+        <field name="view_mode">list</field>
+        <field name="context">{'active_test': False}</field>
+    </record>
+</odoo>

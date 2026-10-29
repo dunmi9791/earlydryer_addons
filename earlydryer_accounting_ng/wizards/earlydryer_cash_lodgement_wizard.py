@@ -110,7 +110,9 @@ class EarlydryerCashLodgementWizard(models.TransientModel):
         journal = branch.cash_journal_id
         if not transit or not journal:
             raise UserError(
-                self.env._("Run the accounting setup first (plant cash, cash in transit).")
+                self.env._(
+                    "Run the accounting setup first (plant cash, cash in transit)."
+                )
             )
         if company.currency_id.compare_amounts(self.amount, 0) <= 0:
             raise UserError(self.env._("The amount lodged must be positive."))

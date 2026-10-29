@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="earlydryer_logistics_schedule_wizard_view_form" model="ir.ui.view">
+        <field name="name">earlydryer.logistics.schedule.wizard.form</field>
+        <field name="model">earlydryer.logistics.schedule.wizard</field>
+        <field name="arch" type="xml">
+            <form>
+                <field name="stop_id" invisible="1"/>
+                <field name="is_manager" invisible="1"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="served" invisible="1"/>
+                <field name="below_minimum" invisible="1"/>
+                <group>
+                    <group string="Customer">
+                        <field name="stop_type" widget="radio" options="{'horizontal': true}"
+                               readonly="stop_id or job_id"/>
+                        <field name="partner_id" readonly="job_id"/>
+                        <field name="address_partner_id"/>
+                        <field name="address_area_id" required="1"/>
+                        <field name="address_landmark"/>
+                        <field name="job_id" invisible="stop_type != 'delivery'"
+                               required="stop_type == 'delivery'"
+                               domain="[('partner_id', 'child_of', partner_id), ('state', 'not in', ('delivered', 'collected', 'cancelled'))]"/>
+                        <field name="amount_due" invisible="not job_id"/>
+                        <field name="return_delivery" invisible="stop_type != 'pickup'"/>
+                        <field name="source"/>
+                    </group>
+                    <group string="Quote">
+                        <field name="branch_id"/>
+                        <field name="date" string="Slots from"/>
+                        <field name="express"/>
+                        <field name="order_amount" invisible="stop_type != 'delivery'"/>
+                        <field name="zone_id"/>
+                        <field name="distance_km" invisible="not distance_km"/>
+                        <field name="fee_breakdown" invisible="not fee_breakdown"/>
+                        <field name="quoted_fee"/>
+                    </group>
+                </group>
+                <div class="alert alert-warning" role="alert" invisible="not message">
+                    <field name="message" readonly="1" nolabel="1"/>
+                </div>
+                <div class="alert alert-info" role="status" invisible="stop_type != 'delivery' or not cod_allowed or amount_due == 0">
+                    Cash on delivery: the rider will collect the amount due, fee included.
+                </div>
+                <field name="cod_allowed" invisible="1"/>
+                <group string="Fee told to the customer">
+                    <group>
+                        <field name="fee_amount" readonly="not is_manager"/>
+                        <field name="fee_waived" invisible="not is_manager"/>
+                        <field name="fee_waive_reason" invisible="not fee_waived" required="fee_waived"/>
+                    </group>
+                </group>
+                <separator string="Available slots (tick one)"/>
+                <field name="slot_line_ids" nolabel="1">
+                    <list editable="bottom" create="false" delete="false" no_open="1">
+                        <field name="selected" widget="boolean_toggle"/>
+                        <field name="label"/>
+                        <field name="remaining"/>
+                        <field name="key" column_invisible="1"/>
+                        <field name="start" column_invisible="1"/>
+                    </list>
+                </field>
+                <group>
+                    <field name="customer_note"/>
+                    <field name="internal_note"/>
+                </group>
+                <footer>
+                    <button name="action_confirm" type="object" string="Schedule" class="btn-primary"
+                            data-hotkey="q"/>
+                    <button name="action_refresh" type="object" string="Refresh Quote"/>
+                    <button special="cancel" string="Cancel" data-hotkey="x"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>

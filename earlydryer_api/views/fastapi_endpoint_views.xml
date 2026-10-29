@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="fastapi_endpoint_form_view" model="ir.ui.view">
+        <field name="name">fastapi.endpoint.form (in earlydryer_api)</field>
+        <field name="model">fastapi.endpoint</field>
+        <field name="inherit_id" ref="fastapi.fastapi_endpoint_form_view"/>
+        <field name="arch" type="xml">
+            <header position="inside">
+                <button name="action_earlydryer_new_api_key" type="object" string="New API Key" invisible="app != 'earlydryer'" groups="base.group_system" confirm="The website and the app stop working until they get the new key. Continue?"/>
+            </header>
+            <field name="app" position="after">
+                <field name="earlydryer_api_key" invisible="app != 'earlydryer'" groups="base.group_system" password="True"/>
+            </field>
+        </field>
+    </record>
+</odoo>

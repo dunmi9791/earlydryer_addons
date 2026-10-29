@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <!-- Homepage from the earlydryer.com copy and the printed flyers. Every
+         section is a text block, so it stays editable in the website builder. -->
+    <template id="homepage" inherit_id="website.homepage" name="Earlydryer Homepage">
+        <xpath expr="//div[@id='wrap']" position="inside">
+
+            <!-- Hero -->
+            <section class="s_text_block o_cc o_cc4 o_ed_hero o_ed_wave pt96" data-snippet="s_text_block" data-name="Hero">
+                <div class="container s_allow_columns">
+                    <div class="row align-items-center g-5">
+                        <div class="col-lg-7">
+                            <p><span class="o_ed_eyebrow"><i class="fa fa-star text-o-color-2"/>Freshness Delivered to Your Doorstep</span></p>
+                            <h1 class="display-4 mb-4">Premium <font class="text-o-color-2">Laundry</font> &amp; Dry Cleaning in Abuja</h1>
+                            <p class="lead mb-5">At EarlyDryer, we redefine laundry with convenience, care, and class. From pickup to delivery, we handle your garments like they’re our own, so you can focus on what truly matters.</p>
+                            <p>
+                                <a href="/pickup" class="btn btn-secondary btn-lg me-2 mb-2"><i class="fa fa-truck me-2"/>Book a Pickup</a>
+                                <a href="/contactus" class="btn btn-outline-light btn-lg mb-2">Contact Us Today</a>
+                            </p>
+                        </div>
+                        <div class="col-lg-5 d-none d-lg-block">
+                            <div class="o_ed_logo_bubble">
+                                <img src="/web/image/theme_earlydryer.logo" class="img-fluid" alt="EarlyDryer laundry"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- About -->
+            <section id="about" class="s_text_block o_cc o_cc1 pt80 pb80" data-snippet="s_text_block" data-name="About us">
+                <div class="container s_allow_columns">
+                    <div class="row align-items-center g-5">
+                        <div class="col-lg-6 order-lg-2">
+                            <span class="o_ed_eyebrow mb-3">About us</span>
+                            <h2 class="mt-3 mb-4">Your clothes deserve <span class="o_ed_highlight">the best care</span></h2>
+                            <p>EarlyDryer is a modern, customer-focused laundry and dry cleaning service proudly serving Abuja. Located at Bahamas Plaza, F01 Kubwa, we are dedicated to delivering top-tier garment care with unmatched convenience.</p>
+                            <p class="mb-4">We understand that your time is valuable. That’s why we bring our services directly to you, wherever you are in Abuja.</p>
+                            <h5 class="mb-3">Our promise</h5>
+                            <ul class="o_ed_checklist">
+                                <li>Professional handling of every fabric</li>
+                                <li>Timely pickup and delivery</li>
+                                <li>Affordable, transparent pricing</li>
+                                <li>Customer satisfaction guaranteed</li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-6 order-lg-1 text-center">
+                            <img src="/web/image/theme_earlydryer.flyer_care" class="img-fluid o_ed_photo" style="max-height: 560px;" alt="EarlyDryer laundry service: express wash, premium care, pick up and delivery, iron and fold"/>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Services -->
+            <section id="services" class="s_text_block o_cc o_cc2 pt80 pb80" data-snippet="s_text_block" data-name="Services">
+                <div class="container s_allow_columns">
+                    <div class="text-center mx-auto mb-5" style="max-width: 44rem;">
+                        <span class="o_ed_eyebrow">Our services</span>
+                        <h2 class="mt-3">Everything your wardrobe needs</h2>
+                        <p class="lead">From everyday wear to delicate fabrics, cleaned, pressed and brought back to your door.</p>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-md-6 col-lg-4">
+                            <div class="o_ed_card">
+                                <span class="o_ed_icon"><i class="fa fa-tint"/></span>
+                                <h4>Laundry &amp; Wash</h4>
+                                <p class="mb-0">Expert washing, drying and folding with high-quality detergents: gentle on fabrics, tough on stains.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="o_ed_card">
+                                <span class="o_ed_icon o_ed_icon_sun"><i class="fa fa-star"/></span>
+                                <h4>Dry Cleaning</h4>
+                                <p class="mb-0">From corporate wear to delicate fabrics, your garments keep their quality and elegance.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="o_ed_card">
+                                <span class="o_ed_icon"><i class="fa fa-check-square-o"/></span>
+                                <h4>Ironing &amp; Pressing</h4>
+                                <p class="mb-0">Crisp, clean and perfectly pressed outfits, ready for any occasion.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="o_ed_card">
+                                <span class="o_ed_icon o_ed_icon_sun"><i class="fa fa-truck"/></span>
+                                <h4>Pickup &amp; Delivery</h4>
+                                <p class="mb-0">Schedule a pickup, we collect from your doorstep, then clean, process and deliver back to you. Available across Abuja.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="o_ed_card">
+                                <span class="o_ed_icon"><i class="fa fa-building"/></span>
+                                <h4>Bulk &amp; Corporate</h4>
+                                <p class="mb-0">Large-scale laundry for hotels, offices, events and businesses.</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4">
+                            <div class="o_ed_card o_ed_card_accent">
+                                <span class="o_ed_icon o_ed_icon_sun"><i class="fa fa-phone"/></span>
+                                <h4>Not sure what you need?</h4>
+                                <p>Call us and we’ll sort it out with you.</p>
+                                <a href="tel:+2347043270116" class="btn btn-secondary">0704 327 0116</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- How it works -->
+            <section class="s_text_block o_cc o_cc1 pt80 pb80" data-snippet="s_text_block" data-name="How it works">
+                <div class="container s_allow_columns">
+                    <div class="text-center mb-5">
+                        <span class="o_ed_eyebrow">How it works</span>
+                        <h2 class="mt-3">Fresh laundry in four easy steps</h2>
+                    </div>
+                    <div class="row g-5">
+                        <div class="col-md-6 col-lg-3 o_ed_step">
+                            <div class="o_ed_step_number">1</div>
+                            <h5>Book</h5>
+                            <p>Contact us or book a pickup online.</p>
+                        </div>
+                        <div class="col-md-6 col-lg-3 o_ed_step">
+                            <div class="o_ed_step_number">2</div>
+                            <h5>We pick up</h5>
+                            <p>We collect your laundry from your location.</p>
+                        </div>
+                        <div class="col-md-6 col-lg-3 o_ed_step">
+                            <div class="o_ed_step_number">3</div>
+                            <h5>We clean</h5>
+                            <p>Professional cleaning and processing.</p>
+                        </div>
+                        <div class="col-md-6 col-lg-3 o_ed_step">
+                            <div class="o_ed_step_number">4</div>
+                            <h5>We deliver</h5>
+                            <p>Back to your doorstep, fresh and ready.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Why choose us -->
+            <section class="s_text_block o_cc o_cc5 pt80 pb80" data-snippet="s_text_block" data-name="Why EarlyDryer">
+                <div class="container s_allow_columns">
+                    <div class="row align-items-center g-5">
+                        <div class="col-lg-7">
+                            <h2 class="mb-4">Why choose <font class="text-o-color-2">EarlyDryer</font>?</h2>
+                            <ul class="o_ed_checklist fs-5 mb-5">
+                                <li>Doorstep pickup &amp; delivery anywhere in Abuja</li>
+                                <li>Fast turnaround time</li>
+                                <li>Skilled professionals handling your garments</li>
+                                <li>Eco-friendly and fabric-safe cleaning methods</li>
+                                <li>Reliable and consistent service</li>
+                                <li>Affordable premium quality</li>
+                            </ul>
+                            <p class="o_ed_quote">“Your clothes deserve the best care.”</p>
+                            <p class="text-white-50">At EarlyDryer, we treat every garment with precision and attention to detail. Whether it’s your everyday wear or special outfits, they come back fresh, clean and perfectly finished.</p>
+                        </div>
+                        <div class="col-lg-5 text-center">
+                            <img src="/web/image/theme_earlydryer.flyer_services" class="img-fluid o_ed_photo" style="max-height: 560px;" alt="EarlyDryer services: washing, dry cleaning, leather cleaning, pick up and delivery"/>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Coverage and call to action -->
+            <section class="s_text_block o_cc o_cc4 o_ed_hero pt80" data-snippet="s_text_block" data-name="Call to action">
+                <div class="container s_allow_columns">
+                    <div class="row align-items-center g-5">
+                        <div class="col-lg-7">
+                            <h2>Ready to experience stress-free laundry?</h2>
+                            <p class="lead mb-4">Let EarlyDryer take the load off your shoulders: contact us today, schedule a pickup, enjoy doorstep delivery.</p>
+                            <p>
+                                <a href="/pickup" class="btn btn-secondary btn-lg me-2 mb-2">Schedule a Pickup</a>
+                                <a href="tel:+2347043270116" class="btn btn-outline-light btn-lg mb-2"><i class="fa fa-phone me-2"/>Call us</a>
+                            </p>
+                        </div>
+                        <div class="col-lg-5">
+                            <div class="o_ed_card">
+                                <span class="o_ed_icon o_ed_icon_sun"><i class="fa fa-map-marker"/></span>
+                                <h4>Our coverage</h4>
+                                <p>Based in Kubwa, Bahamas Plaza (F01). Serving all areas in Abuja.</p>
+                                <p class="fw-bold mb-0 text-o-color-1">No matter where you are, EarlyDryer comes to you.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </xpath>
+    </template>
+</odoo>

@@ -1,0 +1,42 @@
+.o_ed_rider {
+    height: 100%;
+    overflow-y: auto;
+    background: $o-webclient-background-color;
+    max-width: 640px;
+    margin: 0 auto;
+
+    .o_ed_rider_bar {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        background: $o-view-background-color;
+        border-bottom: 1px solid $border-color;
+    }
+
+    .o_ed_cod {
+        font-size: 1.6rem;
+        font-weight: 700;
+    }
+
+    .o_ed_stop_done {
+        opacity: 0.6;
+    }
+
+    .o_ed_stop_failed {
+        opacity: 0.6;
+        border-color: $danger;
+    }
+
+    .o_ed_signature_canvas {
+        width: 100%;
+        height: 180px;
+        border: 1px solid $border-color;
+        border-radius: 4px;
+        background: #fff;
+        touch-action: none;
+    }
+
+    .btn-lg {
+        min-height: 3rem;
+    }
+}

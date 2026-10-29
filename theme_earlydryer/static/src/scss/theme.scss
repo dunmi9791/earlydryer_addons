@@ -1,0 +1,270 @@
+// Earlydryer decorations: waves and soap bubbles from the flyers, rounded
+// cards and the yellow highlight used on "LAUNDRY".
+
+$ed-teal: #5AB6C4;  // accent from the current earlydryer.com contact block
+
+h1, h2, h3, .display-1, .display-2, .display-3, .display-4 {
+    font-weight: 800;
+    letter-spacing: -.02em;
+}
+
+h4, h5, h6 {
+    font-weight: 700;
+}
+
+// Small pill above a heading ("Freshness Delivered to Your Doorstep").
+.o_ed_eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    padding: .375rem 1rem;
+    border-radius: 10rem;
+    background-color: rgba(255, 255, 255, .14);
+    font-weight: 600;
+    font-size: .875rem;
+
+    .o_cc1 &, .o_cc2 & {
+        background-color: rgba(o-color('o-color-1'), .1);
+        color: o-color('o-color-1');
+    }
+}
+
+// Underline-marker behind a word, in sun yellow.
+.o_ed_highlight {
+    background-image: linear-gradient(transparent 62%, rgba(o-color('o-color-2'), .55) 62%);
+    padding: 0 .1em;
+}
+
+// Hero ------------------------------------------------------------------------
+
+.o_ed_hero {
+    position: relative;
+    overflow: hidden;
+    padding-bottom: 7rem !important;
+
+    // soap bubbles
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        @include media-breakpoint-down(lg) {
+            display: none;
+        }
+        $ring: rgba(255, 255, 255, .35);
+        background:
+            radial-gradient(circle, transparent 56%, $ring 58%, $ring 66%, transparent 68%) 38% 90% / 56px 56px no-repeat,
+            radial-gradient(circle, transparent 56%, $ring 58%, $ring 66%, transparent 68%) 44% 78% / 28px 28px no-repeat,
+            radial-gradient(circle, transparent 56%, $ring 58%, $ring 66%, transparent 68%) 2% 94% / 20px 20px no-repeat,
+            radial-gradient(circle, transparent 56%, $ring 58%, $ring 66%, transparent 68%) 92% 12% / 40px 40px no-repeat,
+            radial-gradient(circle, transparent 56%, $ring 58%, $ring 66%, transparent 68%) 96% 26% / 22px 22px no-repeat,
+            radial-gradient(circle, transparent 56%, $ring 58%, $ring 66%, transparent 68%) 48% 92% / 18px 18px no-repeat;
+    }
+
+    > .container {
+        position: relative;
+    }
+}
+
+// The logo sits on a white "bubble" in the hero.
+.o_ed_logo_bubble {
+    aspect-ratio: 1;
+    max-width: 26rem;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #FFFFFF 0%, #FFFFFF 55%, o-color('o-color-3') 100%);
+    box-shadow: 0 0 0 .75rem rgba(255, 255, 255, .18), 0 0 0 1.75rem rgba(255, 255, 255, .08), $box-shadow-lg;
+
+    img {
+        width: 78%;
+    }
+}
+
+// Wave at the bottom of a section, white like the next one by default.
+.o_ed_wave {
+    position: relative;
+
+    &::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -1px;
+        height: clamp(2.5rem, 6vw, 5rem);
+        pointer-events: none;
+        background-color: var(--o-ed-wave-color, #{o-color('o-color-4')});
+        -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120' preserveAspectRatio='none'%3E%3Cpath d='M0 64c120-40 240-56 360-40s240 72 360 72 240-56 360-72 240 0 360 32v64H0z'/%3E%3C/svg%3E") center bottom / 100% 100% no-repeat;
+        mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120' preserveAspectRatio='none'%3E%3Cpath d='M0 64c120-40 240-56 360-40s240 72 360 72 240-56 360-72 240 0 360 32v64H0z'/%3E%3C/svg%3E") center bottom / 100% 100% no-repeat;
+    }
+
+    &.o_ed_wave_sky::after {
+        --o-ed-wave-color: #{o-color('o-color-3')};
+    }
+}
+
+// Cards ------------------------------------------------------------------------
+
+.o_ed_card {
+    height: 100%;
+    padding: 2rem;
+    border-radius: $border-radius-lg;
+    background-color: o-color('o-color-4');
+    color: o-color('o-color-5');
+    box-shadow: $box-shadow;
+    transition: transform .2s ease, box-shadow .2s ease;
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: $box-shadow-lg;
+    }
+
+    p {
+        color: rgba(o-color('o-color-5'), .75);
+    }
+
+    // Blue variant, for the odd card that asks for action.
+    &.o_ed_card_accent {
+        background-color: o-color('o-color-1');
+        color: o-color('o-color-4');
+
+        h4 {
+            color: inherit;
+        }
+
+        p {
+            color: rgba(o-color('o-color-4'), .8);
+        }
+
+        .o_ed_icon {
+            background-color: o-color('o-color-2');
+            color: o-color('o-color-5');
+        }
+    }
+}
+
+.o_ed_icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+    border-radius: 1rem;
+    background-color: rgba(o-color('o-color-1'), .1);
+    color: o-color('o-color-1');
+    font-size: 1.5rem;
+
+    &.o_ed_icon_sun {
+        background-color: rgba(o-color('o-color-2'), .2);
+        color: darken(o-color('o-color-2'), 22%);
+    }
+}
+
+// How it works: numbered sun-yellow discs joined by a dotted line.
+.o_ed_step {
+    position: relative;
+    text-align: center;
+
+    .o_ed_step_number {
+        width: 4rem;
+        height: 4rem;
+        margin: 0 auto 1.25rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background-color: o-color('o-color-2');
+        color: o-color('o-color-5');
+        font-family: $headings-font-family;
+        font-weight: 800;
+        font-size: 1.5rem;
+        box-shadow: 0 0 0 .5rem rgba(o-color('o-color-2'), .2);
+    }
+
+    @include media-breakpoint-up(lg) {
+        &:not(:last-child)::after {
+            content: "";
+            position: absolute;
+            top: 2rem;
+            left: calc(50% + 3rem);
+            right: calc(-50% + 3rem);
+            border-top: 2px dashed rgba(o-color('o-color-1'), .35);
+        }
+    }
+}
+
+// Check list ("Why choose EarlyDryer?").
+.o_ed_checklist {
+    list-style: none;
+    padding-left: 0;
+
+    li {
+        position: relative;
+        padding-left: 2.25rem;
+        margin-bottom: .875rem;
+
+        &::before {
+            content: "\f00c";
+            font-family: FontAwesome;
+            position: absolute;
+            left: 0;
+            top: .1em;
+            width: 1.5rem;
+            height: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background-color: o-color('o-color-2');
+            color: o-color('o-color-5');
+            font-size: .75rem;
+        }
+    }
+}
+
+.o_ed_quote {
+    border-left: .375rem solid o-color('o-color-2');
+    padding-left: 1.25rem;
+    font-family: $headings-font-family;
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+.o_ed_photo {
+    border-radius: 1.5rem;
+    box-shadow: $box-shadow-lg;
+}
+
+// Footer -----------------------------------------------------------------------
+
+#footer .o_ed_footer {
+    a {
+        color: inherit;
+        text-decoration: none;
+
+        &:hover {
+            color: o-color('o-color-2');
+        }
+    }
+
+    .o_ed_footer_logo {
+        max-height: 5rem;
+        padding: .5rem .75rem;
+        border-radius: 1rem;
+        background-color: o-color('o-color-4');
+    }
+
+    .o_ed_footer_title {
+        color: o-color('o-color-2');
+        font-size: .8125rem;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
+
+    .o_ed_teal {
+        color: $ed-teal;
+    }
+}

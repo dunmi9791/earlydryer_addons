@@ -121,9 +121,11 @@ class AccountMoveLine(models.Model):
         before = {line.id: line._earlydryer_wht_taxes() for line in self}
         res = super().write(vals)
         removed = self.filtered(
-            lambda line: line.move_id.move_type in ("in_invoice", "in_refund")
-            and (before[line.id] - line.tax_ids)
-            and line._earlydryer_expected_wht() in before[line.id] - line.tax_ids
+            lambda line: (
+                line.move_id.move_type in ("in_invoice", "in_refund")
+                and (before[line.id] - line.tax_ids)
+                and line._earlydryer_expected_wht() in before[line.id] - line.tax_ids
+            )
         )
         if removed:
             raise UserError(
@@ -158,14 +160,19 @@ class AccountMoveLine(models.Model):
                 line.with_context(earlydryer_wht_reason=reason).write(
                     {"tax_ids": [(3, tax.id) for tax in wht]}
                 )
-                removed.append(f"{line.name or line.product_id.display_name}: {', '.join(wht.mapped('name'))}")
+                label = line.name or line.product_id.display_name
+                removed.append(f"{label}: {', '.join(wht.mapped('name'))}")
             if removed:
                 move.message_post(
                     body=Markup("%s<br/>%s<ul>%s</ul>")
                     % (
-                        self.env._("Withholding tax removed. Reason: %(reason)s", reason=reason),
+                        self.env._(
+                            "Withholding tax removed. Reason: %(reason)s", reason=reason
+                        ),
                         self.env._("Lines:"),
-                        Markup("").join(Markup("<li>%s</li>") % item for item in removed),
+                        Markup("").join(
+                            Markup("<li>%s</li>") % item for item in removed
+                        ),
                     )
                 )
         return True
