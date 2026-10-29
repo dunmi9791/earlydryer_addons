@@ -9,3 +9,4 @@ from . import test_trips
 from . import test_planning
 from . import test_rider_api
 from . import test_kpi_notifications
+from . import test_online_booking

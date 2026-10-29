@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo noupdate="1">
+    <!-- technical user running the API: no rights of its own, the booking
+         service checks every input and works as superuser -->
+    <record id="user_api" model="res.users" context="{'no_reset_password': True}">
+        <field name="name">Earlydryer API</field>
+        <field name="login">earlydryer_api</field>
+        <field name="group_ids" eval="[Command.set([ref('fastapi.group_fastapi_endpoint_runner')])]"/>
+    </record>
+    <record id="endpoint_api" model="fastapi.endpoint">
+        <field name="name">Earlydryer API</field>
+        <field name="description">Online pickup booking for the Earlydryer website and mobile app.</field>
+        <field name="app">earlydryer</field>
+        <field name="root_path">/earlydryer/api/v1</field>
+        <field name="user_id" ref="user_api"/>
+    </record>
+</odoo>

@@ -143,6 +143,53 @@ Pickups through to jobs (when the customer sees the price)
    customer the count and the price: **that is when they see the price**.
 4. The return delivery uses the pickup's address.
 
+Online booking (website and app)
+================================
+
+Customers book pickups themselves on the website
+(``earlydryer_website_pickup``) or in the mobile app (``earlydryer_api``).
+Both call one service, ``earlydryer.logistics.booking``. It is the only
+public entry point: callers are anonymous, so it works as superuser and
+checks every input itself.
+
+* ``public_areas()``: the areas served by at least one plant (address
+  picker).
+* ``quote_pickup({"area_id", "date"?, "days"?})``: the plant (the zone
+  with the lowest sequence that contains the area), the fee and the free
+  slots.
+* ``book_pickup(payload)``:
+
+  * matches the customer by phone (E.164, ``0803…`` = ``+234803…``) or
+    creates the customer;
+  * reuses the same street in the same area, or adds a delivery address;
+  * runs the quote again (**the fee always comes from the quote, never
+    from the caller**);
+  * locks the slot row so that two bookings cannot take its last place;
+  * creates the stop (source *Website* or *Mobile App*) and **schedules it
+    at once**: ``pickup_booked`` goes to the customer (if they agreed to
+    messages), and the alert *Pickup booked online* goes to Branch Managers
+    and Customer Service.
+
+  If the area is not served or the slot is taken, nothing is booked: the
+  caller gets the reason.
+* ``request_callback(payload)``: the area is not served, or no time suits.
+  The service creates a **draft** pickup and a To Do for the plant's
+  Customer Service (fallback: its managers), with no fee and no message.
+* ``get_pickup(ref, token)`` / ``cancel_pickup(ref, token)``: an online
+  booking gets a random ``access_token``, so the customer can follow it and
+  cancel it without logging in. Cancelling works while the pickup is still
+  scheduled (not on a trip) and before the slot's cut-off.
+* Limits:
+
+  * ``client_ref`` (unique per source) makes a retried request return the
+    same pickup;
+  * at most 3 open online pickups per customer (system parameter
+    ``earlydryer_logistics.online_max_open_pickups``).
+
+After booking, an online pickup follows the normal flow: planning, trip,
+rider, *Pickups Arrived*, pricing. *Logistics > Stops* has an *Online
+requests* filter and a *Source* grouping.
+
 Cash on delivery and door collections
 =====================================
 
@@ -366,6 +413,9 @@ Open questions for Earlydryer
 * **Scheduling**: slot times and capacity per plant and weekday; cut-off.
 * **Pickups**: who counts and prices pickups (plant intake is the default);
   is a rough count at the door useful?
+* **Online booking**: should online pickups be scheduled at once (shipped)
+  or reviewed first; the cap of open pickups per customer (3); should the
+  website pickup page ask customers to log in.
 * **Cash and failures**: is COD allowed, and for whom; the failed-delivery
   fee rule (placeholder: none); how rider cash shortages are treated (rider
   receivable or cash over and short) and recovered.

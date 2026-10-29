@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <asset id="primary_variables_scss" name="Earlydryer primary variables">
+        <field name="key">theme_earlydryer.primary_variables_scss</field>
+        <bundle>web._assets_primary_variables</bundle>
+        <path>theme_earlydryer/static/src/scss/primary_variables.scss</path>
+    </asset>
+
+    <asset id="bootstrap_overridden_scss" name="Earlydryer bootstrap overrides">
+        <field name="key">theme_earlydryer.bootstrap_overridden_scss</field>
+        <bundle directive="prepend">web._assets_frontend_helpers</bundle>
+        <path>theme_earlydryer/static/src/scss/bootstrap_overridden.scss</path>
+    </asset>
+
+    <asset id="theme_scss" name="Earlydryer theme styles">
+        <field name="key">theme_earlydryer.theme_scss</field>
+        <bundle>web.assets_frontend</bundle>
+        <path>theme_earlydryer/static/src/scss/theme.scss</path>
+    </asset>
+</odoo>

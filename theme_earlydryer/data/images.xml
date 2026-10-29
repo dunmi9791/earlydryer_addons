@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright 2026 Secteur
+     License LGPL-3.0 or later (https://www.gnu.org/licenses/lgpl). -->
+<odoo>
+    <record id="logo" model="theme.ir.attachment">
+        <field name="name">Earlydryer logo</field>
+        <field name="url">/theme_earlydryer/static/src/img/logo.png</field>
+        <field name="key">theme_earlydryer.logo</field>
+    </record>
+
+    <record id="flyer_care" model="theme.ir.attachment">
+        <field name="name">Earlydryer laundry service flyer</field>
+        <field name="url">/theme_earlydryer/static/src/img/flyer_care.webp</field>
+        <field name="key">theme_earlydryer.flyer_care</field>
+    </record>
+
+    <record id="flyer_services" model="theme.ir.attachment">
+        <field name="name">Earlydryer services flyer</field>
+        <field name="url">/theme_earlydryer/static/src/img/flyer_services.webp</field>
+        <field name="key">theme_earlydryer.flyer_services</field>
+    </record>
+</odoo>

@@ -10,6 +10,7 @@ from . import earlydryer_logistics_client_action
 from . import earlydryer_logistics_stop
 from . import earlydryer_logistics_trip
 from . import earlydryer_logistics_rider_api
+from . import earlydryer_logistics_booking
 from . import earlydryer_kpi
 from . import earlydryer_logistics_demo
 from . import earlydryer_branch

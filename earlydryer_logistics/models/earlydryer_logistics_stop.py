@@ -41,6 +41,7 @@ SOURCES = [
     ("whatsapp", "WhatsApp"),
     ("phone", "Phone"),
     ("website", "Website"),
+    ("app", "Mobile App"),
     ("corporate", "Corporate"),
 ]
 # context key: the stop engine writes the protected fields
@@ -82,6 +83,7 @@ PROTECTED_FIELDS = {
     "fee_line_ref",
     "cod_payment_id",
     "credit_approver_employee_id",
+    "access_token",
 }
 FEE_FIELDS = {"fee_amount", "fee_waived", "fee_waive_reason", "failed_fee_amount"}
 SNAPSHOT_FIELDS = (
@@ -124,6 +126,20 @@ class EarlydryerLogisticsStop(models.Model):
         group_expand=True,
     )
     source = fields.Selection(SOURCES, required=True, default="backend")
+    client_ref = fields.Char(
+        string="Client Reference",
+        readonly=True,
+        copy=False,
+        help="Online bookings: key sent by the website or app, so a retried "
+        "request does not book twice.",
+    )
+    access_token = fields.Char(
+        readonly=True,
+        copy=False,
+        groups="earlydryer_base.group_branch_manager",
+        help="Lets the customer follow or cancel an online booking without "
+        "logging in.",
+    )
     company_id = fields.Many2one(
         related="earlydryer_branch_id.company_id", store=True, index=True
     )
@@ -334,6 +350,9 @@ class EarlydryerLogisticsStop(models.Model):
 
     _attempt_positive = models.Constraint(
         "CHECK(attempt >= 1)", "The attempt number starts at 1."
+    )
+    _client_ref_unique = models.Constraint(
+        "UNIQUE(source, client_ref)", "This online booking already exists."
     )
 
     # ------------------------------------------------------------------
@@ -800,6 +819,32 @@ class EarlydryerLogisticsStop(models.Model):
         else:
             context["number"] = self.job_id.name or self.name
             Notify.notify("delivery_scheduled", self, context=context)
+
+    def _earlydryer_notify_online_booked(self):
+        """Tell the plant a pickup was booked online (staff alert)."""
+        self.ensure_one()
+        self.env["earlydryer.notify.message"].notify(
+            "alert_pickup_online",
+            self,
+            context={
+                "occurrence": f"online:{self.id}",
+                "number": self.name,
+                "summary": self.env._(
+                    "%(customer)s, %(area)s, %(slot)s",
+                    customer=self.partner_id.name,
+                    area=self.area_id.name or "",
+                    slot=self.slot_label or "",
+                ),
+            },
+        )
+
+    def _earlydryer_callback_users(self):
+        """Customer Service of the stop's plant (fallback: its managers)."""
+        self.ensure_one()
+        branch = self.earlydryer_branch_id.sudo()
+        group = self.env.ref(GROUPS["customer_service"])
+        users = branch.user_ids.filtered(lambda u: group in u.all_group_ids)
+        return users or self._earlydryer_manager_users()
 
     def _earlydryer_format(self, amount):
         currency = self.currency_id or self.env.company.currency_id

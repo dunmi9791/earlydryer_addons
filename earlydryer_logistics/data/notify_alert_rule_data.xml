@@ -17,4 +17,11 @@
         <field name="threshold">0</field>
         <field name="recipient_group_ids" eval="[(6, 0, [ref('earlydryer_base.group_branch_manager'), ref('earlydryer_base.group_finance')])]"/>
     </record>
+    <record id="rule_alert_pickup_online" model="earlydryer.notify.alert.rule">
+        <field name="name">Pickup booked online</field>
+        <field name="event_id" ref="event_alert_pickup_online"/>
+        <field name="mode">immediate</field>
+        <field name="threshold">0</field>
+        <field name="recipient_group_ids" eval="[(6, 0, [ref('earlydryer_base.group_branch_manager'), ref('earlydryer_base.group_customer_service')])]"/>
+    </record>
 </odoo>

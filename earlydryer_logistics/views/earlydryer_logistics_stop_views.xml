@@ -105,6 +105,7 @@
                             <field name="rider_employee_id" invisible="not rider_employee_id"/>
                             <field name="carrier_partner_id" invisible="not carrier_partner_id"/>
                             <field name="source"/>
+                            <field name="client_ref" invisible="not client_ref"/>
                         </group>
                     </group>
                     <group>
@@ -243,6 +244,7 @@
                 <field name="area_id"/>
                 <filter name="pickups" string="Pickups" domain="[('stop_type', '=', 'pickup')]"/>
                 <filter name="deliveries" string="Deliveries" domain="[('stop_type', '=', 'delivery')]"/>
+                <filter name="online" string="Online requests" domain="[('source', 'in', ('website', 'app'))]"/>
                 <separator/>
                 <filter name="today" string="Today" domain="[('slot_date', '=', context_today().strftime('%Y-%m-%d'))]"/>
                 <filter name="slot_date_filter" string="Slot Date" date="slot_date"/>
@@ -260,6 +262,7 @@
                     <filter name="group_slot" string="Slot" context="{'group_by': 'slot_template_id'}"/>
                     <filter name="group_reason" string="Failure Reason" context="{'group_by': 'fail_reason_id'}"/>
                     <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_source" string="Source" context="{'group_by': 'source'}"/>
                     <filter name="group_date" string="Date" context="{'group_by': 'slot_date'}"/>
                 </group>
             </search>

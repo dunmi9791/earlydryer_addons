@@ -88,4 +88,32 @@
     <field name="meta_language">en</field>
     <field name="param_expressions">["ctx['plant']", "ctx['number']", "ctx['summary']", "ctx['plant_phone']"]</field>
   </record>
+  <record id="event_alert_pickup_online" model="earlydryer.notify.event">
+    <field name="name">Pickup booked online</field>
+    <field name="code">alert_pickup_online</field>
+    <field name="audience">staff</field>
+    <field name="active" eval="True" />
+    <field name="urgent" eval="False" />
+    <field name="allow_repeat" eval="True" />
+  </record>
+  <record id="template_alert_pickup_online_whatsapp" model="earlydryer.notify.template">
+    <field name="name">Pickup booked online (whatsapp)</field>
+    <field name="event_id" ref="event_alert_pickup_online" />
+    <field name="channel">whatsapp</field>
+    <field name="body">{{ ctx['plant'] }}: Pickup {{ ctx['number'] }} booked online: {{ ctx['summary'] }}.</field>
+    <field name="approved" eval="False" />
+    <field name="meta_template_name">earlydryer_alert_pickup_online</field>
+    <field name="meta_language">en</field>
+    <field name="param_expressions">["ctx['plant']", "ctx['number']", "ctx['summary']"]</field>
+  </record>
+  <record id="template_alert_pickup_online_sms" model="earlydryer.notify.template">
+    <field name="name">Pickup booked online (sms)</field>
+    <field name="event_id" ref="event_alert_pickup_online" />
+    <field name="channel">sms</field>
+    <field name="body">{{ ctx['plant'] }}: Pickup {{ ctx['number'] }} booked online: {{ ctx['summary'] }}.</field>
+    <field name="approved" eval="False" />
+    <field name="meta_template_name" />
+    <field name="meta_language">en</field>
+    <field name="param_expressions">["ctx['plant']", "ctx['number']", "ctx['summary']"]</field>
+  </record>
 </odoo>
