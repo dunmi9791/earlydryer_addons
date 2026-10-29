@@ -1,0 +1,64 @@
+[submodule "account-financial-reporting"]
+	path = account-financial-reporting
+	url = https://github.com/OCA/account-financial-reporting.git
+	branch = 19.0
+[submodule "account-financial-tools"]
+	path = account-financial-tools
+	url = https://github.com/OCA/account-financial-tools.git
+	branch = 19.0
+[submodule "account-reconcile"]
+	path = account-reconcile
+	url = https://github.com/OCA/account-reconcile.git
+	branch = 19.0
+[submodule "bank-statement-import"]
+	path = bank-statement-import
+	url = https://github.com/OCA/bank-statement-import.git
+	branch = 19.0
+[submodule "helpdesk"]
+	path = helpdesk
+	url = https://github.com/OCA/helpdesk.git
+	branch = 19.0
+[submodule "mis-builder"]
+	path = mis-builder
+	url = https://github.com/OCA/mis-builder.git
+	branch = 19.0
+[submodule "partner-contact"]
+	path = partner-contact
+	url = https://github.com/OCA/partner-contact.git
+	branch = 19.0
+[submodule "payroll"]
+	path = payroll
+	url = https://github.com/OCA/payroll.git
+	branch = 19.0
+[submodule "purchase-workflow"]
+	path = purchase-workflow
+	url = https://github.com/OCA/purchase-workflow.git
+	branch = 19.0
+[submodule "queue"]
+	path = queue
+	url = https://github.com/OCA/queue.git
+	branch = 19.0
+[submodule "reporting-engine"]
+	path = reporting-engine
+	url = https://github.com/OCA/reporting-engine.git
+	branch = 19.0
+[submodule "rest-framework"]
+	path = rest-framework
+	url = https://github.com/OCA/rest-framework.git
+	branch = 19.0
+[submodule "server-tools"]
+	path = server-tools
+	url = https://github.com/OCA/server-tools.git
+	branch = 19.0
+[submodule "server-ux"]
+	path = server-ux
+	url = https://github.com/OCA/server-ux.git
+	branch = 19.0
+[submodule "web"]
+	path = web
+	url = https://github.com/OCA/web.git
+	branch = 19.0
+[submodule "web-api"]
+	path = web-api
+	url = https://github.com/OCA/web-api.git
+	branch = 19.0
